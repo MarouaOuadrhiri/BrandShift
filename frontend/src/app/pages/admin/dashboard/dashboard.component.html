@@ -1,40 +1,40 @@
-<div class="animate-fade-up space-y-6 max-w-[1600px] mx-auto pb-10 px-4 pt-4">
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
-    <div class="bg-[#161616] border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all group">
-      <p class="text-[10px] uppercase tracking-widest text-white/30 font-black mb-4">Total Projects</p>
-      <div class="flex items-end justify-between">
-        <p class="text-4xl font-black text-white leading-none tracking-tighter">{{ stats.projects }}</p>
-        <span class="text-[9px] text-green-400 font-bold bg-green-500/10 px-2 py-1 rounded-lg border border-green-500/20 group-hover:scale-110 transition-all">+12% from last month</span>
+<div class="animate-fade-up space-y-6 max-w-[1600px] mx-auto pb-10 px-4">
+   <div class="stats-canvas">
+ 
+    <!-- Stats Bento Grid: 4 columns -->
+    <div class="stats-grid">
+ 
+      <!-- CARD 1: Total Projects — dark card -->
+      <div class="stat-card stat-card--dark">
+        <p class="stat-label">Total Projects</p>
+        <p class="stat-number">{{ stats.projects }}</p>
+        <p class="stat-sub stat-sub--green">+12% from last month</p>
       </div>
-    </div>
-    
-    <div class="bg-[#e53935] rounded-3xl p-6 relative overflow-hidden shadow-2xl shadow-red-900/40 group">
-      <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700"></div>
-      <p class="text-[10px] uppercase tracking-widest text-white/70 font-black mb-4">Completed Projects</p>
-      <div class="flex items-end justify-between relative z-10">
-        <p class="text-4xl font-black text-white leading-none tracking-tighter">{{ stats.completedProjects }}</p>
-        <span class="text-[9px] text-white/60 font-bold uppercase tracking-widest">Velocity: High</span>
+ 
+      <!-- CARD 2: Completed Projects — RED gradient card -->
+      <div class="stat-card stat-card--red">
+        <!-- overlay shadow layer -->
+        <div class="stat-card-overlay"></div>
+        <p class="stat-label stat-label--white">Completed Projects</p>
+        <p class="stat-number">{{ stats.completedProjects }}</p>
+        <p class="stat-sub stat-sub--white">Velocity: High</p>
       </div>
-    </div>
-    
-    <div class="bg-[#161616] border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all">
-      <p class="text-[10px] uppercase tracking-widest text-white/30 font-black mb-4">Active Projects</p>
-      <div class="flex items-end justify-between">
-        <p class="text-4xl font-black text-white leading-none tracking-tighter">{{ stats.activeProjects }}</p>
-        <span class="text-[9px] text-[#e53935] font-bold uppercase tracking-widest px-2 py-1 bg-[#e53935]/10 rounded-lg border border-[#e53935]/20">4 due this week</span>
+ 
+      <!-- CARD 3: Active Projects — dark card -->
+      <div class="stat-card stat-card--dark">
+        <p class="stat-label">Active Projects</p>
+        <p class="stat-number">{{ stats.activeProjects }}</p>
+        <p class="stat-sub stat-sub--blue">4 due this week</p>
       </div>
-    </div>
-    
-    <div class="bg-[#161616] border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all group">
-      <p class="text-[10px] uppercase tracking-widest text-white/30 font-black mb-4">Pending Tasks</p>
-      <div class="flex items-end justify-between">
-        <p class="text-4xl font-black text-white leading-none tracking-tighter">{{ stats.tasks }}</p>
-        <div class="flex flex-col items-end">
-          <span class="text-[10px] text-[#e53935] font-bold uppercase animate-pulse">Action required</span>
-        </div>
+ 
+      <!-- CARD 4: Pending Tasks — dark card -->
+      <div class="stat-card stat-card--dark">
+        <p class="stat-label">Pending Tasks</p>
+        <p class="stat-number">{{ stats.tasks }}</p>
+        <p class="stat-sub stat-sub--yellow">Action required</p>
       </div>
+ 
     </div>
-  </div>
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
     
     <!-- LEFT COLUMN -->
@@ -46,16 +46,16 @@
         
         <div class="flex items-center justify-between mb-10 relative z-10">
           <div>
-            <h2 class="text-2xl font-black text-white tracking-tight">Weekly Project Activity</h2>
-            <p class="text-[10px] text-white/20 mt-1 uppercase tracking-[0.2em] font-black">Data tracking based on task completion velocity</p>
+            <h2 class="my-heading-style">Weekly Project Activity</h2>
+            <p class="subTitle">Data tracking based on task completion velocity</p>
           </div>
           <div class="flex items-center gap-3">
             <div class="w-2.5 h-2.5 bg-[#e53935] rounded-sm shadow-[0_0_10px_rgba(229,57,53,0.5)]"></div>
             <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Output</span>
-            <span class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 ml-2">
+            <!-- <span class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 ml-2">
               <span class="w-1 h-1 bg-[#e53935] rounded-full animate-pulse"></span>
               <span class="text-[8px] font-black text-[#e53935] uppercase tracking-widest">Live</span>
-            </span>
+            </span> -->
           </div>
         </div>
 
@@ -74,7 +74,7 @@
       <!-- Current Projects Card -->
       <div class="bg-[#161616] border border-white/5 rounded-[2.5rem] p-10 shadow-2xl">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-2xl font-black text-white tracking-tight">Current Projects</h2>
+          <h2 class="my-heading-style">Current Projects</h2>
           <button routerLink="../projects" class="text-[10px] text-white/30 font-black uppercase tracking-widest hover:text-[#e53935] transition-all flex items-center gap-2 group">
             View All
             <svg class="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
@@ -117,7 +117,7 @@
       <!-- Team Performance -->
       <div class="space-y-6">
         <div class="flex items-center justify-between">
-          <h2 class="text-2xl font-black text-white tracking-tight">Team Performance</h2>
+          <h2 class="my-heading-style">Team Performance</h2>
           <button routerLink="/admin/employees" class="text-[10px] text-white/20 font-black uppercase tracking-widest hover:text-white transition-all">View All</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

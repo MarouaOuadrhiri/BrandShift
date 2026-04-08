@@ -11,7 +11,7 @@ import { ApiService } from '../../core/api.service';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit, OnDestroy {
-  showSidebar = false;
+  showSidebar = true;
   user: any = null;
 
   // Meetings notification state
@@ -144,5 +144,13 @@ export class AdminComponent implements OnInit, OnDestroy {
     } else {
       this.api.endAttendance().subscribe({ next: finalizeLogout, error: finalizeLogout });
     }
+  }
+
+  closeSidebar() {
+    this.showSidebar = false;
+  }
+
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
   }
 }
