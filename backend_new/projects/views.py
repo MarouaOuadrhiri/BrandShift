@@ -19,7 +19,13 @@ def serialize_project(p):
         'description': p.description,
         'department_id': str(p.department.id) if p.department else None,
         'department_name': getattr(p.department, 'name', None) if p.department and not isinstance(p.department, bson.DBRef) else (Department.objects.filter(id=p.department.id).first().name if p.department and Department.objects.filter(id=p.department.id).first() else None),
-        'employees': [{'id': str(e.id), 'username': getattr(e, 'username', '') if not isinstance(e, bson.DBRef) else getattr(User.objects.filter(id=e.id).first(), 'username', '')} for e in p.employees],
+        'employees': [
+            {
+                'id': str(e.id), 
+                'username': getattr(e, 'username', '') if not isinstance(e, bson.DBRef) else getattr(User.objects.filter(id=e.id).first(), 'username', ''),
+                'profile_photo': getattr(e, 'profile_photo', '') if not isinstance(e, bson.DBRef) else getattr(User.objects.filter(id=e.id).first(), 'profile_photo', '')
+            } for e in p.employees
+        ],
         'start_date': p.start_date.isoformat() if p.start_date else None,
         'deadline': p.deadline.isoformat() if p.deadline else None,
         'tasks': [

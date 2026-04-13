@@ -101,7 +101,7 @@ opacity: 1;
   line-height: 28px;
   color: #FFFFFF;
   letter-spacing: 0px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   vertical-align: middle;
 }
 
@@ -156,31 +156,51 @@ opacity: 1;
 
 /* Progress Section */
 .card-progress-section {
-  margin-bottom: 24px;
-  margin-top: 12px; /* Added margin top as requested */
+  /* margin-bottom: 24px; 
+  margin-top: 12px;  */
+  /* Added margin top as requested */
 }
 
 .progress-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
+  width: 256px;
+  height: 15px;
+  padding-right: 0%;
   margin-bottom: 12px;
 }
 
 .progress-label {
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: 0.15em;
+  font-size: 10px;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.25);
   text-transform: uppercase;
+  font-style: Regular;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 400;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  color: #737373;
 }
 
 .hero-card .progress-label { color: rgba(255, 255, 255, 0.6); }
 
 .progress-value {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 400;
   color: #FFFFFF;
+
+font-style: Regular;
+  font-family: 'Space Grotesk', sans-serif;
+
+font-size: 10px;
+line-height: 15px;
+letter-spacing: 0.5px;
+vertical-align: middle;
+text-transform: uppercase;
+
 }
 
 .progress-track {
@@ -208,7 +228,9 @@ opacity: 1;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding-top: 24px;
+  padding-top: 16px;
+  width: 256px;
+  height: 48px;
 }
 
 .hero-card .card-footer {
