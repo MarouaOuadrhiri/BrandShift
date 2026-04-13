@@ -10,7 +10,7 @@
 /* Card Base Styles */
 .project-card {
   height: 278px;
-  background: #171717;
+  background: #1C1B1C;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 40px;
   padding: 24px;
@@ -156,8 +156,8 @@ opacity: 1;
 
 /* Progress Section */
 .card-progress-section {
-  /* margin-bottom: 24px; 
-  margin-top: 12px;  */
+  margin-bottom: 24px; 
+  /* margin-top: 12px;  */
   /* Added margin top as requested */
 }
 
@@ -228,9 +228,9 @@ text-transform: uppercase;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding-top: 16px;
-  width: 256px;
+  width: 260px;
   height: 48px;
+  padding-bottom: 20px;
 }
 
 .hero-card .card-footer {
@@ -243,6 +243,7 @@ text-transform: uppercase;
   display: flex;
   align-items: center;
 }
+
 
 .avatar {
   width: 32px;
@@ -299,19 +300,37 @@ text-transform: uppercase;
   text-align: right;
 }
 
+
 .deadline-tag {
-  font-size: 8px;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.25);
+  font-size: 9px;
+  font-weight: 400;
+  color: #737373;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 2px;
+  font-family:  "Space Grotesk" ,sans-serif;
+  font-style: regular;
+vertical-align: middle;
+line-height: 13.5px;
+letter-spacing: 0.45px;
+text-align: right;
 }
 
 .deadline-val {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 400;
   color: #FFFFFF;
+font-family: 'Inter',sans-serif;
+font-style: regular;
+line-height: 16px;
+letter-spacing: 0px;
+text-align: right;
+vertical-align: middle;
+width: 78;
+height: 16;
+top: 12.75px;
+left: -3.77px;
+opacity: 1;
 }
 
 /* Hero Button */

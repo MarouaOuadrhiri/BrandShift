@@ -120,7 +120,7 @@
 
         <!-- Middle: Date -->
         <div class="archive-date">
-          {{ (p.client | date:'MMM dd, yyyy') || 'N/A' }}
+          {{ (p.start_date | date:'MMM dd, yyyy') || 'N/A' }}
         </div>
 
         <!-- Right: Client & Arrow -->
@@ -139,7 +139,7 @@
   </div>
 
   <!-- Optional Workspace Velocity Metrics (Footer) -->
-  <div class="pt-16 border-t border-white/5 flex flex-wrap items-center justify-between gap-12 px-2">
+  <div class="pt-16 border-t border-white/5 flex flex-wrap items-center justify-between gap-12">
     <div class="flex items-center gap-12">
       <div>
         <p class="text-[10px] font-black tracking-widest text-white/20 uppercase mb-3">TASK COMPLETION</p>

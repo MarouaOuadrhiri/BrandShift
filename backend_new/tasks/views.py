@@ -9,13 +9,20 @@ from mongoengine.errors import DoesNotExist
 
 
 def serialize_task(t):
+    try:
+        employee_id = str(t.employee.id) if t.employee else None
+        employee_name = t.employee.username if t.employee else "Unknown Member"
+    except DoesNotExist:
+        employee_id = None
+        employee_name = "Unknown Member (Deleted)"
+
     return {
         'id': str(t.id),
         'title': t.title,
         'description': t.description or '',
         'status': t.status,
-        'employee_id': str(t.employee.id),
-        'employee_name': t.employee.username,
+        'employee_id': employee_id,
+        'employee_name': employee_name,
         'source_project_task_id': getattr(t, 'source_project_task_id', None),
     }
 
