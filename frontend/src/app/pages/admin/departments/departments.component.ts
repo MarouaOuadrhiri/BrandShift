@@ -18,11 +18,19 @@ export class DepartmentsComponent implements OnInit {
   errorMsg = '';
 
   depName = '';
+  depSubtitle = '';
   depDesc = '';
+  depIcon = '';
   editDepId: string | null = null;
 
+  isModalOpen = false;
   showHistoryModal = false;
   selectedHistory: any = null;
+
+  totalWorkforce = 0;
+  activeEntities = 0;
+
+  defaultIcon = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>';
 
   constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
 
@@ -33,9 +41,10 @@ export class DepartmentsComponent implements OnInit {
   loadData() {
     this.api.getDepartments().subscribe({ 
       next: (r: any) => { 
-        setTimeout(() => {
-          this.departments = r; 
-        }, 0);
+        this.departments = r; 
+        this.activeEntities = r.length;
+        this.totalWorkforce = r.reduce((acc: number, d: any) => acc + (d.employees_count || 0), 0);
+        this.cdr.detectChanges();
       }, 
       error: () => { } 
     });
@@ -56,21 +65,55 @@ export class DepartmentsComponent implements OnInit {
     });
   }
 
-  createDepartment() {
-    if (!this.depName) { this.errorMsg = 'Department name is required.'; return; }
-    this.isSubmitting = true;
-    this.api.createDepartment({ name: this.depName, description: this.depDesc }).subscribe({
-      next: () => { this.depName = ''; this.depDesc = ''; this.isSubmitting = false; this.loadData(); },
-      error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to create department.'; this.isSubmitting = false; }
-    });
+  openModal(d: any = null) {
+    if (d) {
+      this.editDepId = d.id;
+      this.depName = d.name;
+      this.depSubtitle = d.subtitle;
+      this.depDesc = d.description;
+      this.depIcon = d.icon;
+    } else {
+      this.editDepId = null;
+      this.depName = '';
+      this.depSubtitle = '';
+      this.depDesc = '';
+      this.depIcon = '';
+    }
+    this.isModalOpen = true;
   }
 
-  startEditDep(d: any) { this.editDepId = d.id; d.editName = d.name; d.editDesc = d.description; }
-  saveEditDep(d: any) {
-    this.api.updateDepartment(d.id, { name: d.editName, description: d.editDesc }).subscribe({
-      next: () => { this.editDepId = null; this.loadData(); },
-      error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to update.'; }
-    });
+  closeModal() {
+    this.isModalOpen = false;
+    this.editDepId = null;
+  }
+
+  submitDepartment() {
+    if (!this.depName) { this.errorMsg = 'Department name is required.'; return; }
+    this.isSubmitting = true;
+    const data = { 
+      name: this.depName, 
+      subtitle: this.depSubtitle,
+      description: this.depDesc, 
+      icon: this.depIcon 
+    };
+
+    if (this.editDepId) {
+      this.api.updateDepartment(this.editDepId, data).subscribe({
+        next: () => { this.postSubmit(); },
+        error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to update department.'; this.isSubmitting = false; }
+      });
+    } else {
+      this.api.createDepartment(data).subscribe({
+        next: () => { this.postSubmit(); },
+        error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to create department.'; this.isSubmitting = false; }
+      });
+    }
+  }
+
+  postSubmit() {
+    this.isSubmitting = false;
+    this.closeModal();
+    this.loadData();
   }
 
   openEmployeeHistory(emp: any) {

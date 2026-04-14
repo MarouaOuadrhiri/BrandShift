@@ -1,158 +1,234 @@
-<div class="animate-fade-up max-w-6xl mx-auto pb-20">
-  <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 class="text-2xl font-black text-white tracking-tight">Departments</h1>
-      <p class="text-sm text-white/30 mt-0.5">Organize your teams into departments</p>
+<div class="dep-container animate-fade-up">
+  <!-- Header -->
+  <header class="dep-header">
+    <div class="header-left">
+      <p class="header-quote">Orchestrate your global operations and department health metrics in real-time velocity.</p>
     </div>
-  </div>
+    <div class="header-right">
+      <div class="global-metric">
+        <span class="metric-label">ACTIVE ENTITIES</span>
+        <span class="metric-value">{{activeEntities}}</span>
+      </div>
+      <div class="global-metric">
+        <span class="metric-label">GLOBAL WORKFORCE</span>
+        <span class="metric-value red">{{totalWorkforce}}</span>
+      </div>
+    </div>
+  </header>
 
-  <div *ngIf="errorMsg" class="mb-4 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl flex items-center justify-between text-sm">
+  <div *ngIf="errorMsg" class="error-alert mb-6">
     <span>{{errorMsg}}</span>
-    <button (click)="errorMsg=''" class="font-bold ml-4">✕</button>
+    <button (click)="errorMsg=''">✕</button>
   </div>
 
-  <div class="grid lg:grid-cols-3 gap-6" *ngIf="!selectedDep">
-    <!-- Create form -->
-    <div class="lg:col-span-1">
-      <div class="bg-[#161616] border border-white/5 rounded-2xl p-6 sticky top-8 shadow-lg">
-        <h3 class="text-xs font-black text-white uppercase tracking-widest mb-5">Create Department</h3>
-        <form (ngSubmit)="createDepartment()" class="space-y-4">
-          <div>
-            <label class="text-[10px] text-white/30 uppercase tracking-wider font-bold block mb-1.5">Name</label>
-            <input type="text" [(ngModel)]="depName" name="depName" placeholder="e.g. Engineering" required
-              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:outline-none transition-all text-sm">
-          </div>
-          <div>
-            <label class="text-[10px] text-white/30 uppercase tracking-wider font-bold block mb-1.5">Description</label>
-            <textarea [(ngModel)]="depDesc" name="depDesc" rows="3" placeholder="Brief description..."
-              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:outline-none transition-all text-sm resize-none"></textarea>
-          </div>
-          <button type="submit" [disabled]="isSubmitting"
-            class="w-full bg-[#e53935] hover:bg-[#c62828] text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 text-sm shadow-lg shadow-red-900/30">
-            + Add Department
+  <!-- Cards Grid -->
+  <div class="dep-grid" *ngIf="!selectedDep">
+    <div *ngFor="let d of departments" class="dep-card glass" (click)="viewDetail(d)">
+      <div class="card-top">
+        <div class="icon-box" [style.background]="d.status === 'OPTIMAL' ? 'rgba(229, 57, 53, 0.9)' : 'rgba(255, 255, 255, 0.05)'">
+          <!-- Mapping icons or using stored SVG -->
+          <div [innerHTML]="d.icon || defaultIcon" class="icon-inner"></div>
+        </div>
+        <div class="status-badge" [attr.data-status]="d.status">{{d.status}}</div>
+      </div>
+
+      <div class="card-main">
+        <h2 class="dep-name">{{d.name}}</h2>
+        <p class="dep-subtitle">{{d.subtitle || 'General Operations' | uppercase}}</p>
+      </div>
+
+      <div class="card-stats">
+        <div class="stat-item">
+          <span class="stat-label">EMPLOYEES</span>
+          <span class="stat-count">{{d.employees_count || 0}}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">ACTIVE TASKS</span>
+          <span class="stat-count">{{d.active_tasks_count || 0}}</span>
+        </div>
+      </div>
+
+      <div class="card-efficiency">
+        <div class="efficiency-header">
+          <span class="eff-label">EFFICIENCY</span>
+          <span class="eff-value">{{d.efficiency || 0}}%</span>
+        </div>
+        <div class="eff-progress-container">
+          <div class="eff-progress-bar" [style.width.%]="d.efficiency || 0"></div>
+        </div>
+      </div>
+      
+      <div class="card-overlay-actions">
+          <button (click)="$event.stopPropagation(); openModal(d)" class="edit-icon-btn">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
           </button>
-        </form>
       </div>
     </div>
+  </div>
 
-    <!-- List -->
-    <div class="lg:col-span-2">
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div *ngFor="let d of departments"
-          (click)="viewDetail(d)"
-          class="bg-[#161616] border border-white/5 rounded-2xl p-5 hover:border-white/10 transition-all group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-9 h-9 rounded-xl bg-[#e53935]/10 border border-[#e53935]/20 flex items-center justify-center">
-              <svg class="w-4 h-4 text-[#e53935]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-            </div>
-            <span class="text-[9px] bg-white/5 text-white/20 border border-white/10 px-2 py-1 rounded-lg font-mono">#{{(d.id || '').slice(-4)}}</span>
-          </div>
-          <h4 class="font-black text-white text-sm mb-1" *ngIf="editDepId !== d.id">{{d.name}}</h4>
-          <input *ngIf="editDepId === d.id" type="text" [(ngModel)]="d.editName" (click)="$event.stopPropagation()"
-            class="w-full bg-white/5 border border-[#e53935]/50 text-white px-2 py-1 rounded-lg text-sm mb-1 focus:outline-none">
-          <p class="text-xs text-white/30 leading-relaxed" *ngIf="editDepId !== d.id">{{d.description || 'No description.'}}</p>
-          <textarea *ngIf="editDepId === d.id" [(ngModel)]="d.editDesc" rows="2" (click)="$event.stopPropagation()"
-            class="w-full bg-white/5 border border-white/10 text-white px-2 py-1 rounded-lg text-xs mt-1 focus:outline-none resize-none"></textarea>
-          
-          <div class="flex gap-2 mt-4 justify-between items-center">
-            <div class="text-[9px] text-white/20 flex items-center gap-1">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-              Click for details
-            </div>
-            <div class="flex gap-2">
-              <button *ngIf="editDepId !== d.id" (click)="$event.stopPropagation(); startEditDep(d)" class="text-xs text-white/30 hover:text-white font-bold transition-all">Edit</button>
-              <button *ngIf="editDepId === d.id" (click)="$event.stopPropagation(); saveEditDep(d)" class="text-xs text-green-400 hover:text-green-300 font-bold">Save</button>
-              <button *ngIf="editDepId === d.id" (click)="$event.stopPropagation(); editDepId = null" class="text-xs text-white/30 hover:text-white font-bold">Cancel</button>
-            </div>
-          </div>
-        </div>
-
-        <div *ngIf="departments.length === 0"
-          class="col-span-2 p-12 text-center border-2 border-dashed border-white/5 rounded-2xl text-white/20">
-          No departments yet.
-        </div>
-      </div>
+  <!-- Summary Table -->
+  <div class="table-section glass mt-12" *ngIf="!selectedDep && departments.length > 0">
+    <div class="table-header">
+      <h3>Department Performance Summary</h3>
+      <button class="generate-report">GENERATE REPORT</button>
+    </div>
+    <div class="table-wrapper">
+      <table class="dep-table">
+        <thead>
+          <tr>
+            <th>DEPARTMENT</th>
+            <th>STATUS</th>
+            <th>EFFICIENCY RATING</th>
+            <th>TEAM HEALTH</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of departments">
+            <td class="name-col">
+              <div class="table-icon" [innerHTML]="d.icon || defaultIcon"></div>
+              <span>{{d.name}}</span>
+            </td>
+            <td>
+              <span class="table-badge" [attr.data-status]="d.status">{{d.status}}</span>
+            </td>
+            <td class="eff-col">{{d.efficiency}}%</td>
+            <td class="health-col" [attr.data-health]="d.status">
+              {{ d.status === 'OPTIMAL' ? 'Excellent' : d.status === 'STABLE' ? 'Good' : d.status === 'AT CAPACITY' ? 'Fair' : 'Strained' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
   <!-- Detailed View -->
   <div *ngIf="selectedDep" class="animate-fade-up">
-    <div class="flex items-center gap-4 mb-6">
+    <div class="flex items-center gap-4 mb-8">
       <button (click)="selectedDep = null" 
-        class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:bg-[#e53935] hover:text-white hover:border-[#e53935] transition-all">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:bg-[#e53935] hover:text-white hover:border-[#e53935] transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
       </button>
       <div>
-        <h2 class="text-xl font-black text-white">{{selectedDep.name}}</h2>
-        <p class="text-sm text-white/30 mt-0.5">{{selectedDep.description || 'No description'}}</p>
+        <h2 class="text-2xl font-black text-white">{{selectedDep.name}}</h2>
+        <p class="text-sm text-white/30 mt-1">{{selectedDep.description || 'Department Analytics & Team Overview'}}</p>
       </div>
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-4">
+    <div class="grid lg:grid-cols-2 gap-6">
       <div *ngFor="let emp of selectedDep.employees"
         (click)="openEmployeeHistory(emp)"
-        class="bg-[#161616] border border-white/5 rounded-2xl p-4 flex items-center gap-4 hover:border-white/10 transition-all cursor-pointer group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#e53935] to-[#b71c1c] flex items-center justify-center text-white font-black shrink-0 overflow-hidden border border-[#e53935]/20">
+        class="bg-[#161616]/50 backdrop-blur-md border border-white/5 rounded-2xl p-5 flex items-center gap-5 hover:border-[#e53935]/30 transition-all cursor-pointer group shadow-xl">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#e53935] to-[#b71c1c] flex items-center justify-center text-white font-black shrink-0 overflow-hidden border border-[#e53935]/20 shadow-lg shadow-red-900/20">
           <img *ngIf="emp.profile_photo" [src]="emp.profile_photo" class="w-full h-full object-cover">
           <span *ngIf="!emp.profile_photo">{{emp.username.charAt(0).toUpperCase()}}</span>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-white text-sm">{{emp.username}}</p>
-          <p class="text-xs text-white/30 truncate">{{emp.email}}</p>
+          <p class="font-bold text-white text-base">{{emp.username}}</p>
+          <p class="text-xs text-secondary truncate">{{emp.email}}</p>
         </div>
-        <svg class="w-4 h-4 text-white/20 opacity-0 group-hover:opacity-100 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-      </div>
-
-      <div *ngIf="!selectedDep.employees?.length" class="col-span-2 p-12 text-center border-2 border-dashed border-white/5 rounded-2xl text-white/20">
-        No employees in this department.
+        <div class="view-history-tag opacity-0 group-hover:opacity-100 transition-all text-[10px] font-black text-[#e53935] uppercase tracking-widest">History</div>
       </div>
     </div>
   </div>
 
-  <!-- History Modal -->
-  <div *ngIf="showHistoryModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4" (click)="closeHistory()">
-    <div class="bg-[#161616] border border-white/10 rounded-2xl p-7 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl custom-scrollbar" (click)="$event.stopPropagation()">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-[#e53935]/10 border border-[#e53935]/20 flex items-center justify-center text-white font-black overflow-hidden">
+  <!-- FAB -->
+  <button class="fab-btn" (click)="openModal()">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+  </button>
+
+  <!-- Create/Edit Modal -->
+  <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="modal-content glass" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">✕</button>
+      
+      <div class="modal-header">
+        <h2>{{ editDepId ? 'Update' : 'Create' }} Department</h2>
+        <p>Configure department settings and visual identity.</p>
+      </div>
+
+      <form (ngSubmit)="submitDepartment()" class="modal-form">
+        <div class="form-row split">
+          <div class="form-group">
+            <label>DEPARTMENT NAME</label>
+            <input type="text" [(ngModel)]="depName" name="depName" placeholder="e.g. Marketing" required>
+          </div>
+          <div class="form-group">
+            <label>ICON SVG / NAME</label>
+            <input type="text" [(ngModel)]="depIcon" name="depIcon" placeholder="Paste SVG or icon name...">
+          </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group full">
+              <label>SUBTITLE (TAGLINE)</label>
+              <input type="text" [(ngModel)]="depSubtitle" name="depSubtitle" placeholder="e.g. BRAND & OUTREACH">
+            </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full">
+            <label>DESCRIPTION</label>
+            <textarea [(ngModel)]="depDesc" name="depDesc" placeholder="Describe department scope..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeModal()">CANCEL</button>
+          <button type="submit" class="btn-create" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'PROCESSING...' : (editDepId ? 'UPDATE DEPARTMENT' : 'CREATE DEPARTMENT') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- History Modal (Existing logic) -->
+  <div *ngIf="showHistoryModal" class="modal-overlay" (click)="closeHistory()">
+    <div class="modal-content glass max-w-2xl" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-[#e53935]/10 border border-[#e53935]/20 flex items-center justify-center text-white font-black overflow-hidden shadow-lg shadow-red-900/10">
             <img *ngIf="selectedHistory?.user?.profile_photo" [src]="selectedHistory.user.profile_photo" class="w-full h-full object-cover">
             <span *ngIf="!selectedHistory?.user?.profile_photo">{{(selectedHistory?.user?.username || 'U').charAt(0).toUpperCase()}}</span>
           </div>
           <div>
-            <h3 class="font-black text-white">{{selectedHistory?.user?.username}}</h3>
-            <p class="text-xs text-white/30">Work History</p>
+            <h3 class="font-black text-xl text-white">{{selectedHistory?.user?.username}}</h3>
+            <p class="text-xs text-[#e53935] font-bold uppercase tracking-widest">Work History</p>
           </div>
         </div>
-        <button (click)="closeHistory()" class="text-white/30 hover:text-white transition-all">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <button (click)="closeHistory()" class="modal-close-inline">✕</button>
       </div>
 
-      <div *ngIf="selectedHistory" class="space-y-5">
+      <div *ngIf="selectedHistory" class="space-y-6">
         <div *ngIf="selectedHistory.projects?.length > 0">
-          <h4 class="text-xs font-black text-white/30 uppercase tracking-widest mb-3">Projects</h4>
-          <div class="space-y-2">
-            <div *ngFor="let p of selectedHistory.projects" class="p-3 bg-white/3 border border-white/5 rounded-xl">
+          <h4 class="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-4">assigned Projects</h4>
+          <div class="space-y-3">
+            <div *ngFor="let p of selectedHistory.projects" class="p-4 bg-white/3 border border-white/5 rounded-2xl hover:border-white/10 transition-all">
               <p class="text-sm font-bold text-white">{{p.name}}</p>
-              <p class="text-xs text-white/30 mt-0.5">{{p.tasks?.length || 0}} tasks</p>
+              <div class="flex items-center gap-2 mt-1.5">
+                  <div class="h-1 w-24 bg-white/5 rounded-full overflow-hidden">
+                      <div class="h-full bg-[#e53935]" [style.width.%]="p.progress"></div>
+                  </div>
+                  <p class="text-[10px] text-white/30 font-bold">{{p.tasks?.length || 0}} tasks • {{p.progress}}%</p>
+              </div>
             </div>
           </div>
         </div>
         <div *ngIf="selectedHistory.standalone_tasks?.length > 0">
-          <h4 class="text-xs font-black text-white/30 uppercase tracking-widest mb-3">Tasks</h4>
-          <div class="space-y-2">
-            <div *ngFor="let t of selectedHistory.standalone_tasks" class="p-3 bg-white/3 border border-white/5 rounded-xl flex items-center gap-3">
-              <div class="w-1.5 h-1.5 rounded-full shrink-0" [class]="t.status === 'DONE' ? 'bg-green-400' : 'bg-white/20'"></div>
-              <span class="text-sm text-white/70 flex-1">{{t.title}}</span>
-              <span class="text-[9px] uppercase text-white/30 font-bold">{{t.status?.replace('_',' ')}}</span>
+          <h4 class="text-[10px] font-black text-white/20 uppercase tracking-[0.2em] mb-4">standalone Tasks</h4>
+          <div class="space-y-3">
+            <div *ngFor="let t of selectedHistory.standalone_tasks" class="p-4 bg-white/3 border border-white/5 rounded-2xl flex items-center gap-4">
+              <div class="w-2 h-2 rounded-full shadow-[0_0_8px]" [class]="t.status === 'DONE' ? 'bg-green-400 shadow-green-400/50' : 'bg-white/10 shadow-transparent'"></div>
+              <span class="text-sm text-white/70 flex-1 font-medium">{{t.title}}</span>
+              <span class="text-[9px] uppercase px-2 py-1 bg-white/5 rounded-lg text-white/30 font-black tracking-widest">{{t.status?.replace('_',' ')}}</span>
             </div>
           </div>
         </div>
-        <div *ngIf="!selectedHistory.projects?.length && !selectedHistory.standalone_tasks?.length" class="text-center py-8 text-white/20 text-sm">No work history.</div>
+        <div *ngIf="!selectedHistory.projects?.length && !selectedHistory.standalone_tasks?.length" class="text-center py-12 text-white/10 text-sm italic font-medium">No activity tracked yet.</div>
       </div>
 
-      <div *ngIf="!selectedHistory" class="flex items-center justify-center py-12">
-        <div class="w-6 h-6 border-2 border-[#e53935] border-t-transparent rounded-full animate-spin"></div>
+      <div *ngIf="!selectedHistory" class="flex items-center justify-center py-16">
+        <div class="w-8 h-8 border-2 border-[#e53935] border-t-transparent rounded-full animate-spin"></div>
       </div>
     </div>
   </div>

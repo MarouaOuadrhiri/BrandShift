@@ -10,7 +10,8 @@
 /* Card Base Styles */
 .project-card {
   height: 278px;
-  background: #1C1B1C;
+  /* background: #1C1B1C; */
+
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 40px;
   padding: 24px;
@@ -22,6 +23,7 @@
   overflow: hidden;
   /* height: 100%; */
 }
+
 /* 
 .project-card:hover {
   transform: translateY(-8px);
@@ -33,15 +35,15 @@
 /* Hero Card (Red Theme) */
 .hero-card {
   grid-column: span 2;
-  background: linear-gradient(135deg, #FF1F1F 0%, #FF4A4A 100%);
+  background: linear-gradient(118.49deg, #FD0000 0%, #FF3B3B 100%);
   border: none;
   padding: 40px;
 }
 
-.hero-card:hover {
+/* .hero-card:hover {
   background: linear-gradient(135deg, #FF3131 0%, #FF5B5B 100%);
   box-shadow: 0 30px 70px rgba(255, 31, 31, 0.25);
-}
+} */
 
 /* Card Header & Status */
 .card-header {
@@ -67,15 +69,37 @@
   border-radius: 50%;
 }
 
-.status-dot.blue { background: #3B82F6; }
-.status-dot.green { background: #10B981; }
-.status-dot.orange { background: #F59E0B; }
-.status-dot.white { background: #FFFFFF;}
+.status-dot.blue {
+  background: #3B82F6;
+}
 
-.status-text.blue { color: #3B82F6; }
-.status-text.green { color: #10B981; }
-.status-text.orange { color: #F59E0B; }
-.status-text.white { color: #FFFFFF; }
+.status-dot.green {
+  background: #10B981;
+}
+
+.status-dot.orange {
+  background: #F59E0B;
+}
+
+.status-dot.white {
+  background: #FFFFFF;
+}
+
+.status-text.blue {
+  color: #3B82F6;
+}
+
+.status-text.green {
+  color: #10B981;
+}
+
+.status-text.orange {
+  color: #F59E0B;
+}
+
+.status-text.white {
+  color: #FFFFFF;
+}
 
 .status-text {
   font-family: 'Space Grotesk', sans-serif;
@@ -92,8 +116,8 @@
 .project-title {
   margin-top: 10px;
   width: 256;
-height: 28;
-opacity: 1;
+  height: 28;
+  opacity: 1;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 20px;
   font-weight: 700;
@@ -137,7 +161,8 @@ opacity: 1;
 
 .project-desc {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;font-weight: 400;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 20px;
   font-style: Regular;
   color: rgba(255, 255, 255, 0.45);
@@ -156,7 +181,7 @@ opacity: 1;
 
 /* Progress Section */
 .card-progress-section {
-  margin-bottom: 24px; 
+  margin-bottom: 24px;
   /* margin-top: 12px;  */
   /* Added margin top as requested */
 }
@@ -185,21 +210,23 @@ opacity: 1;
   color: #737373;
 }
 
-.hero-card .progress-label { color: rgba(255, 255, 255, 0.6); }
+.hero-card .progress-label {
+  color: rgba(255, 255, 255, 0.6);
+}
 
 .progress-value {
   font-size: 12px;
   font-weight: 400;
   color: #FFFFFF;
 
-font-style: Regular;
+  font-style: Regular;
   font-family: 'Space Grotesk', sans-serif;
 
-font-size: 10px;
-line-height: 15px;
-letter-spacing: 0.5px;
-vertical-align: middle;
-text-transform: uppercase;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  text-transform: uppercase;
 
 }
 
@@ -210,7 +237,9 @@ text-transform: uppercase;
   overflow: hidden;
 }
 
-.hero-card .progress-track { background: rgba(255, 255, 255, 0.15); }
+.hero-card .progress-track {
+  background: rgba(255, 255, 255, 0.15);
+}
 
 .progress-fill {
   height: 100%;
@@ -218,10 +247,22 @@ text-transform: uppercase;
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.progress-fill.blue { background: #3B82F6; }
-.progress-fill.red { background: #FF4A4A; }
-.progress-fill.green { background: #10B981; }
-.progress-fill.white { background: #FFFFFF; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+.progress-fill.blue {
+  background: #3B82F6;
+}
+
+.progress-fill.red {
+  background: #FF4A4A;
+}
+
+.progress-fill.green {
+  background: #10B981;
+}
+
+.progress-fill.white {
+  background: #FFFFFF;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
 
 /* Card Footer */
 .card-footer {
@@ -255,7 +296,9 @@ text-transform: uppercase;
   background: #262626;
 }
 
-.avatar:first-child { margin-left: 0; }
+.avatar:first-child {
+  margin-left: 0;
+}
 
 .hero-card .avatar {
   border-color: #FF2E2E;
@@ -308,29 +351,29 @@ text-transform: uppercase;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 2px;
-  font-family:  "Space Grotesk" ,sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-style: regular;
-vertical-align: middle;
-line-height: 13.5px;
-letter-spacing: 0.45px;
-text-align: right;
+  vertical-align: middle;
+  line-height: 13.5px;
+  letter-spacing: 0.45px;
+  text-align: right;
 }
 
 .deadline-val {
   font-size: 12px;
   font-weight: 400;
   color: #FFFFFF;
-font-family: 'Inter',sans-serif;
-font-style: regular;
-line-height: 16px;
-letter-spacing: 0px;
-text-align: right;
-vertical-align: middle;
-width: 78;
-height: 16;
-top: 12.75px;
-left: -3.77px;
-opacity: 1;
+  font-family: 'Inter', sans-serif;
+  font-style: regular;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-align: right;
+  vertical-align: middle;
+  width: 78;
+  height: 16;
+  top: 12.75px;
+  left: -3.77px;
+  opacity: 1;
 }
 
 /* Hero Button */
@@ -354,19 +397,37 @@ opacity: 1;
 
 /* Responsive Overrides */
 @media (max-width: 1280px) {
-  .hero-card .project-title { font-size: 36px; }
+  .hero-card .project-title {
+    font-size: 36px;
+  }
 }
 
 @media (max-width: 1024px) {
-  .projects-grid { grid-template-columns: repeat(2, 1fr); }
-  .hero-card { grid-column: span 2; }
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-card {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 768px) {
-  .projects-grid { grid-template-columns: 1fr; }
-  .hero-card { grid-column: span 1; }
-  .project-title { font-size: 24px; }
-  .hero-card .project-title { font-size: 28px; }
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    grid-column: span 1;
+  }
+
+  .project-title {
+    font-size: 24px;
+  }
+
+  .hero-card .project-title {
+    font-size: 28px;
+  }
 }
 
 /* Archive & Maintenance Section */
@@ -392,7 +453,8 @@ opacity: 1;
 .archive-row {
   background: #1C1B1C;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 60px; /* Pill shape */
+  border-radius: 60px;
+  /* Pill shape */
   padding: 12px 32px;
   display: flex;
   align-items: center;
@@ -464,6 +526,7 @@ opacity: 1;
     padding: 24px;
     gap: 16px;
   }
+
   .archive-row .flex-col.items-end {
     align-items: flex-start;
   }

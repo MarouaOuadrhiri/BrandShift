@@ -10,24 +10,70 @@ from mongoengine.errors import DoesNotExist, NotUniqueError
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def department_list_create(request):
+    from users.models import User
+    from projects.models import Project
+    from tasks.models import Task
+
     if request.method == 'GET':
         deps = Department.objects.all()
-        return Response([{'id': str(d.id), 'name': d.name, 'description': d.description} for d in deps])
+        data = []
+        for d in deps:
+            # Metrics calculation
+            employees = User.objects(department=d)
+            emp_ids = [e.id for e in employees]
+            
+            # Tasks from projects
+            projects = Project.objects(department=d)
+            project_tasks = []
+            for p in projects:
+                project_tasks.extend(p.tasks)
+            
+            # Standalone tasks for employees in this department
+            standalone_tasks = Task.objects(employee__in=emp_ids)
+            
+            all_tasks = project_tasks + list(standalone_tasks)
+            total_tasks = len(all_tasks)
+            done_tasks = len([t for t in all_tasks if t.status == 'DONE'])
+            active_tasks = total_tasks - done_tasks
+            
+            efficiency = (done_tasks / total_tasks * 100) if total_tasks > 0 else 0
+            
+            # Determine status
+            status = 'STABLE'
+            if efficiency >= 90: status = 'OPTIMAL'
+            elif efficiency >= 75: status = 'STABLE'
+            elif efficiency >= 70: status = 'AT CAPACITY'
+            else: status = 'CRITICAL'
+            
+            data.append({
+                'id': str(d.id),
+                'name': d.name,
+                'subtitle': d.subtitle or '',
+                'description': d.description or '',
+                'icon': d.icon or '',
+                'employees_count': len(employees),
+                'active_tasks_count': active_tasks,
+                'efficiency': round(efficiency),
+                'status': status
+            })
+        return Response(data)
     
     if request.method == 'POST':
-        # Only admin can create
         if request.user.role != 'ADMIN':
             return Response({'error': 'Unauthorized'}, status=403)
         
         name = request.data.get('name')
+        subtitle = request.data.get('subtitle', '')
         description = request.data.get('description', '')
+        icon = request.data.get('icon', '')
+        
         if not name:
             return Response({'error': 'Name is required'}, status=400)
         
         try:
-            dep = Department(name=name, description=description)
+            dep = Department(name=name, subtitle=subtitle, description=description, icon=icon)
             dep.save()
-            return Response({'id': str(dep.id), 'name': dep.name, 'description': dep.description}, status=201)
+            return Response({'id': str(dep.id), 'name': dep.name}, status=201)
         except NotUniqueError:
             return Response({'error': 'Department already exists'}, status=400)
 
@@ -84,10 +130,12 @@ def department_detail(request, pk):
 
     if request.method == 'PUT':
         dep.name = request.data.get('name', dep.name)
+        dep.subtitle = request.data.get('subtitle', dep.subtitle)
         dep.description = request.data.get('description', dep.description)
+        dep.icon = request.data.get('icon', dep.icon)
         try:
             dep.save()
-            return Response({'id': str(dep.id), 'name': dep.name, 'description': dep.description})
+            return Response({'id': str(dep.id), 'name': dep.name})
         except NotUniqueError:
             return Response({'error': 'Department name already exists'}, status=400)
         
