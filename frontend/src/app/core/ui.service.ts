@@ -5,14 +5,14 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class UiService {
-  private openProjectModalSource = new Subject<any | null>();
+  private openProjectModalSource = new Subject<{ project: any | null, mode: 'edit' | 'view' }>();
   openProjectModal$ = this.openProjectModalSource.asObservable();
   
   private projectEditedSource = new Subject<void>();
   projectEdited$ = this.projectEditedSource.asObservable();
-
-  triggerOpenProjectModal(project: any = null) {
-    this.openProjectModalSource.next(project);
+ 
+  triggerOpenProjectModal(project: any = null, mode: 'edit' | 'view' = 'edit') {
+    this.openProjectModalSource.next({ project, mode });
   }
 
   notifyProjectChanged() {

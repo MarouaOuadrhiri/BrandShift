@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, HostListener } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/api.service';
@@ -20,13 +20,14 @@ export class ProjectsComponent implements OnInit {
   searchQuery = '';
   activeFilter = 'ALL';
   selectedPriorityProjectId = '';
+  openMenuId: string | null = null;
   private modalSub: Subscription | null = null;
 
   constructor(
-    private api: ApiService, 
+    private api: ApiService,
     private ui: UiService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -45,14 +46,16 @@ export class ProjectsComponent implements OnInit {
   }
 
   loadData() {
-    this.api.getProjects().subscribe({ next: (r: any) => {
-      this.projects = (r || []).map((project: any) => ({
-        ...project,
-        isPriority: project.id === this.selectedPriorityProjectId || !!project.isPriority
-      }));
-    }, error: () => {} });
-    this.api.getEmployees().subscribe({ next: (r: any) => { this.employees = r; }, error: () => {} });
-    this.api.getDepartments().subscribe({ next: (r: any) => { this.departments = r; }, error: () => {} });
+    this.api.getProjects().subscribe({
+      next: (r: any) => {
+        this.projects = (r || []).map((project: any) => ({
+          ...project,
+          isPriority: project.id === this.selectedPriorityProjectId || !!project.isPriority
+        }));
+      }, error: () => { }
+    });
+    this.api.getEmployees().subscribe({ next: (r: any) => { this.employees = r; }, error: () => { } });
+    this.api.getDepartments().subscribe({ next: (r: any) => { this.departments = r; }, error: () => { } });
   }
 
 
@@ -114,7 +117,7 @@ export class ProjectsComponent implements OnInit {
     const projects = this.displayProjects;
     if (projects.length === 0) return null;
     const priority = projects.find(p => p.isPriority);
-    return priority ?? projects[0];
+    return priority || null;
   }
 
   get ArchivedProjects() {
@@ -150,7 +153,28 @@ export class ProjectsComponent implements OnInit {
   }
 
   editProject(p: any) {
-    this.ui.triggerOpenProjectModal(p);
+    this.openMenuId = null;
+    this.ui.triggerOpenProjectModal(p, 'edit');
+  }
+
+  toggleFavorite(p: any) {
+    this.openMenuId = null;
+    this.setPriorityProject(p);
+  }
+
+  detailProject(p: any) {
+    this.openMenuId = null;
+    this.ui.triggerOpenProjectModal(p, 'view');
+  }
+
+  toggleMenu(id: string, event: Event) {
+    event.stopPropagation();
+    this.openMenuId = this.openMenuId === id ? null : id;
+  }
+
+  @HostListener('document:click')
+  closeMenus() {
+    this.openMenuId = null;
   }
 
   deleteProject(id: string) {

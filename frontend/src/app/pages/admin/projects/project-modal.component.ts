@@ -19,6 +19,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   errorMsg = '';
   projectSuccess = false;
+  isReadOnly = false;
 
   projectName = '';
   projectClient = '';
@@ -38,9 +39,13 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadData();
-    this.modalSub = this.ui.openProjectModal$.subscribe((project) => {
+    this.modalSub = this.ui.openProjectModal$.subscribe(({ project, mode }) => {
       if (project) {
-        this.openEditModal(project);
+        if (mode === 'view') {
+          this.openViewModal(project);
+        } else {
+          this.openEditModal(project);
+        }
       } else {
         this.openCreateModal();
       }
@@ -72,12 +77,14 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
   openCreateModal() {
     this.resetForm();
     this.isEditingMode = false;
+    this.isReadOnly = false;
     this.showProjectModal = true;
   }
 
   openEditModal(p: any) {
     this.resetForm();
     this.isEditingMode = true;
+    this.isReadOnly = false;
     this.editingProjectId = p.id;
     this.projectName = p.name;
     this.projectClient = p.client || '';
@@ -95,6 +102,12 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
     this.showProjectModal = true;
   }
 
+  openViewModal(p: any) {
+    this.openEditModal(p);
+    this.isReadOnly = true;
+    this.isEditingMode = false;
+  }
+
   closeModal() {
     this.showProjectModal = false;
     this.resetForm();
@@ -110,6 +123,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
     this.projectTasks = [];
     this.errorMsg = '';
     this.isEditingMode = false;
+    this.isReadOnly = false;
     this.editingProjectId = '';
   }
 

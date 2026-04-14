@@ -26,66 +26,92 @@
   <!-- Main Bento Grid -->
   <div class="projects-grid">
     
-    <!-- Row 1: First 3 Standard Cards -->
-    <ng-container *ngFor="let p of topThree">
-      <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
-    </ng-container>
+    <ng-container *ngIf="heroProject; else standardOnlyGrid">
+      <!-- Row 1: First 3 Standard Cards -->
+      <ng-container *ngFor="let p of topThree">
+        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
+      </ng-container>
 
-    <!-- Row 2: 4th Card + Spanning Hero Card -->
-    <ng-container *ngIf="fourthProject">
-      <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: fourthProject }"></ng-container>
-    </ng-container>
+      <!-- Row 2: 4th Card + Spanning Hero Card -->
+      <ng-container *ngIf="fourthProject">
+        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: fourthProject }"></ng-container>
+      </ng-container>
 
-    <!-- HERO PROJECT (High Priority) -->
-    <div *ngIf="heroProject" class="project-card hero-card">
-      <div class="card-header">
-        <div class="status-badge">
-          <div class="status-dot white animate-pulse"></div>
-          <span class="status-text white">HIGH PRIORITY</span>
-        </div>
-        <button (click)="editProject(heroProject)" class="text-white/20 hover:text-white transition-all transform hover:scale-110">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
-        </button>
-      </div>
-
-      <div class="mb-6">
-        <h2 class="project-title">{{ heroProject.name }}</h2>
-        <span class="client-label" *ngIf="heroProject.client">CLIENT: {{ heroProject.client }}</span>
-        <p class="project-desc">{{ heroProject.description || 'Production of cinematic assets and creative campaigns.' }}</p>
-      </div>
-
-      <div class="card-progress-section">
-        <div class="progress-header">
-          <span class="progress-label">PRODUCTION STATUS</span>
-          <span class="progress-value">{{ getProjectProgress(heroProject) }}%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill white" [style.width.%]="getProjectProgress(heroProject)"></div>
-        </div>
-      </div>
-
-      <div class="card-footer">
-        <div class="flex items-center gap-8">
-          <div class="avatar-stack">
-            <ng-container *ngFor="let m of heroProject.employees?.slice(0, 3)">
-              <img *ngIf="m.profile_photo || m.photo" [src]="m.profile_photo || m.photo" class="avatar" />
-              <div *ngIf="!(m.profile_photo || m.photo)" class="avatar avatar-fallback">{{ m.username?.slice(0,2).toUpperCase() }}</div>
-            </ng-container>
-            <span *ngIf="heroProject.employees?.length > 3" class="avatar avatar-fallback bg-black/20 text-white/40">+{{ heroProject.employees.length - 3 }}</span>
+      <!-- HERO PROJECT (Visible only if favorite matches filter) -->
+      <div class="project-card hero-card">
+        <div class="card-header">
+          <div class="status-badge">
+            <div class="status-dot white animate-pulse"></div>
+            <span class="status-text white">HIGH PRIORITY</span>
           </div>
-          <div class="team-indicator">
-            <span class="team-label">ASSIGNED TEAM</span>
-            <span class="team-name">{{ heroProject.department_name || 'CREATIVE STRATEGY' }}</span>
+          <div class="relative">
+            <button (click)="toggleMenu(heroProject.id, $event)" class="text-white/40 hover:text-white transition-all transform hover:scale-110">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div *ngIf="openMenuId === heroProject.id" class="action-dropdown hero-dropdown">
+              <button (click)="detailProject(heroProject)" class="dropdown-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>Detail</span>
+              </button>
+              <button (click)="toggleFavorite(heroProject)" class="dropdown-item" [class.favorite]="heroProject.isFavorite">
+                <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="heroProject.isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span>Favorite</span>
+              </button>
+              <button (click)="editProject(heroProject)" class="dropdown-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Edit</span>
+              </button>
+            </div>
           </div>
         </div>
-        <button (click)="editProject(heroProject)" class="hero-action-btn">VIEW PROJECT</button>
-      </div>
-    </div>
 
-    <!-- Remaining Rows: The rest of the projects -->
-    <ng-container *ngFor="let p of remainingProjects">
-      <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
+        <div class="mb-6">
+          <h2 class="project-title">{{ heroProject.name }}</h2>
+          <span class="client-label" *ngIf="heroProject.client">CLIENT: {{ heroProject.client }}</span>
+          <p class="project-desc">{{ heroProject.description || 'Production of cinematic assets and creative campaigns.' }}</p>
+        </div>
+
+        <div class="card-progress-section">
+          <div class="progress-header">
+            <span class="progress-label">PRODUCTION STATUS</span>
+            <span class="progress-value">{{ getProjectProgress(heroProject) }}%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill white" [style.width.%]="getProjectProgress(heroProject)"></div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="flex items-center gap-8">
+            <div class="avatar-stack">
+              <ng-container *ngFor="let m of heroProject.employees?.slice(0, 3)">
+                <img *ngIf="m.profile_photo || m.photo" [src]="m.profile_photo || m.photo" class="avatar hero-avatar" />
+                <div *ngIf="!(m.profile_photo || m.photo)" class="avatar hero-avatar avatar-fallbackSmall">{{ m.username?.slice(0,2).toUpperCase() }}</div>
+              </ng-container>
+            </div>
+            <div class="hero-team-label">
+              TEAM: {{ heroProject.department_name || 'CREATIVE & VIDEO' }}
+            </div>
+          </div>
+          <button (click)="editProject(heroProject)" class="hero-action-btn">VIEW PROJECT</button>
+        </div>
+      </div>
+
+      <!-- Remaining Rows: The rest of the projects -->
+      <ng-container *ngFor="let p of remainingProjects">
+        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
+      </ng-container>
     </ng-container>
+
+    <!-- Fallback Standard Grid (when no priority project matches filter) -->
+    <ng-template #standardOnlyGrid>
+      <ng-container *ngFor="let p of displayProjects">
+        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
+      </ng-container>
+    </ng-template>
+
   </div>
 
   <!-- ARCHIVE & MAINTENANCE SECTION -->
@@ -115,7 +141,7 @@
         <!-- Middle: Status -->
         <div class="status-badge">
           <div class="status-dot green"></div>
-          <span class="status-text green">DONE</span>
+          <span class="status-text">DONE</span>
         </div>
 
         <!-- Middle: Date -->
@@ -139,7 +165,7 @@
   </div>
 
   <!-- Optional Workspace Velocity Metrics (Footer) -->
-  <div class="pt-16 border-t border-white/5 flex flex-wrap items-center justify-between gap-12">
+  <div class="flex flex-wrap items-center justify-between gap-12">
     <div class="flex items-center gap-12">
       <div>
         <p class="text-[10px] font-black tracking-widest text-white/20 uppercase mb-3">TASK COMPLETION</p>
@@ -182,9 +208,27 @@
           <span class="status-text blue">IN PROGRESS</span>
         </ng-container>
       </div>
-      <button (click)="editProject(p)" class="text-[#525252] hover:text-white transition-all transform hover:rotate-90">
-        <svg class="w-16 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
-      </button>
+      <div class="relative">
+        <button (click)="toggleMenu(p.id, $event)" class="text-[#525252] hover:text-white transition-all transform">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div *ngIf="openMenuId === p.id" class="action-dropdown">
+          <button (click)="detailProject(p)" class="dropdown-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Detail</span>
+          </button>
+          <button (click)="toggleFavorite(p)" class="dropdown-item" [class.favorite]="p.isFavorite">
+            <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="p.isFavorite ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Favorite</span>
+          </button>
+          <button (click)="editProject(p)" class="dropdown-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            <span>Edit</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div>
