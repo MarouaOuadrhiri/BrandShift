@@ -257,7 +257,7 @@
             <div class="select-wrapper">
               <select [(ngModel)]="taskProjectId" name="taskProjectId">
                 <option value="" disabled selected>Select project...</option>
-                <option *ngFor="let p of projects" [value]="p.id">{{p.name}}</option>
+                <option *ngFor="let p of projects" [value]="p.id" class="text-black">{{p.name}}</option>
               </select>
             </div>
           </div>
@@ -266,7 +266,7 @@
             <div class="select-wrapper">
               <select [(ngModel)]="taskDepartmentId" name="taskDepartmentId">
                 <option value="" disabled selected>Select department...</option>
-                <option *ngFor="let d of departments" [value]="d.id">{{d.name}}</option>
+                <option *ngFor="let d of departments" [value]="d.id" class="text-black">{{d.name}}</option>
               </select>
             </div>
           </div>
@@ -289,7 +289,7 @@
             <label>STATUS</label>
             <div class="select-wrapper">
               <select [(ngModel)]="taskStatus" name="taskStatus">
-                <option *ngFor="let s of ['BLOCKED', 'IN PROGRESS', 'REVIEW', 'DONE', 'ARCHIVED']" [value]="s">{{s}}</option>
+                <option *ngFor="let s of ['BLOCKED', 'IN PROGRESS', 'REVIEW', 'DONE', 'ARCHIVED']" [value]="s" class="text-black">{{s}}</option>
               </select>
             </div>
           </div>
@@ -324,7 +324,7 @@
               <select [(ngModel)]="taskEmployeeId" name="taskEmployeeId" required
                 class="mt-2 text-[10px] bg-transparent border-none text-white/40">
                 <option value="" disabled selected>Assign to...</option>
-                <option *ngFor="let e of employees" [value]="e.id">{{e.username}}</option>
+                <option *ngFor="let e of employees" [value]="e.id"  class="text-black">{{e.username}}</option>
               </select>
             </div>
           </div>

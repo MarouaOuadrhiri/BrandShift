@@ -1,9 +1,67 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :host {
-  display: block;
+  width: 820;
+  height: 921;
+  top: 189px;
+  left: 230px;
+  border-radius: 24px;
+  background: #FFFFFF0D;
+  border: 1px solid #FFFFFF0D;
 }
-
+.title-popup{
+  font-family: 'Space Grotesk',sans-serif;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 30px;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+  vertical-align: middle;
+  color: white;
+}
+.subtitle{
+  font-family: 'Space Grotesk',sans-serif;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  vertical-align: middle;
+  color: #C6C6CC;
+}
+input ::placeholder{
+  font-family: 'Inter',sans-serif;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  color: #525252;
+}
+input{
+  width: 366;
+  height: 44;
+  border-radius: 15px;
+  opacity: 1;
+  padding-top: 13px;
+  padding-right: 16px;
+  padding-bottom: 14px;
+  padding-left: 16px;
+  background-color: #1C1B1C;
+}
+.label{
+  font-family: 'Space Grotesk',sans-serif;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 1px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  color: #A3A3A3;
+}
 .modal-overlay {
   animation: backdropFade 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }

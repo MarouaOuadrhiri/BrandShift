@@ -132,48 +132,70 @@
 
   </div>
 
-  <!-- ARCHIVE & MAINTENANCE SECTION -->
-  <div class="archive-section" *ngIf="ArchivedProjects.length > 0">
-    <h2 class="archive-header">ARCHIVE & MAINTENANCE</h2>
+<!-- ARCHIVE & MAINTENANCE SECTION -->
+  <div *ngIf="ArchivedProjects.length > 0"
+    style="width: 100%; padding-top: 16px; display: flex; flex-direction: column; gap: 8px;">
 
-    <div class="archive-list">
-      <div *ngFor="let p of ArchivedProjects" class="archive-row group" (click)="editProject(p)">
+    <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.6px; color: #737373; text-transform: uppercase; margin: 0;">
+      ARCHIVE & MAINTENANCE
+    </h2>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 8px;">
+      <div
+        *ngFor="let p of ArchivedProjects"
+        class="group"
+        (click)="editProject(p)"
+        style="border: 1px solid rgba(255,255,255,0.05); border-radius: 32px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(16px);"
+        onmouseover="this.style.background='#252425'; this.style.borderColor='rgba(255,255,255,0.10)'; this.style.transform='translateX(8px)'"
+        onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
 
         <!-- Left: Icon & Info -->
-        <div class="flex items-center gap-6">
-          <div class="archive-icon-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); flex-shrink: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="3" y1="9" x2="21" y2="9"></line>
               <line x1="9" y1="21" x2="9" y2="9"></line>
             </svg>
           </div>
-          <div class="flex flex-col">
-            <span class="archive-project-name">{{ p.name }}</span>
-            <span class="archive-project-tag">{{ p.department_name || 'GENERAL MAINTENANCE' }}</span>
+          <div style="display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 500; line-height: 20px; color: #FFFFFF;">
+              {{ p.name }}
+            </span>
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: rgba(255,255,255,0.25); text-transform: uppercase;">
+              {{ p.department_name || 'GENERAL MAINTENANCE' }}
+            </span>
           </div>
         </div>
 
-        <!-- Middle: Status -->
-        <div class="status-badge">
-          <div class="status-dot green"></div>
-          <span class="status-text">DONE</span>
+        <!-- Status -->
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 6px; height: 6px; border-radius: 9999px; flex-shrink: 0;"
+            [ngStyle]="{'background': getProjectProgress(p) === 100 ? '#10B981' : getProjectProgress(p) > 0 ? '#3B82F6' : '#737373'}">
+          </div>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; text-transform: uppercase;"
+            [ngStyle]="{'color': getProjectProgress(p) === 100 ? '#10B981' : getProjectProgress(p) > 0 ? '#3B82F6' : '#737373'}">
+            {{ getProjectProgress(p) === 100 ? 'DONE' : getProjectProgress(p) > 0 ? 'IN PROGRESS' : 'PENDING' }}
+          </span>
         </div>
 
-        <!-- Middle: Date -->
-        <div class="archive-date">
-          {{ (p.start_date | date:'MMM dd, yyyy') || 'N/A' }}
-        </div>
+        <!-- Date -->
+        <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; line-height: 16px; color: rgba(255,255,255,0.4);">
+          {{ (p.deadline | date:'MMM dd, yyyy') || 'N/A' }}
+        </span>
 
         <!-- Right: Client & Arrow -->
-        <div class="flex items-center gap-12">
-          <div class="flex flex-col items-end">
-            <span class="client-label-tiny">CLIENT</span>
-            <span class="client-name-archive">{{ p.client || 'N/A' }}</span>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+            <span style="font-family: 'Space Grotesk', sans-serif; font-size: 9px; font-weight: 400; line-height: 13.5px; letter-spacing: 0.45px; color: rgba(255,255,255,0.15); text-transform: uppercase; text-align: right;">
+              CLIENT
+            </span>
+            <span style="font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 400; line-height: 16px; color: rgba(255,255,255,0.7); text-align: right;">
+              {{ p.client || 'N/A' }}
+            </span>
           </div>
-          <svg class="w-5 h-5 text-white/10 group-hover:text-white transition-colors" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2">
+            <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
 
@@ -181,48 +203,67 @@
     </div>
   </div>
 
-  <!-- Optional Workspace Velocity Metrics (Footer) -->
-  <div class="footer-metrics-container">
-    <div class="metrics-left-group">
-      <div class="metric-item">
-        <p class="metric-label">TASK COMPLETION</p>
-        <div class="metric-value-box">
-          <span class="metric-number">{{ systemMetrics.completion }}%</span>
-          <svg class="metric-arrow" width="12" height="7" viewBox="0 0 12 7" fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z"
-              fill="#10B981" />
+  <!-- FOOTER METRICS -->
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; background: #0E0E0F; margin: 0 -32px -32px -32px; flex-wrap: wrap; gap: 24px;">
+
+    <!-- Left metrics -->
+    <div style="display: flex; align-items: flex-end; gap: 48px;">
+
+      <!-- Task Completion -->
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: #737373; text-transform: uppercase;">
+          TASK COMPLETION
+        </span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; line-height: 28px; color: #FFFFFF;">
+            {{ systemMetrics.completion }}%
+          </span>
+          <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
+            <path d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z" fill="#10B981"/>
           </svg>
         </div>
       </div>
 
-      <div class="metric-item">
-        <p class="metric-label">ACTIVE PROJECTS</p>
-        <span class="metric-number">{{ systemMetrics.active }}</span>
+      <!-- Active Projects -->
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: #737373; text-transform: uppercase;">
+          ACTIVE PROJECTS
+        </span>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; line-height: 28px; color: #FFFFFF;">
+          {{ systemMetrics.active }}
+        </span>
       </div>
 
-      <div class="metric-item">
-        <p class="metric-label">UPCOMING DEADLINES</p>
-        <div class="metric-value-box">
-          <span class="metric-number">{{ (systemMetrics.upcoming < 10 ? '0' : '' ) + systemMetrics.upcoming }}</span>
-              <span class="metric-icon"><svg width="10" height="12" viewBox="0 0 10 12" fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M3.82083 9.45L6.83958 5.83333H4.50625L4.92917 2.52292L2.23125 6.41667H4.25833L3.82083 9.45ZM2.33333 11.6667L2.91667 7.58333H0L5.25 0H6.41667L5.83333 4.66667H9.33333L3.5 11.6667H2.33333Z"
-                    fill="#EF4444" />
-                </svg></span>
+      <!-- Upcoming Deadlines -->
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: #737373; text-transform: uppercase;">
+          UPCOMING DEADLINES
+        </span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; line-height: 28px; color: #FFFFFF;">
+            {{ (systemMetrics.upcoming < 10 ? '0' : '') + systemMetrics.upcoming }}
+          </span>
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+            <path d="M3.82083 9.45L6.83958 5.83333H4.50625L4.92917 2.52292L2.23125 6.41667H4.25833L3.82083 9.45ZM2.33333 11.6667L2.91667 7.58333H0L5.25 0H6.41667L5.83333 4.66667H9.33333L3.5 11.6667H2.33333Z" fill="#EF4444"/>
+          </svg>
         </div>
       </div>
+
     </div>
 
-    <div class="status-right-group">
-      <span class="status-label">SYSTEM STATUS</span>
-      <div class="status-pill-minimal">
-        <div class="status-dot-pulse"></div>
-        <span class="status-pill-text">ALL SYSTEMS NOMINAL</span>
+    <!-- Right: System Status -->
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: #737373; text-transform: uppercase;">
+        SYSTEM STATUS
+      </span>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 4px 12px; background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.3); border-radius: 9999px;">
+        <div style="width: 6px; height: 6px; background: #10B981; border-radius: 9999px;"></div>
+        <span style="font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: 0.5px; color: #10B981; text-transform: uppercase;">
+          ALL SYSTEMS NOMINAL
+        </span>
       </div>
     </div>
+
   </div>
 </div>
 
