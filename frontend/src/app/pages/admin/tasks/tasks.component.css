@@ -14,8 +14,12 @@
 }
 
 .tasks-container {
-  padding: 1rem;
-  min-height: calc(100vh - 80px);
+  padding: 1rem 0 1rem 1rem;
+  height: calc(100vh - 100px);
+  max-width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   color: var(--text-main);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
@@ -26,6 +30,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2.5rem;
+  padding-right: 1rem;
 }
 
 .tasks-header h1 {
@@ -126,55 +131,42 @@ vertical-align: middle;
 /* Kanban Board Layout */
 .kanban-board {
   display: flex;
-  overflow-x: auto;
+  width: 100%;
+  flex: 1;
+  overflow: auto;
   gap: 1.5rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
+  /* padding-right:5px; */
   align-items: flex-start;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 1280px) {
-  .kanban-board {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    overflow-x: visible;
-    padding-bottom: 1rem;
-  }
-}
-
 .kanban-column {
-  flex: 0 0 320px;
+  flex: 0 0 340px;
   display: flex;
   flex-direction: column;
-  min-height: 400px;
-  
-}
-
-@media (min-width: 1280px) {
-  .kanban-column {
-    flex: 1;
-    min-width: 0;
-  }
+  height: 100%;
 }
 
 /* Custom scrollbar for the board */
 .kanban-board::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
+  width: 6px;
 }
 
 .kanban-board::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
 }
 
 .kanban-board::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
 }
 
 .kanban-board::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .column-content {
