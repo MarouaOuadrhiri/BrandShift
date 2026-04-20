@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../../../core/api.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { ApiService } from '../../../core/api.service';
   styleUrl: './analytics.component.css'
 })
 export class AnalyticsComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
   employees: any[] = [];
   tasks: any[] = [];
   projects: any[] = [];
@@ -26,7 +27,7 @@ export class AnalyticsComponent implements OnInit {
   };
 
   activePulse: any[] = [];
-  performanceHours = Array(48).fill(0).map(() => Math.floor(Math.random() * 4));
+  performanceHours = Array(96).fill(0).map(() => Math.floor(Math.random() * 4));
   
   topPerformer = {
     name: '---',
@@ -40,7 +41,9 @@ export class AnalyticsComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.loadData();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadData();
+    }
   }
 
   loadData() {
@@ -72,7 +75,7 @@ export class AnalyticsComponent implements OnInit {
     // Calculate department stats
     if (this.departments.length) {
       this.stats.departmentStats = this.departments.map(dept => {
-        const deptTasks = this.tasks.filter(t => t.department === dept.id);
+        const deptTasks = this.tasks.filter(t => t.department_id === dept.id);
         const deptCompleted = deptTasks.filter(t => t.status === 'DONE').length;
         const deptRate = deptTasks.length ? (deptCompleted / deptTasks.length) * 100 : 0;
         return {
@@ -95,12 +98,22 @@ export class AnalyticsComponent implements OnInit {
   }
 
   calculatePulse() {
-    this.activePulse = this.projects.slice(0, 3).map(p => ({
-      title: p.name,
-      status: p.status || 'IN PROGRESS',
-      deadline: p.end_date ? `Due ${new Date(p.end_date).toLocaleDateString()}` : 'No deadline',
-      icon: p.category === 'TECH' ? 'zap' : (p.category === 'DESIGN' ? 'pen-tool' : 'rocket')
-    }));
+    this.activePulse = this.projects.slice(0, 3).map(p => {
+      const statusRaw = (p.status || '').toUpperCase().replace(' ', '_');
+      let type = 'PENDING';
+      if (statusRaw === 'IN_PROGRESS') type = 'IN_PROGRESS';
+      if (statusRaw === 'COMPLETED' || statusRaw === 'DONE') type = 'DONE';
+
+      return {
+        title: p.name,
+        status: p.status || 'Pending',
+        type: type,
+        deadline: p.deadline 
+          ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(p.deadline))
+          : 'No deadline',
+        icon: p.category === 'TECH' ? 'zap' : (p.category === 'DESIGN' ? 'pen-tool' : 'rocket')
+      };
+    });
   }
 
   calculateTopPerformer() {

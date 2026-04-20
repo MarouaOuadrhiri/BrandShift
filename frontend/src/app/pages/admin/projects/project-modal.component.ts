@@ -32,7 +32,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
 
   // New fields
   projectOwner = '';
-  projectStatus = 'Planning';
+  projectStatus = 'Pending';
   isHighPriority = false;
   projectBudget = '';
   projectDuration = '';
@@ -104,7 +104,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
     this.projectDeadline = p.deadline ? p.deadline.slice(0, 16) : '';
     this.projectStartDate = p.start_date ? p.start_date.slice(0, 16) : '';
     this.projectOwner = p.owner || '';
-    this.projectStatus = p.status || 'Planning';
+    this.projectStatus = p.status || 'Pending';
     this.isHighPriority = p.is_high_priority || false;
     this.projectBudget = p.budget || '';
     this.projectDuration = p.duration || '';
@@ -139,7 +139,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
     this.projectStartDate = '';
     this.projectTasks = [];
     this.projectOwner = '';
-    this.projectStatus = 'Planning';
+    this.projectStatus = 'Pending';
     this.isHighPriority = false;
     this.projectBudget = '';
     this.projectDuration = '';

@@ -18,7 +18,7 @@ def serialize_project(p):
         'client': getattr(p, 'client', ''),
         'description': p.description,
         'owner': str(p.owner) if getattr(p, 'owner', None) else None,
-        'status': getattr(p, 'status', 'Planning'),
+        'status': getattr(p, 'status', 'Pending'),
         'priority': getattr(p, 'priority', 'MEDIUM'),
         'is_high_priority': getattr(p, 'is_high_priority', False),
         'budget': getattr(p, 'budget', ''),
@@ -80,7 +80,7 @@ def project_list_create(request):
         deadline_str = request.data.get('deadline')
         
         owner = request.data.get('owner')
-        status = request.data.get('status', 'Planning')
+        status = request.data.get('status', 'Pending')
         priority = request.data.get('priority', 'MEDIUM')
         is_high_priority = request.data.get('is_high_priority', False)
         budget = request.data.get('budget', '')

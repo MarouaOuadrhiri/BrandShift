@@ -20,7 +20,7 @@ class Project(Document):
     client = StringField(max_length=200)
     description = StringField()
     owner = StringField(max_length=200, null=True)
-    status = StringField(choices=('Planning', 'In Progress', 'On Hold', 'Completed', 'Cancelled'), default='Planning')
+    status = StringField(choices=('Pending', 'In Progress', 'On Hold', 'Completed', 'Cancelled'), default='Pending')
     priority = StringField(choices=('LOW', 'MEDIUM', 'HIGH', 'URGENT'), default='MEDIUM')
     is_high_priority = BooleanField(default=False)
     budget = StringField(max_length=100)
