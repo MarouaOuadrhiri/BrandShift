@@ -27,7 +27,7 @@ export class AnalyticsComponent implements OnInit {
   };
 
   activePulse: any[] = [];
-  performanceHours = Array(96).fill(0).map(() => Math.floor(Math.random() * 4));
+  performanceHours: number[] = Array(48).fill(0);
   
   topPerformer = {
     name: '---',
@@ -62,7 +62,8 @@ export class AnalyticsComponent implements OnInit {
     subs.emps.subscribe({ next: (data: any) => { this.employees = data; this.calculateTopPerformer(); }, error: () => {} });
     subs.tasks.subscribe({ next: (data: any) => { this.tasks = data; this.calculateStats(); }, error: () => {} });
     subs.projs.subscribe({ next: (data: any) => { this.projects = data; this.calculatePulse(); }, error: () => {} });
-    subs.depts.subscribe({ next: (data: any) => { this.departments = data; this.calculateStats(); }, error: () => {} });
+    subs.depts.subscribe({ next: (data: any) => { this.departments = data; this.calculateDepartmentStats(); }, error: () => {} });
+    this.api.getActivityHeatmap().subscribe({ next: (data: any) => { this.loadHeatmap(data); }, error: () => {} });
   }
 
   calculateStats() {
@@ -76,18 +77,7 @@ export class AnalyticsComponent implements OnInit {
     const rate = (completed / this.tasks.length) * 100;
     this.stats.avgCompletionRate = parseFloat(rate.toFixed(1));
 
-    // Calculate department stats
-    if (this.departments.length) {
-      this.stats.departmentStats = this.departments.map(dept => {
-        const deptTasks = this.tasks.filter(t => t.department_id === dept.id);
-        const deptCompleted = deptTasks.filter(t => t.status === 'DONE').length;
-        const deptRate = deptTasks.length ? (deptCompleted / deptTasks.length) * 100 : 0;
-        return {
-          name: dept.name,
-          percent: Math.round(deptRate)
-        };
-      }).sort((a, b) => b.percent - a.percent);
-    }
+
 
     // Mock weekly trend based on current data for visual continuity
     this.stats.weeklyData = [
@@ -98,6 +88,24 @@ export class AnalyticsComponent implements OnInit {
       Math.max(0, rate - 5),
       rate
     ];
+  }
+
+  calculateDepartmentStats() {
+    if (!this.departments.length) return;
+    this.stats.departmentStats = this.departments
+      .filter((dept: any) => dept.efficiency !== undefined)
+      .map((dept: any) => ({
+        name: dept.name,
+        percent: Math.round(dept.efficiency)
+      }))
+      .sort((a: any, b: any) => b.percent - a.percent);
+  }
+
+  loadHeatmap(data: any) {
+    // Backend returns 24 hourly values (0-3 levels).
+    // The grid shows 48 cells so we tile the 24-hour data twice to fill it.
+    const hourly: number[] = data.hourly || Array(24).fill(0);
+    this.performanceHours = [...hourly, ...hourly];
   }
 
   calculatePulse() {

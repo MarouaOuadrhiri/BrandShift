@@ -112,15 +112,37 @@ for u in user_data:
 print(f"[OK] {len(users)} users ready")
 
 # ─────────────────────────────────────────────
-# 3. ATTENDANCE RECORDS
+# 3. ATTENDANCE RECORDS  (realistic hour distribution for the heatmap)
 # ─────────────────────────────────────────────
 now = datetime.datetime.utcnow()
 
+# Weighted hour probabilities – heavier during typical work hours
+# Index = hour (0-23), value = relative weight
+HOUR_WEIGHTS = [
+    1,  1,  0,  0,  0,  1,  2,  5,   # 00-07  (night / early)
+   15, 20, 12, 10,  8,  14, 16, 10,  # 08-15  (core work)
+    8,  6,  4,  3,  2,  2,  1,  1,   # 16-23  (evening)
+]
+HOUR_POOL = []
+for h, w in enumerate(HOUR_WEIGHTS):
+    HOUR_POOL.extend([h] * w)
+
 attendance_records = []
-for user in users[1:]:  # skip admin for variety
-    for day_offset in range(5):  # last 5 days
-        start = now - datetime.timedelta(days=day_offset, hours=random.randint(7, 9))
-        end   = start + datetime.timedelta(hours=random.randint(7, 9))
+employee_pool = users[1:]  # skip admin
+
+for day_offset in range(30):  # 30 days of history
+    # Pick a random subset of employees who "logged in" that day
+    daily_count = random.randint(len(employee_pool) // 3, len(employee_pool))
+    daily_users = random.sample(employee_pool, daily_count)
+
+    for user in daily_users:
+        login_hour = random.choice(HOUR_POOL)
+        login_minute = random.randint(0, 59)
+        start = (now - datetime.timedelta(days=day_offset)).replace(
+            hour=login_hour, minute=login_minute, second=0, microsecond=0
+        )
+        session_len = random.randint(3, 9)  # 3-9 hour sessions
+        end = start + datetime.timedelta(hours=session_len, minutes=random.randint(0, 59))
         status = "COMPLETED" if day_offset > 0 else random.choice(["ACTIVE", "COMPLETED"])
 
         rec = AttendanceRecord(
@@ -236,26 +258,6 @@ projects_data = [
     },
 ]
 
-# Add 200 more projects
-for i in range(200):
-    projects_data.append({
-        "name": f"Expansion Project {i+6}",
-        "client": random.choice(["Global Solutions", "Tech Innovators", "Nexa Corp", "Internal"]),
-        "description": f"Automated scaling project for sector {i+6}.",
-        "owner": random.choice(["karen_eng", "carol_mkt", "eve_hr", "grace_fin", "irene_design"]),
-        "status": random.choice(["In Progress", "Pending", "On Hold"]),
-        "priority": random.choice(["LOW", "MEDIUM", "HIGH", "URGENT"]),
-        "is_high_priority": random.choice([True, False]),
-        "budget": f"${random.randint(20, 500)},000",
-        "duration": f"{random.randint(2, 18)} months",
-        "tags": random.sample(["cloud", "ai", "security", "infrastructure", "mobile", "analytics"], 3),
-        "employees": random.sample(users, random.randint(2, 5)),
-        "department": random.choice(departments),
-        "start_date": now - datetime.timedelta(days=random.randint(0, 60)),
-        "deadline": future(random.randint(60, 300)),
-        "task_indices": random.sample(range(len(project_tasks_pool)), random.randint(2, 4)),
-    })
-
 projects = []
 for pd in projects_data:
     embedded_tasks = []
@@ -292,6 +294,68 @@ for pd in projects_data:
     proj.save()
     projects.append(proj)
 
+# Add 200 more projects with progressive completion for a nice chart curve
+more_task_pool = [
+    ("Requirements gathering",    "Document stakeholder needs",          "DONE"),
+    ("Architecture design",       "System design and tech stack choice", "DONE"),
+    ("Sprint planning",           "Break work into 2-week sprints",      "DONE"),
+    ("Core implementation",       "Build the main features",             "IN_PROGRESS"),
+    ("Integration testing",       "End-to-end test suites",              "IN_PROGRESS"),
+    ("Code review cycle",         "Peer review all pull requests",       "TODO"),
+    ("Security audit",            "Penetration testing and fixes",       "TODO"),
+    ("Performance tuning",        "Load testing and optimization",       "TODO"),
+    ("Documentation",             "Write user and API docs",             "IN_PROGRESS"),
+    ("Deployment preparation",    "Staging environment setup",           "DONE"),
+]
+
+for i in range(200):
+    # Gradually shift task statuses: older projects → more DONE
+    progress_ratio = i / 200  # 0.0 (oldest) → 1.0 (newest)
+    num_tasks = random.randint(3, 6)
+    chosen_tasks = random.sample(more_task_pool, min(num_tasks, len(more_task_pool)))
+
+    embedded = []
+    proj_employees = random.sample(users[1:], random.randint(2, 5))
+    for title, desc, _default_status in chosen_tasks:
+        # Older projects (low i) get more DONE, newer ones more TODO
+        r = random.random()
+        if progress_ratio < 0.3:
+            status = "DONE" if r < 0.75 else "IN_PROGRESS"
+        elif progress_ratio < 0.6:
+            status = "DONE" if r < 0.5 else ("IN_PROGRESS" if r < 0.85 else "TODO")
+        else:
+            status = "DONE" if r < 0.2 else ("IN_PROGRESS" if r < 0.6 else "TODO")
+
+        embedded.append(ProjectTask(
+            id=bson.ObjectId(),
+            title=title,
+            description=desc,
+            status=status,
+            deadline=future(random.randint(10, 90)),
+            completed_by=random.choice(proj_employees) if status == "DONE" else None,
+            completed_at=now - datetime.timedelta(days=random.randint(1, 20)) if status == "DONE" else None,
+        ))
+
+    proj = Project(
+        name=f"Expansion Project {i+6}",
+        client=random.choice(["Global Solutions", "Tech Innovators", "Nexa Corp", "Internal"]),
+        description=f"Automated scaling project for sector {i+6}.",
+        owner=random.choice(["karen_eng", "carol_mkt", "eve_hr", "grace_fin", "irene_design"]),
+        status=random.choice(["In Progress", "Pending", "On Hold"]),
+        priority=random.choice(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+        is_high_priority=random.choice([True, False]),
+        budget=f"${random.randint(20, 500)},000",
+        duration=f"{random.randint(2, 18)} months",
+        tags=random.sample(["cloud", "ai", "security", "infrastructure", "mobile", "analytics"], 3),
+        employees=proj_employees,
+        department=random.choice(departments),
+        start_date=now - datetime.timedelta(days=random.randint(0, 60)),
+        deadline=future(random.randint(60, 300)),
+        tasks=embedded,
+    )
+    proj.save()
+    projects.append(proj)
+
 print(f"[OK] {len(projects)} projects created")
 
 # ─────────────────────────────────────────────
@@ -310,12 +374,13 @@ task_data = [
     {"title": "Icon library audit",               "description": "Remove duplicates and document usage guidelines.",       "status": "ARCHIVED",    "employees": [users[10]],         "department": departments[4]},
 ]
 
-# Add 200 more tasks
+# Add 200 more tasks with weighted status for a meaningful completion rate
+TASK_STATUSES = ["DONE"] * 4 + ["IN_PROGRESS"] * 3 + ["REVIEW"] * 1 + ["BLOCKED"] * 1 + ["ARCHIVED"] * 1
 for i in range(200):
     task_data.append({
         "title": f"Automated Task {i+11}",
         "description": f"Standard operational task for sequence {i+11}.",
-        "status": random.choice(["IN_PROGRESS", "REVIEW", "DONE", "BLOCKED", "ARCHIVED"]),
+        "status": random.choice(TASK_STATUSES),
         "employees": random.sample(users, random.randint(1, 2)),
         "department": random.choice(departments)
     })

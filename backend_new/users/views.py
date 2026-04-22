@@ -541,7 +541,7 @@ def get_employee_attendance_logs(request, pk):
         user = User.objects.get(id=pk)
     except Exception:
         return Response({'error': 'User not found'}, status=404)
-        
+
     logs = AttendanceRecord.objects(user=user).order_by('-start_time')
     return Response([{
         'id': str(l.id),
@@ -550,3 +550,32 @@ def get_employee_attendance_logs(request, pk):
         'status': l.status,
         'duration': str(l.end_time - l.start_time).split('.')[0] if l.end_time else 'Active'
     } for l in logs])
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdmin])
+def activity_heatmap(request):
+    """
+    Returns an array of 24 values (one per hour, 0-23) representing
+    how many login sessions started in that hour across all employees.
+    Values are normalised into levels 0-3 for the heatmap display.
+    """
+    counts = [0] * 24
+    for record in AttendanceRecord.objects():
+        hour = record.start_time.hour
+        counts[hour] += 1
+
+    max_count = max(counts) if max(counts) > 0 else 1
+
+    def to_level(c):
+        if c == 0:
+            return 0
+        ratio = c / max_count
+        if ratio < 0.33:
+            return 1
+        if ratio < 0.66:
+            return 2
+        return 3
+
+    return Response({'hourly': [to_level(c) for c in counts], 'raw': counts})

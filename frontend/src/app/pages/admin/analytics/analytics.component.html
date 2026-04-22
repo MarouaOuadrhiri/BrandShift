@@ -61,7 +61,7 @@
         <svg width="100%" height="200" viewBox="0 0 557 200" preserveAspectRatio="none"
           class="relative z-10 mt-4 cursor-pointer overflow-visible" (mousemove)="onMouseMove($event)" (mouseleave)="onMouseLeave()">
           <defs>
-            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#FD0000" stop-opacity="0" />
               <stop offset="100%" stop-color="#FD0000" stop-opacity="0.2" />
             </linearGradient>
@@ -231,11 +231,69 @@
             Distribution</span>
           <h2 class="card-title-main !text-3xl tracking-tight">Peak Performance Hours</h2>
         </div>
-        <div class="flex gap-2 items-center mt-6">
-          <div class="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] border border-white/5"></div>
-          <div class="w-2.5 h-2.5 rounded-full bg-[#3c2020]"></div>
-          <div class="w-2.5 h-2.5 rounded-full bg-[#6e3232]"></div>
-          <div class="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] shadow-[0_0_10px_rgba(255,59,59,0.3)]"></div>
+        <div class="flex gap-3 items-center mt-6">
+          <!-- High Activity -->
+          <div class="legend-dot-wrap group">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] border border-white/5 cursor-default"></div>
+            <div class="legend-tooltip w-max">
+              <div class="chart-tooltip-container !p-3">
+                <div class="flex items-center gap-3">
+                  <div class="tooltip-avatar !w-8 !h-8 !text-[10px] font-black tracking-wider">LA</div>
+                  <div class="flex flex-col text-left">
+                    <span class="tooltip-name !text-xs !mb-0">Low Activity</span>
+                    <!-- <span class="text-[10px] text-gray-500 font-medium">67% - 99% of max</span> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Low Activity -->
+          <div class="legend-dot-wrap group">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#3c2020] cursor-default"></div>
+            <div class="legend-tooltip w-max">
+              <div class="chart-tooltip-container !p-3">
+                <div class="flex items-center gap-3">
+                  <div class="tooltip-avatar !w-8 !h-8 !text-[10px] font-black tracking-wider">ME</div>
+                  <div class="flex flex-col text-left">
+                    <span class="tooltip-name !text-xs !mb-0">Medium Activity</span>
+                    <!-- <span class="text-[10px] text-gray-500 font-medium">&lt; 33% of max</span> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medium Activity -->
+          <div class="legend-dot-wrap group">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#6e3232] cursor-default"></div>
+            <div class="legend-tooltip w-max">
+              <div class="chart-tooltip-container !p-3">
+                <div class="flex items-center gap-3">
+                  <div class="tooltip-avatar !w-8 !h-8 !text-[10px] font-black tracking-wider">HA</div>
+                  <div class="flex flex-col text-left">
+                    <span class="tooltip-name !text-xs !mb-0">High Activity</span>
+                    <!-- <span class="text-[10px] text-gray-500 font-medium">33% - 66% of max</span> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Peak Activity -->
+          <div class="legend-dot-wrap group">
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] shadow-[0_0_10px_rgba(255,59,59,0.3)] cursor-default"></div>
+            <div class="legend-tooltip w-max">
+              <div class="chart-tooltip-container !p-3">
+                <div class="flex items-center gap-3">
+                  <div class="tooltip-avatar !w-8 !h-8 !text-[10px] font-black tracking-wider">PA</div>
+                  <div class="flex flex-col text-left">
+                    <span class="tooltip-name !text-xs !mb-0">Peak Activity</span>
+                    <!-- <span class="text-[10px] text-gray-500 font-medium">&gt; 66% of max</span> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

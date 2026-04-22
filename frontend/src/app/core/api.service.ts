@@ -53,6 +53,7 @@ export class ApiService {
   startAttendance(): Observable<any> { return this.http.post(`${this.baseUrl}/users/attendance/start/`, {}); }
   endAttendance(): Observable<any> { return this.http.post(`${this.baseUrl}/users/attendance/end/`, {}); }
   getEmployeeAttendance(userId: string): Observable<any> { return this.http.get(`${this.baseUrl}/users/employees/${userId}/attendance/`); }
+  getActivityHeatmap(): Observable<any> { return this.http.get(`${this.baseUrl}/users/activity-heatmap/`); }
 
   // Meetings
   getMeetings(): Observable<any> { return this.http.get(`${this.baseUrl}/meetings/`); }

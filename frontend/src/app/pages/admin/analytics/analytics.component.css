@@ -691,3 +691,30 @@ h4 {
     justify-content: center;
     flex-shrink: 0;
 }
+
+/* Legend dot tooltips */
+.legend-dot-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend-tooltip {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 50;
+    /* Added filter to match chart tooltip shadow on the whole container */
+    filter: drop-shadow(0px 10px 30px rgba(0, 0, 0, 0.15));
+}
+
+.legend-dot-wrap:hover .legend-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
