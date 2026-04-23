@@ -23,6 +23,16 @@ from meetings.models import Meeting
 import bson
 
 # ─────────────────────────────────────────────
+# 0. CLEANUP (Ensure fresh data)
+# ─────────────────────────────────────────────
+print("Cleaning up old records...")
+AttendanceRecord.objects.delete()
+Task.objects.delete()
+Project.objects.delete()
+Meeting.objects.delete()
+print("[OK] Cleanup finished\n")
+
+# ─────────────────────────────────────────────
 # 1. DEPARTMENTS
 # ─────────────────────────────────────────────
 dept_data = [
@@ -362,20 +372,20 @@ print(f"[OK] {len(projects)} projects created")
 # 5. TASKS  (standalone board tasks)
 # ─────────────────────────────────────────────
 task_data = [
-    {"title": "Fix login redirect bug",           "description": "Users are redirected to 404 after OAuth login.",         "status": "IN_PROGRESS", "employees": [users[1]],          "department": departments[0]},
-    {"title": "Write unit tests for auth module", "description": "Cover all edge cases for JWT token validation.",          "status": "BLOCKED",     "employees": [users[2]],          "department": departments[0]},
-    {"title": "Create Q3 email templates",        "description": "Design 3 email variants for the launch campaign.",       "status": "REVIEW",      "employees": [users[3], users[9]], "department": departments[1]},
+    {"title": "Fix login redirect bug",           "description": "Users are redirected to 404 after OAuth login.",         "status": "DONE",        "employees": [users[1]],          "department": departments[0]},
+    {"title": "Write unit tests for auth module", "description": "Cover all edge cases for JWT token validation.",          "status": "DONE",        "employees": [users[2]],          "department": departments[0]},
+    {"title": "Create Q3 email templates",        "description": "Design 3 email variants for the launch campaign.",       "status": "DONE",        "employees": [users[3], users[9]], "department": departments[1]},
     {"title": "Update employee handbook",         "description": "Incorporate new remote work and PTO policies.",          "status": "DONE",        "employees": [users[5]],          "department": departments[2]},
-    {"title": "Monthly payroll reconciliation",   "description": "Cross-check payroll figures with bank statements.",      "status": "IN_PROGRESS", "employees": [users[7]],          "department": departments[3]},
-    {"title": "Prepare audit evidence binder",    "description": "Compile receipts, contracts, and GL exports.",           "status": "BLOCKED",     "employees": [users[8]],          "department": departments[3]},
-    {"title": "Redesign dashboard cards",         "description": "Apply new design tokens to all KPI card components.",   "status": "IN_PROGRESS", "employees": [users[9], users[10]],"department": departments[4]},
+    {"title": "Monthly payroll reconciliation",   "description": "Cross-check payroll figures with bank statements.",      "status": "DONE",        "employees": [users[7]],          "department": departments[3]},
+    {"title": "Prepare audit evidence binder",    "description": "Compile receipts, contracts, and GL exports.",           "status": "DONE",        "employees": [users[8]],          "department": departments[3]},
+    {"title": "Redesign dashboard cards",         "description": "Apply new design tokens to all KPI card components.",   "status": "DONE",        "employees": [users[9], users[10]],"department": departments[4]},
     {"title": "Conduct user interviews",          "description": "5 x 45-min sessions with power users for roadmap input.","status": "DONE",       "employees": [users[3], users[5]], "department": departments[1]},
-    {"title": "Set up staging environment",       "description": "Mirror production on a separate VPS for QA.",            "status": "REVIEW",      "employees": [users[1], users[2]], "department": departments[0]},
-    {"title": "Icon library audit",               "description": "Remove duplicates and document usage guidelines.",       "status": "ARCHIVED",    "employees": [users[10]],         "department": departments[4]},
+    {"title": "Set up staging environment",       "description": "Mirror production on a separate VPS for QA.",            "status": "DONE",        "employees": [users[1], users[2]], "department": departments[0]},
+    {"title": "Icon library audit",               "description": "Remove duplicates and document usage guidelines.",       "status": "DONE",        "employees": [users[10]],         "department": departments[4]},
 ]
 
-# Add 200 more tasks with weighted status for a meaningful completion rate
-TASK_STATUSES = ["DONE"] * 4 + ["IN_PROGRESS"] * 3 + ["REVIEW"] * 1 + ["BLOCKED"] * 1 + ["ARCHIVED"] * 1
+# Add 200 more tasks with weighted status for a meaningful completion rate (~84% target)
+TASK_STATUSES = ["DONE"] * 84 + ["IN_PROGRESS"] * 10 + ["REVIEW"] * 4 + ["BLOCKED"] * 2
 for i in range(200):
     task_data.append({
         "title": f"Automated Task {i+11}",

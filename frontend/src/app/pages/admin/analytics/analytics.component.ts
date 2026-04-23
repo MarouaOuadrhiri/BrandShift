@@ -1,15 +1,45 @@
-import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
 import { ApiService } from '../../../core/api.service';
+
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexYAxis,
+  ApexStroke,
+  ApexTooltip,
+  ApexDataLabels,
+  ApexFill,
+  ApexGrid,
+  ApexMarkers
+} from 'ng-apexcharts';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
+  stroke: ApexStroke;
+  tooltip: ApexTooltip;
+  dataLabels: ApexDataLabels;
+  fill: ApexFill;
+  grid: ApexGrid;
+  markers: ApexMarkers;
+  colors: string[];
+};
 
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgApexchartsModule],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.css'
 })
 export class AnalyticsComponent implements OnInit {
+  @ViewChild('chart') chart!: ChartComponent;
+  public chartOptions: Partial<ChartOptions>;
   private platformId = inject(PLATFORM_ID);
   employees: any[] = [];
   tasks: any[] = [];
@@ -42,7 +72,126 @@ export class AnalyticsComponent implements OnInit {
   
   showProfileModal = false;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) {
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Completion Rate',
+          data: [0, 0, 0, 0, 0, 0]
+        }
+      ],
+      chart: {
+        height: 280,
+        type: 'area',
+        toolbar: {
+          show: false
+        },
+        animations: {
+          enabled: true,
+          speed: 800,
+          animateGradually: {
+            enabled: true,
+            delay: 150
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350
+          }
+        },
+        background: 'transparent',
+        sparkline: {
+          enabled: false
+        }
+      },
+      colors: ['#FD0000'],
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 3,
+        colors: ['#FD0000']
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.4,
+          opacityTo: 0.05,
+          stops: [0, 90, 100],
+          colorStops: [
+            {
+              offset: 0,
+              color: '#FD0000',
+              opacity: 0.4
+            },
+            {
+              offset: 100,
+              color: '#FD0000',
+              opacity: 0
+            }
+          ]
+        }
+      },
+      grid: {
+        show: true,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        strokeDashArray: 0,
+        position: 'back',
+        xaxis: {
+          lines: {
+            show: false
+          }
+        },
+        yaxis: {
+          lines: {
+            show: true
+          }
+        },
+        padding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 10
+        }
+      },
+      xaxis: {
+        categories: ['WK 01', 'WK 02', 'WK 03', 'WK 04', 'WK 05', 'WK 06'],
+        axisBorder: {
+          show: false
+        },
+        axisTicks: {
+          show: false
+        },
+        labels: {
+          style: {
+            colors: '#737373',
+            fontSize: '10px',
+            fontWeight: 600,
+            fontFamily: 'Space Grotesk'
+          }
+        }
+      },
+      yaxis: {
+        show: false,
+        min: 0,
+        max: 100
+      },
+      tooltip: {
+        theme: 'dark',
+        x: {
+          show: true
+        },
+        marker: {
+          show: false
+        },
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Space Grotesk'
+        }
+      }
+    };
+  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -85,9 +234,20 @@ export class AnalyticsComponent implements OnInit {
       Math.max(0, rate - 15),
       Math.max(0, rate - 25),
       Math.max(0, rate - 10),
-      Math.max(0, rate - 5),
+      Math.max(0, rate - 12.4),
       rate
     ];
+
+    // Update chart series
+    this.chartOptions.series = [{
+      name: 'Completion Rate',
+      data: this.stats.weeklyData
+    }];
+
+    // Calculate mock growth (difference between last week and this week)
+    const lastVal = this.stats.weeklyData[this.stats.weeklyData.length - 2] || 0;
+    const growth = rate - lastVal;
+    this.stats.avgCompletionChange = (growth >= 0 ? '+' : '') + growth.toFixed(1) + '%';
   }
 
   calculateDepartmentStats() {
@@ -167,75 +327,5 @@ export class AnalyticsComponent implements OnInit {
 
   toggleProfileModal() {
     this.showProfileModal = !this.showProfileModal;
-  }
-
-  hoveredPoint: any = null;
-  showTooltip = false;
-
-  onMouseMove(event: MouseEvent) {
-    const svg = event.currentTarget as SVGElement;
-    const rect = svg.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    
-    const svgWidth = 557;
-    const clientWidth = rect.width;
-    
-    // Map client X to SVG X
-    const svgX = (x / clientWidth) * svgWidth;
-    
-    const dataPointsCount = this.stats.weeklyData.length;
-    if (dataPointsCount < 2) return;
-
-    const index = Math.round((svgX / svgWidth) * (dataPointsCount - 1));
-    const finalIndex = Math.max(0, Math.min(dataPointsCount - 1, index));
-    
-    const pointX = (finalIndex / (dataPointsCount - 1)) * svgWidth;
-    const val = this.stats.weeklyData[finalIndex];
-    const height = 200;
-    const padding = 20;
-    const actualHeight = height - padding * 2;
-    const pointY = height - (val / 100) * actualHeight - padding;
-
-    this.hoveredPoint = {
-      index: finalIndex,
-      x: pointX,
-      y: pointY,
-      value: val,
-      label: `WK 0${finalIndex + 1}`
-    };
-  }
-
-  onMouseLeave() {
-    this.hoveredPoint = null;
-    this.showTooltip = false;
-  }
-
-  get chartLinePath(): string {
-    if (!this.stats.weeklyData || this.stats.weeklyData.length < 2) return '';
-    const width = 557;
-    const height = 200;
-    const padding = 20;
-    const actualHeight = height - padding * 2;
-    const points = this.stats.weeklyData.map((val, i) => ({
-      x: (i / (this.stats.weeklyData.length - 1)) * width,
-      y: height - (val / 100) * actualHeight - padding
-    }));
-    let path = `M ${points[0].x},${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i];
-      const p1 = points[i + 1];
-      const cp1x = p0.x + (p1.x - p0.x) / 2;
-      const cp1y = p0.y;
-      const cp2x = p0.x + (p1.x - p0.x) / 2;
-      const cp2y = p1.y;
-      path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p1.x},${p1.y}`;
-    }
-    return path;
-  }
-
-  get chartFillPath(): string {
-    const linePath = this.chartLinePath;
-    if (!linePath) return '';
-    return `${linePath} V 200 H 0 Z`;
   }
 }
