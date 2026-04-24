@@ -1,3 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+
+/* Global Pagination Styles */
+.pagination-arrow-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-arrow-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.pagination-arrow-btn:disabled {
+  opacity: 0.15;
+  cursor: not-allowed;
+}
+
+.pagination-number-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-number-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
+}
+
+.pagination-number-btn.active {
+  background: #FE0707;
+  color: #FFFFFF;
+  border-color: #FE0707;
+  box-shadow: 0 10px 25px rgba(254, 7, 7, 0.25);
+}

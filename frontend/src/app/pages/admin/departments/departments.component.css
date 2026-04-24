@@ -174,14 +174,14 @@
 
 .status-badge[data-status="STABLE"] {
   border: 1px solid #3B82F633;
-  border: 1px solid #3B82F633;
-  background: #3B82F6;
+  background: #3B82F61A;
+  color: #3B82F6;
 }
 
 .status-badge[data-status="AT CAPACITY"] {
   border: 1px solid #EAB30833;
   background: #EAB3081A;
-  background: #EAB308;
+  color: #EAB308;
 }
 
 .status-badge[data-status="CRITICAL"] {

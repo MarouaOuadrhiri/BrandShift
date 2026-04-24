@@ -32,6 +32,7 @@ export class EmployeesComponent implements OnInit {
 
   isModalOpen = false;
   showHistoryModal = false;
+  activeProfileTab: 'OVERVIEW' | 'PROJECTS' | 'ATTENDANCE' = 'OVERVIEW';
   selectedHistory: any = null;
 
   showAttendanceModal = false;
@@ -85,18 +86,29 @@ export class EmployeesComponent implements OnInit {
   }
 
   openHistory(emp: any) {
-    // Pre-populate header immediately with available employee data
-    this.selectedHistory = { user: emp, projects: [], standalone_tasks: [] };
+    // Pre-populate header immediately
+    this.selectedHistory = { user: emp, projects: [], standalone_tasks: [], attendance: [] };
     this.showHistoryModal = true;
+    
+    // Load History
     this.api.getEmployeeHistory(emp.id).subscribe({
       next: (res: any) => {
-        console.log('Employee History Data:', res);
-        setTimeout(() => {
-          this.selectedHistory = res;
+        setTimeout(() => { 
+          if (this.selectedHistory) {
+            this.selectedHistory = { ...this.selectedHistory, ...res };
+          }
         }, 0);
-      },
-      error: () => {
-        this.errorMsg = 'Failed to load employee history.';
+      }
+    });
+
+    // Load Attendance (Pointage)
+    this.api.getEmployeeAttendance(emp.id).subscribe({
+      next: (res: any) => {
+        setTimeout(() => {
+          if (this.selectedHistory) {
+            this.selectedHistory.attendance = res;
+          }
+        }, 0);
       }
     });
   }
@@ -163,8 +175,10 @@ export class EmployeesComponent implements OnInit {
   }
 
   get pagesArray() {
+    const total = this.totalPages;
+    const limit = Math.min(total, 5);
     const pages = [];
-    for (let i = 1; i <= this.totalPages; i++) {
+    for (let i = 1; i <= limit; i++) {
       pages.push(i);
     }
     return pages;
@@ -195,5 +209,10 @@ export class EmployeesComponent implements OnInit {
 
   setPage(page: number) {
     this.currentPage = page;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
 }

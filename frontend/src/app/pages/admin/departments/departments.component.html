@@ -24,7 +24,7 @@
 
   <!-- Cards Grid -->
   <div class="dep-grid" *ngIf="!selectedDep">
-    <div *ngFor="let d of departments" class="dep-card glass" (click)="viewDetail(d)">
+    <div *ngFor="let d of paginatedDepartments" class="dep-card glass" (click)="viewDetail(d)">
       <div class="card-top">
         <div class="icon-box">
           <!-- Show uploaded image if available, otherwise fall back to SVG icon -->
@@ -85,7 +85,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let d of departments">
+          <tr *ngFor="let d of paginatedDepartments">
             <td class="name-col" id="name-col">
               <img *ngIf="d.image" [src]="'data:image/jpeg;base64,' + d.image" alt="" class="dep-icon" style="color: #EF4444;">
               <span>{{d.name}}</span>
@@ -101,6 +101,31 @@
         </tbody>
       </table>
     </div>
+  </div>
+
+  <!-- PAGINATION -->
+  <div class="flex items-center justify-center gap-4 py-12" *ngIf="totalPages > 1 && !selectedDep">
+    <button (click)="prevPage()" [disabled]="currentPage === 1" 
+            class="pagination-arrow-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <div class="flex items-center gap-2">
+      <button *ngFor="let p of pagesArray" (click)="setPage(p)" 
+              class="pagination-number-btn"
+              [class.active]="currentPage === p">
+        {{ p }}
+      </button>
+    </div>
+
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages" 
+            class="pagination-arrow-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 
   <!-- Detailed View -->

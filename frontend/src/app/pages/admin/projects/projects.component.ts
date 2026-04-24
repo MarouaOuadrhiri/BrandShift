@@ -23,6 +23,45 @@ export class ProjectsComponent implements OnInit {
   openMenuId: string | null = null;
   private modalSub: Subscription | null = null;
 
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 12; // 4 rows * 3 columns
+
+  get totalPages(): number {
+    const totalCount = this.displayProjects.length;
+    // Page 1 uses 11 slots (Hero=2, others=9) or 12 if no Hero
+    const firstPageCount = this.heroProject ? 10 : 12; 
+    const remaining = Math.max(0, totalCount - firstPageCount);
+    return 1 + Math.ceil(remaining / this.itemsPerPage);
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const limit = Math.min(total, 5);
+    return Array.from({ length: limit }, (_, i) => i + 1);
+  }
+
+  // Projects for the current page (excluding Hero)
+  get pagedProjects() {
+    if (this.currentPage === 1) {
+      // Page 1: topThree (3) + fourthProject (1) + next 6 (Rows 3 & 4)
+      const others = this.displayProjects.filter(p => p.id !== this.heroProject?.id);
+      return others.slice(0, 10); // 3 + 1 + 6 = 10
+    } else {
+      // Page 2+: Standard 12 items
+      const firstPageCount = this.heroProject ? 10 : 0;
+      const others = this.displayProjects.filter(p => p.id !== this.heroProject?.id);
+      const start = firstPageCount + (this.currentPage - 2) * this.itemsPerPage;
+      return others.slice(start, start + this.itemsPerPage);
+    }
+  }
+
+  setPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
   constructor(
     private api: ApiService,
     private ui: UiService,

@@ -1,5 +1,5 @@
 <!-- Projects Dashboard Root -->
-<div class="animate-fade-up space-y-12 pb-24">
+<div class="animate-fade-up space-y-12">
 
   <!-- Header Section -->
   <div class="flex flex-col xl:flex-row items-baseline justify-between gap-8 px-1">
@@ -21,115 +21,102 @@
     </div>
   </div>
 
-  <!-- Main Bento Grid -->
+  <!-- Main Grid Section -->
   <div class="projects-grid">
+    <!-- PAGE 1: Special Bento Layout with High Priority Project on Row 2 -->
+    <ng-container *ngIf="currentPage === 1 && heroProject; else standardPagedGrid">
+      
+      <!-- Row 1: 3 Projects -->
+      <div class="top-row-grid">
+        <ng-container *ngFor="let p of pagedProjects.slice(0, 3)">
+          <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
+        </ng-container>
+      </div>
 
-    <ng-container *ngIf="heroProject; else standardOnlyGrid">
-      <!-- Row 1: First 3 Standard Cards -->
-      <ng-container *ngFor="let p of topThree">
-        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
-      </ng-container>
-
-      <!-- Row 2: 4th Card + Spanning Hero Card -->
-      <ng-container *ngIf="fourthProject">
-        <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: fourthProject }"></ng-container>
-      </ng-container>
-
-      <!-- HERO PROJECT (Visible only if favorite matches filter) -->
-      <div class="project-card hero-card">
-        <div class="card-header">
-          <div class="status-badge">
-            <div class="status-dot white animate-pulse"></div>
-            <span class="status-text white">HIGH PRIORITY</span>
+      <!-- Row 2: Hero (High Priority, 2-cols) + 1 Project (1-col) -->
+      <div class="hero-row-grid">
+       
+        <!-- Filling Row 2 with the 4th project from our list -->
+        <ng-container *ngIf="pagedProjects[3]">
+          <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: pagedProjects[3] }"></ng-container>
+        </ng-container>
+         <div class="hero-card">
+          <!-- Top Status -->
+          <div class="hero-status">
+            <div class="status-dot white"></div>
+            <span>HIGH PRIORITY</span>
           </div>
-          <div class="relative">
-            <button (click)="toggleMenu(heroProject.id, $event)"
-              class="text-white/40 hover:text-white transition-all transform hover:scale-110">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-              </svg>
-            </button>
 
-            <!-- Dropdown Menu -->
-            <div *ngIf="openMenuId === heroProject.id" class="action-dropdown hero-dropdown">
-              <button (click)="detailProject(heroProject)" class="dropdown-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
-                <span>Detail</span>
-              </button>
-              <button (click)="toggleFavorite(heroProject)" class="dropdown-item"
-                [class.favorite]="heroProject.isFavorite">
-                <svg width="14" height="14" viewBox="0 0 24 24"
-                  [attr.fill]="heroProject.isFavorite ? 'currentColor' : 'none'" stroke="currentColor"
-                  stroke-width="2.5">
-                  <path
-                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                  </path>
-                </svg>
-                <span>Favorite</span>
-              </button>
-              <button (click)="editProject(heroProject)" class="dropdown-item">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-                <span>Edit</span>
-              </button>
+          <!-- Content -->
+          <h1 class="hero-title">{{ heroProject.name }}</h1>
+          <p class="hero-desc">{{ heroProject.description || 'Production of 20+ cinematic assets for Chamim campaign. Targets 1M+ reach and drives engagement.' }}</p>
+
+          <!-- Production Status -->
+          <div class="hero-production-section">
+            <div class="hero-production-header">
+              <span class="label">PRODUCTION STATUS</span>
+              <span class="value">{{ getProjectProgress(heroProject) }}%</span>
+            </div>
+            <div class="hero-progress-track">
+              <div class="hero-progress-fill" [style.width.%]="getProjectProgress(heroProject)"></div>
             </div>
           </div>
-        </div>
 
-        <div class="">
-          <h2 class="project-title">{{ heroProject.name }}</h2>
-          <span class="client-label" *ngIf="heroProject.client">CLIENT: {{ heroProject.client }}</span>
-          <p class="project-desc">{{ heroProject.description || 'Production of cinematic assets and creative campaigns.'
-            }}</p>
-        </div>
-
-        <div class="card-progress-section">
-          <div class="progress-header">
-            <span class="progress-label">PRODUCTION STATUS</span>
-            <span class="progress-value">{{ getProjectProgress(heroProject) }}%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill white" [style.width.%]="getProjectProgress(heroProject)"></div>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <div class="flex items-center gap-8">
-            <div class="avatar-stack">
-              <ng-container *ngFor="let m of heroProject.employees?.slice(0, 3)">
-                <img *ngIf="m.profile_photo || m.photo" [src]="m.profile_photo || m.photo" class="avatar " />
-                <div *ngIf="!(m.profile_photo || m.photo)" class="avatar hero-avatar avatar-fallbackSmall">{{
-                  (m.first_name || m.name || 'U').slice(0,2).toUpperCase() }}</div>
-              </ng-container>
+          <!-- Bottom Footer -->
+          <div class="hero-footer">
+            <div class="hero-team-box">
+              <div class="hero-avatars">
+                <ng-container *ngFor="let emp of heroProject.employees?.slice(0,4)">
+                  <img [src]="emp.profile_photo || '/avatar.png'" class="hero-avatar" [title]="emp.username">
+                </ng-container>
+              </div>
+              <span class="hero-team-text">TEAM: {{ heroProject.department_name || 'CREATIVE & VIDEO' }}</span>
             </div>
-            <div class="hero-team-label">
-              TEAM: {{ heroProject.department_name || 'CREATIVE & VIDEO' }}
-            </div>
+            <button (click)="editProject(heroProject)" class="hero-action-btn">VIEW PROJECT</button>
           </div>
-          <button (click)="editProject(heroProject)" class="hero-action-btn">VIEW PROJECT</button>
         </div>
       </div>
 
-      <!-- Remaining Rows: The rest of the projects -->
-      <ng-container *ngFor="let p of remainingProjects">
+      <!-- Rows 3 & 4: 3 Projects each (Remaining 6 items) -->
+      <ng-container *ngFor="let p of pagedProjects.slice(4)">
         <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
       </ng-container>
     </ng-container>
 
-    <!-- Fallback Standard Grid (when no priority project matches filter) -->
-    <ng-template #standardOnlyGrid>
-      <ng-container *ngFor="let p of displayProjects">
+    <!-- PAGE 2+ / FALLBACK: Standard 4x3 Grid -->
+    <ng-template #standardPagedGrid>
+      <ng-container *ngFor="let p of pagedProjects">
         <ng-container *ngTemplateOutlet="standardCard; context: { $implicit: p }"></ng-container>
       </ng-container>
     </ng-template>
+  </div>
 
+  <!-- PAGINATION -->
+  <div class="flex items-center justify-center gap-4 py-12" *ngIf="totalPages > 1">
+    <!-- Previous Button -->
+    <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1" 
+            class="pagination-arrow-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <!-- Page Numbers -->
+    <div class="flex items-center gap-2">
+      <button *ngFor="let p of pageNumbers" (click)="setPage(p)" 
+              class="pagination-number-btn"
+              [class.active]="currentPage === p">
+        {{ p }}
+      </button>
+    </div>
+
+    <!-- Next Button -->
+    <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages" 
+            class="pagination-arrow-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 
 <!-- ARCHIVE & MAINTENANCE SECTION -->
@@ -142,7 +129,7 @@
 
     <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 8px;">
       <div
-        *ngFor="let p of ArchivedProjects"
+        *ngFor="let p of ArchivedProjects.slice(0, 3)"
         class="group"
         (click)="editProject(p)"
         style="border: 1px solid rgba(255,255,255,0.05); border-radius: 32px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(16px);"
@@ -204,7 +191,7 @@
   </div>
 
   <!-- FOOTER METRICS -->
-  <div style="display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; background: #0E0E0F; margin: 0 -32px -32px -32px; flex-wrap: wrap; gap: 24px;">
+  <div style="z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; background: #0E0E0F; margin: 24px -32px 0 -32px; flex-wrap: wrap; gap: 24px; border-top: 1px solid rgba(255,255,255,0.05);">
 
     <!-- Left metrics -->
     <div style="display: flex; align-items: flex-end; gap: 48px;">

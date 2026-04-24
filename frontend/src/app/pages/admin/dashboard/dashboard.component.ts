@@ -25,18 +25,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { day: 'MON', value: 0 }, { day: 'TUE', value: 0 }, { day: 'WED', value: 0 },
     { day: 'THU', value: 0 }, { day: 'FRI', value: 0 }, { day: 'SAT', value: 0 }, { day: 'SUN', value: 0 }
   ];
-  
-  currentDateTime = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  currentDateTime = '';
+  private clockInterval: any;
 
   timerValue = '00:00:00';
   timerRunning = false;
-  private timerInterval: any;
-  private teamTimerInterval: any;
   private refreshInterval: any;
 
   isLunchBreak = false;
+  lunchBreakOver = false;
   lunchSecondsLeft = 3600;
-  private lunchTimerIntervalId: any;
+  sessionStartTime: string | null = null;
 
   // Meeting Modal State
   showMeetingModal = false;
@@ -55,15 +55,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   filteredEmployees: any[] = [];
 
   constructor(
-    private api: ApiService, 
-    private cdr: ChangeDetectorRef, 
+    private api: ApiService,
+    private cdr: ChangeDetectorRef,
     private zone: NgZone,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadData();
     if (isPlatformBrowser(this.platformId)) {
+      this.startLiveClock();
+      this.restoreTimerState();
       this.refreshInterval = setInterval(() => {
         this.loadData(true);
       }, 30000);
@@ -71,11 +73,97 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    if (this.teamTimerInterval) clearInterval(this.teamTimerInterval);
     if (this.refreshInterval) clearInterval(this.refreshInterval);
+    if (this.clockInterval) clearInterval(this.clockInterval);
   }
 
+  startLiveClock() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (this.clockInterval) clearInterval(this.clockInterval);
+
+    this.clockInterval = setInterval(() => {
+      this.zone.run(() => {
+        const nowTs = Date.now();
+
+        // 1. Dashboard Clock
+        this.currentDateTime = new Date(nowTs).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+
+        // 2. Work Timer
+        if (this.timerRunning && this.sessionStartTime) {
+          const startTs = new Date(this.sessionStartTime).getTime();
+          let prevSecs = 0;
+          if (this.user && this.user.total_work_today) {
+            const parts = this.user.total_work_today.split(':');
+            if (parts.length === 3) prevSecs = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+          }
+          const diff = (nowTs - startTs) + (prevSecs * 1000);
+          if (!isNaN(diff)) {
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            this.timerValue = `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`;
+          }
+        }
+
+        // 3. Lunch Timer
+        if (this.isLunchBreak) {
+          const lunchStart = localStorage.getItem('timer_start');
+          if (lunchStart) {
+            const startTs = parseInt(lunchStart);
+            const elapsed = Math.floor((nowTs - startTs) / 1000);
+            this.lunchSecondsLeft = Math.max(0, 3600 - elapsed);
+            if (this.lunchSecondsLeft > 0) {
+              const m = Math.floor(this.lunchSecondsLeft / 60);
+              const s = this.lunchSecondsLeft % 60;
+              this.timerValue = `LUNCH ${this.pad(m)}:${this.pad(s)}`;
+            } else {
+              this.lunchBreakOver = true;
+              this.timerValue = 'LUNCH OVER';
+            }
+          }
+        }
+
+        // 4. Team Performance
+        this.teamPerformance.forEach(m => {
+          if (m.isOnline && m.sessionStart) {
+            const start = new Date(m.sessionStart).getTime();
+            let prev = 0;
+            if (m.totalWorkToday) {
+              const parts = m.totalWorkToday.split(':');
+              if (parts.length === 3) prev = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+            }
+            const diff = (nowTs - start) + (prev * 1000);
+            const h = Math.floor(diff / 3600000);
+            const m_ = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            m.elapsed = `${this.pad(h)}:${this.pad(m_)}:${this.pad(s)}`;
+          }
+        });
+
+        this.cdr.detectChanges();
+      });
+    }, 1000);
+  }
+
+  private restoreTimerState() {
+    const sessionType = localStorage.getItem('timer_mode');
+    const startTime = localStorage.getItem('timer_start');
+    if (sessionType === 'LUNCH' && startTime) {
+      this.isLunchBreak = true;
+      this.timerRunning = false;
+      const startTs = parseInt(startTime);
+      const elapsed = Math.floor((Date.now() - startTs) / 1000);
+      this.lunchSecondsLeft = Math.max(0, 3600 - elapsed);
+      if (this.lunchSecondsLeft === 0) {
+        this.lunchBreakOver = true;
+        this.timerValue = 'LUNCH OVER';
+      }
+    }
+  }
+
+  // Meeting Modal Logic
   openMeetingModal() {
     this.showMeetingModal = true;
     this.isSubmittingMeeting = false;
@@ -88,14 +176,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       selectedDepartments: [],
       selectedEmployees: []
     };
-    // Reset filtered employees without calling onDepartmentChange (no dept selected yet)
     this.filteredEmployees = [];
   }
 
   closeMeetingModal() {
-    if (this.isSubmittingMeeting) return; // Don't close while submitting
+    if (this.isSubmittingMeeting) return;
     this.showMeetingModal = false;
-    this.isSubmittingMeeting = false;
   }
 
   onDepartmentChange() {
@@ -108,7 +194,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       this.filteredEmployees = [];
     }
-    // Clear selected employees that are no longer in filtered list
     const filteredIds = new Set(this.filteredEmployees.map(e => e.id));
     this.meetingForm.selectedEmployees = this.meetingForm.selectedEmployees.filter(id => filteredIds.has(id));
   }
@@ -128,188 +213,100 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   submitMeeting() {
     const title = (this.meetingForm.title || '').trim();
-    const date  = (this.meetingForm.date  || '').trim();
-    const time  = (this.meetingForm.time  || '').trim();
-
-    if (!title) { alert('Please enter a meeting title.'); return; }
-    if (!date)  { alert('Please select a date.'); return; }
-    if (!time)  { alert('Please select a time.'); return; }
-
-    const hasParticipants =
-      this.meetingForm.allDepartments ||
-      this.meetingForm.selectedDepartments.length > 0 ||
-      this.meetingForm.selectedEmployees.length > 0;
-
-    if (!hasParticipants) {
-      alert('Please select at least one department or employee as a participant.');
-      return;
-    }
-
+    const date = (this.meetingForm.date || '').trim();
+    const time = (this.meetingForm.time || '').trim();
+    if (!title || !date || !time) { alert('Please fill in all fields.'); return; }
     this.isSubmittingMeeting = true;
-
     const meetingData = {
       title,
       description: (this.meetingForm.description || '').trim(),
       date_time: `${date}T${time}:00Z`,
-      departments: this.meetingForm.allDepartments
-        ? this.allDepartments.map(d => d.id)
-        : this.meetingForm.selectedDepartments,
+      departments: this.meetingForm.allDepartments ? this.allDepartments.map(d => d.id) : this.meetingForm.selectedDepartments,
       employees: this.meetingForm.selectedEmployees
     };
-
     this.api.createMeeting(meetingData).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.isSubmittingMeeting = false;
         this.showMeetingModal = false;
-
-        const createdMeeting = {
-          id: res?.id || `${Date.now()}`,
-          title,
-          description: meetingData.description,
-          date_time: meetingData.date_time,
-          departments: this.meetingForm.allDepartments
-            ? this.allDepartments.map(d => ({ id: d.id, name: d.name }))
-            : this.allDepartments.filter(d => this.meetingForm.selectedDepartments.includes(d.id)).map(d => ({ id: d.id, name: d.name })),
-          employees: this.allEmployees
-            .filter(e => this.meetingForm.selectedEmployees.includes(e.id))
-            .map(e => ({ id: e.id, name: e.username }))
-        };
-
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('meeting-created', { detail: createdMeeting }));
-          try {
-            localStorage.setItem('meeting-created', JSON.stringify({
-              meeting: createdMeeting,
-              ts: new Date().toISOString()
-            }));
-          } catch {
-            // ignore localStorage errors
-          }
-        }
-
         this.loadData();
-        alert('Meeting scheduled successfully!');
+        alert('Meeting scheduled!');
       },
-      error: (err) => {
-        this.isSubmittingMeeting = false;
-        const msg = err.error?.error || err.message || 'Unknown error';
-        alert('Could not schedule meeting: ' + msg);
-      }
+      error: () => { this.isSubmittingMeeting = false; alert('Failed to schedule meeting.'); }
     });
   }
 
   loadData(isRefresh = false) {
+    if (!isPlatformBrowser(this.platformId)) return;
+
     if (!isRefresh) {
-      setTimeout(() => {
-        this.loading = true;
-        if (isPlatformBrowser(this.platformId)) {
-          this.cdr.detectChanges();
-        }
-      }, 0);
+      this.loading = true;
+      this.cdr.detectChanges();
     }
 
     this.api.getProjects().subscribe({
       next: (r: any) => {
-        const runLogic = () => {
-          this.projects = r;
-          this.stats.projects = r.length;
-          const allTasks: any[] = [];
-          let doneProjects = 0;
-          let activeProjects = 0;
-          
-          r.forEach((p: any) => { 
-            if (p.tasks) allTasks.push(...p.tasks); 
-            const prog = this.getProjectProgress(p);
-            if (prog === 100 && p.tasks && p.tasks.length > 0) doneProjects++;
-            else activeProjects++;
-          });
-
-          this.stats.completedProjects = doneProjects;
-          this.stats.activeProjects = activeProjects;
-          this.recentTasks = allTasks.slice(0, 6);
-          this.stats.tasks = allTasks.filter((t: any) => t.status !== 'DONE').length;
-
-          const comp = allTasks.filter(t => t.status === 'DONE').length;
-          const prog = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
-          const todo = allTasks.filter(t => t.status === 'TODO').length;
-          
-          if (allTasks.length > 0) {
-            this.globalStats = { completed: comp, inProgress: prog, pending: todo };
-            this.overallVelocity = Math.round((comp / allTasks.length) * 100);
-          }
-
-          this.updateWeeklyActivity(allTasks);
-          this.loading = false;
-          this.cdr.detectChanges();
-        };
-
-        if (this.zone) this.zone.run(runLogic);
-        else runLogic();
+        this.projects = r;
+        this.stats.projects = r.length;
+        const allTasks: any[] = [];
+        let doneProjects = 0;
+        let activeProjects = 0;
+        r.forEach((p: any) => {
+          if (p.tasks) allTasks.push(...p.tasks);
+          const prog = this.getProjectProgress(p);
+          if (prog === 100 && p.tasks && p.tasks.length > 0) doneProjects++;
+          else activeProjects++;
+        });
+        this.stats.completedProjects = doneProjects;
+        this.stats.activeProjects = activeProjects;
+        this.recentTasks = allTasks.slice(0, 6);
+        this.stats.tasks = allTasks.filter((t: any) => t.status !== 'DONE').length;
+        const comp = allTasks.filter(t => t.status === 'DONE').length;
+        const prog = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
+        const todo = allTasks.filter(t => t.status === 'TODO').length;
+        if (allTasks.length > 0) {
+          this.globalStats = { completed: comp, inProgress: prog, pending: todo };
+          this.overallVelocity = Math.round((comp / allTasks.length) * 100);
+        }
+        this.updateWeeklyActivity(allTasks);
+        this.loading = false;
+        this.cdr.detectChanges();
       },
-      error: () => { 
-        if (this.zone) this.zone.run(() => { this.loading = false; this.cdr.detectChanges(); }); 
-        else { this.loading = false; this.cdr.detectChanges(); }
-      }
+      error: () => { this.loading = false; this.cdr.detectChanges(); }
     });
 
     this.api.getEmployees().subscribe({
-      next: (r: any) => { 
-        const runLogic = () => {
-          this.allEmployees = r; // Store all for selecting in modal
-          this.stats.employees = r.length; 
-          this.teamPerformance = r.slice(0, 4).map((e: any, idx: number) => ({
-            name: e.username,
-            role: e.department_name || (idx === 0 ? 'Videographer' : 'Senior Dev'),
-            status: e.is_online ? 'ONLINE' : 'OFFLINE',
-            photo: e.profile_photo || null,
-            isOnline: e.is_online,
-            sessionStart: e.current_session_start,
-            totalWorkToday: e.total_work_today,
-            elapsed: e.is_online ? '00:00:00' : e.total_work_today,
-            lastTask: e.last_task ? e.last_task.title : null,
-            taskStatus: e.last_task ? e.last_task.status : 'TODO'
-          }));
-          this.startTeamTimer();
-          this.cdr.detectChanges();
-        };
-        if (this.zone) this.zone.run(runLogic);
-        else runLogic();
-      },
-      error: () => {}
+      next: (r: any) => {
+        this.allEmployees = r;
+        this.stats.employees = r.length;
+        this.teamPerformance = r.slice(0, 4).map((e: any) => ({
+          name: e.username,
+          role: e.department_name || 'Team Member',
+          status: e.is_online ? 'ONLINE' : 'OFFLINE',
+          photo: e.profile_photo || null,
+          isOnline: e.is_online,
+          sessionStart: e.current_session_start,
+          totalWorkToday: e.total_work_today,
+          elapsed: e.is_online ? '00:00:00' : e.total_work_today,
+          lastTask: e.last_task ? e.last_task.title : null,
+          taskStatus: e.last_task ? e.last_task.status : 'TODO'
+        }));
+        this.cdr.detectChanges();
+      }
     });
 
     if (!isRefresh) {
-      this.api.getMe().subscribe({
-        next: (r: any) => { 
-          const runLogic = () => {
-            this.user = r; 
-            this.api.getCurrentAttendance().subscribe(session => {
-              if (session) {
-                this.timerRunning = true;
-                this.startTimer(session.start_time);
-              }
-              this.cdr.detectChanges();
-            });
-            this.cdr.detectChanges();
-          };
-          if (this.zone) this.zone.run(runLogic);
-          else runLogic();
-        },
-        error: () => {}
+      this.api.getMe().subscribe(r => { this.user = r; this.cdr.detectChanges(); });
+      this.api.getCurrentAttendance().subscribe(session => {
+        if (session && session.start_time) {
+          this.timerRunning = true;
+          this.sessionStartTime = session.start_time;
+        } else {
+          this.timerRunning = false;
+          if (!this.isLunchBreak) this.timerValue = '00:00:00';
+        }
+        this.cdr.detectChanges();
       });
-
-      this.api.getDepartments().subscribe({
-        next: (r: any) => { 
-          const logic = () => {
-             this.allDepartments = r; // Store all for selecting in modal
-             this.stats.departments = r.length; 
-             this.cdr.detectChanges();
-          };
-          if (this.zone) this.zone.run(logic); 
-          else logic();
-        },
-        error: () => {}
-      });
+      this.api.getDepartments().subscribe(r => { this.allDepartments = r; this.stats.departments = r.length; this.cdr.detectChanges(); });
     }
   }
 
@@ -322,159 +319,69 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateWeeklyActivity(allTasks: any[]) {
     const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const now = new Date();
-    const activityMap: { [key: string]: number } = {
-      'MON': 0, 'TUE': 0, 'WED': 0, 'THU': 0, 'FRI': 0, 'SAT': 0, 'SUN': 0
-    };
-
+    const activityMap: { [key: string]: number } = { 'MON': 0, 'TUE': 0, 'WED': 0, 'THU': 0, 'FRI': 0, 'SAT': 0, 'SUN': 0 };
     const monday = new Date(now);
     monday.setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1));
     monday.setHours(0, 0, 0, 0);
-
     allTasks.forEach(t => {
-      if (t.status === 'DONE') {
-        const compDate = t.completed_at ? new Date(t.completed_at) : new Date();
-        if (compDate >= monday) {
-          const dayName = days[compDate.getDay()];
-          activityMap[dayName] = (activityMap[dayName] || 0) + 20;
-        }
+      if (t.status === 'DONE' && t.completed_at) {
+        const compDate = new Date(t.completed_at);
+        if (compDate >= monday) { activityMap[days[compDate.getDay()]] += 20; }
       }
     });
-
-    this.weeklyActivity = [
-      { day: 'MON', value: Math.min(activityMap['MON'], 100) },
-      { day: 'TUE', value: Math.min(activityMap['TUE'], 100) },
-      { day: 'WED', value: Math.min(activityMap['WED'], 100) },
-      { day: 'THU', value: Math.min(activityMap['THU'], 100) },
-      { day: 'FRI', value: Math.min(activityMap['FRI'], 100) },
-      { day: 'SAT', value: Math.min(activityMap['SAT'], 100) },
-      { day: 'SUN', value: Math.min(activityMap['SUN'], 100) }
-    ];
+    this.weeklyActivity = Object.keys(activityMap).map(d => ({ day: d, value: Math.min(activityMap[d], 100) }));
   }
 
-  startTeamTimer() {
-    if (!isPlatformBrowser(this.platformId)) return;
-    if (this.teamTimerInterval) clearInterval(this.teamTimerInterval);
-    if (!this.zone) return;
-    
-    this.teamTimerInterval = setInterval(() => {
-      const now = new Date().getTime();
-      this.teamPerformance.forEach(m => {
-        if (m.isOnline && m.sessionStart) {
-          const start = new Date(m.sessionStart).getTime();
-          let prevSecs = 0;
-          if (m.totalWorkToday) {
-            const parts = m.totalWorkToday.split(':');
-            if (parts.length === 3) prevSecs = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
-          }
-          const diff = (now - start) + (prevSecs * 1000);
-          const h = Math.floor(diff / 3600000);
-          const m_ = Math.floor((diff % 3600000) / 60000);
-          const s = Math.floor((diff % 60000) / 1000);
-          m.elapsed = `${this.pad(h)}:${this.pad(m_)}:${this.pad(s)}`;
-        } else {
-          m.elapsed = m.totalWorkToday || '00:00:00';
-        }
-      });
-      this.cdr.detectChanges();
-    }, 1000);
-  }
-
+  // Timer Actions
   startTimer(startTime: string) {
-    if (!isPlatformBrowser(this.platformId)) return;
-    const start = new Date(startTime).getTime();
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    if (!this.zone) return;
-    
-    let prevSecs = 0;
-    if (this.user && this.user.total_work_today) {
-      const parts = this.user.total_work_today.split(':');
-      if (parts.length === 3) prevSecs = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
-    }
-
-    this.timerInterval = setInterval(() => {
-      const now = new Date().getTime();
-      const diff = (now - start) + (prevSecs * 1000);
-      const h = Math.floor(diff / 3600000);
-      const m_ = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      this.timerValue = `${this.pad(h)}:${this.pad(m_)}:${this.pad(s)}`;
-      this.cdr.detectChanges();
-    }, 1000);
-  }
-
-  private pad(n: number): string {
-    return n < 10 ? '0' + n : '' + n;
+    this.sessionStartTime = startTime;
+    this.timerRunning = true;
   }
 
   toggleTimer() {
     if (this.isLunchBreak) {
       this.isLunchBreak = false;
-      if (this.lunchTimerIntervalId) clearInterval(this.lunchTimerIntervalId);
+      this.lunchBreakOver = false;
+      localStorage.removeItem('timer_mode');
+      localStorage.removeItem('timer_start');
       this.timerValue = '00:00:00';
     }
-
     if (this.timerRunning) {
-      this.stopTimer();
+      this.api.endAttendance().subscribe(() => {
+        this.timerRunning = false;
+        this.sessionStartTime = null;
+        this.timerValue = '00:00:00';
+        this.loadData();
+      });
     } else {
-      this.api.startAttendance().subscribe({
-        next: () => {
-          this.timerRunning = true;
-          const now = new Date().toISOString();
-          this.startTimer(now);
-          this.loadData();
-        },
-        error: () => {}
+      this.api.startAttendance().subscribe(() => {
+        this.timerRunning = true;
+        this.sessionStartTime = new Date().toISOString();
+        this.loadData();
       });
     }
   }
 
   startLunchBreak() {
     if (this.isLunchBreak) return;
-    
     if (this.timerRunning) {
       this.api.endAttendance().subscribe(() => {
-        this.beginLunchCountdown();
+        const startTs = Date.now();
+        localStorage.setItem('timer_mode', 'LUNCH');
+        localStorage.setItem('timer_start', startTs.toString());
+        this.timerRunning = false;
+        this.isLunchBreak = true;
         this.loadData();
       });
     } else {
-      this.beginLunchCountdown();
+      const startTs = Date.now();
+      localStorage.setItem('timer_mode', 'LUNCH');
+      localStorage.setItem('timer_start', startTs.toString());
+      this.isLunchBreak = true;
     }
   }
 
-  private beginLunchCountdown() {
-    this.timerRunning = false;
-    this.isLunchBreak = true;
-    this.lunchSecondsLeft = 3600;
-
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    if (this.lunchTimerIntervalId) clearInterval(this.lunchTimerIntervalId);
-
-    this.lunchTimerIntervalId = setInterval(() => {
-      if (this.lunchSecondsLeft > 0) {
-        this.lunchSecondsLeft--;
-        const m_ = Math.floor(this.lunchSecondsLeft / 60);
-        const s = this.lunchSecondsLeft % 60;
-        this.timerValue = `LUNCH ${this.pad(m_)}:${this.pad(s)}`;
-      } else {
-        clearInterval(this.lunchTimerIntervalId);
-        this.timerValue = '00:00:00';
-      }
-      this.cdr.detectChanges();
-    }, 1000);
-  }
-
-  stopTimer() {
-    this.api.endAttendance().subscribe(() => {
-      const runLogic = () => {
-        this.timerRunning = false;
-        this.timerValue = '00:00:00';
-        this.cdr.detectChanges();
-        this.loadData();
-      };
-      if (this.zone) this.zone.run(runLogic);
-      else runLogic();
-    });
-  }
+  pad(n: number): string { return n < 10 ? '0' + n : '' + n; }
 
   getInitials(name: string): string {
     return name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : '??';

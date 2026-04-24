@@ -208,87 +208,85 @@
       </div>
 
       <!-- Team Performance -->
-     
-      
-<div class="flex flex-col" style="background: #1C1B1C; border-radius: 32px; padding: 32px; gap: 24px; width: 100%; box-sizing: border-box;">
+      <div class="flex flex-col" style="background: #1C1B1C; border-radius: 32px; padding: clamp(16px, 4vw, 32px); gap: 24px; width: 100%; box-sizing: border-box;">
 
-  <!-- Header -->
-  <div class="flex items-center justify-between">
-    <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; line-height: 28px; color: #FFFFFF; margin: 0;">
-      Team Performance
-    </h2>
-    <button
-      routerLink="/admin/employees"
-      style="background: none; border: none; cursor: pointer; padding: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 400; font-size: 11px; line-height: 16.5px; letter-spacing: 1.1px; text-transform: uppercase; text-decoration: underline; color: #A3A3A3; transition: color 0.2s;"
-      onmouseover="this.style.color='#DC2626'"
-      onmouseout="this.style.color='#A3A3A3'">
-      View All
-    </button>
-  </div>
-
-  <!-- Grid -->
-  <div class="grid grid-cols-2" style="gap: 16px;">
-    <div
-      *ngFor="let member of teamPerformance"
-      class="flex flex-col"
-      style="background: #2A2A2B; border-radius: 24px; padding: 16px; gap: 12px; border-left: 2px solid #DC26264D; box-sizing: border-box; width: 274.67px;">
-
-      <!-- Avatar + Name + Role -->
-      <div class="flex items-center" style="gap: 12px;">
-        <img
-          *ngIf="member.photo"
-          [src]="member.photo"
-          style="width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; border: 1px solid #FFFFFF1A; flex-shrink: 0;">
-        <div
-          *ngIf="!member.photo"
-          class="flex items-center justify-center flex-shrink-0"
-          style="width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #FFFFFF1A; background: #FFFFFF0D;">
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10px; color: #FFFFFF66; text-transform: uppercase;">
-            {{ member.name.slice(0, 2) }}
-          </span>
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+          <h2 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; line-height: 28px; color: #FFFFFF; margin: 0;">
+            Team Performance
+          </h2>
+          <button
+            routerLink="/admin/employees"
+            style="background: none; border: none; cursor: pointer; padding: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 400; font-size: 11px; line-height: 16.5px; letter-spacing: 1.1px; text-transform: uppercase; text-decoration: underline; color: #A3A3A3; transition: color 0.2s;"
+            onmouseover="this.style.color='#DC2626'"
+            onmouseout="this.style.color='#A3A3A3'">
+            View All
+          </button>
         </div>
-        <div class="flex flex-col" style="gap: 1px;">
-          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; line-height: 16px; letter-spacing: 0px; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
-            {{ member.name }}
-          </span>
-          <span style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 10px; line-height: 15px; letter-spacing: 0px; color: #737373;">
-            {{ member.role }}
-          </span>
+
+        <!-- Responsive Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2" style="gap: 16px;">
+          <div
+            *ngFor="let member of teamPerformance"
+            class="flex flex-col"
+            style="background: #2A2A2B; border-radius: 24px; padding: 20px; gap: 12px; border-left: 2px solid #DC26264D; box-sizing: border-box; width: 100%;">
+
+            <!-- Avatar + Name + Role -->
+            <div class="flex items-center" style="gap: 12px;">
+              <img
+                *ngIf="member.photo"
+                [src]="member.photo"
+                style="width: 32px; height: 32px; border-radius: 9999px; object-fit: cover; border: 1px solid #FFFFFF1A; flex-shrink: 0;">
+              <div
+                *ngIf="!member.photo"
+                class="flex items-center justify-center flex-shrink-0"
+                style="width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #FFFFFF1A; background: #FFFFFF0D;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10px; color: #FFFFFF66; text-transform: uppercase;">
+                  {{ member.name.slice(0, 2) }}
+                </span>
+              </div>
+              <div class="flex flex-col min-w-0" style="gap: 1px; flex: 1;">
+                <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; line-height: 16px; letter-spacing: 0px; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                  {{ member.name }}
+                </span>
+                <span style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 10px; line-height: 15px; letter-spacing: 0px; color: #737373;">
+                  {{ member.role }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Last task description -->
+            <p style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 12px; line-height: 19.5px; letter-spacing: 0px; color: #D4D4D4; margin: 0; min-height: 40px;">
+              {{ member.lastTask || 'No active tasks' }}
+            </p>
+
+            <!-- Bottom row: active time + status badge -->
+            <div class="flex items-center justify-between mt-auto">
+              <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 400; font-size: 9px; line-height: 13.5px; letter-spacing: 0px; color: #525252; text-transform: uppercase;">
+                ACTIVE {{ member.elapsed }} AGO
+              </span>
+              <div
+                style="border-radius: 9999px; padding: 2px 10px; display: inline-flex; align-items: center;"
+                [ngStyle]="{
+                  'background': member.taskStatus === 'DONE'        ? '#22C55E1A' :
+                                member.taskStatus === 'IN_PROGRESS' ? '#DC26261A' :
+                                member.taskStatus === 'TODO'        ? '#EAB3081A' : '#FFFFFF0D'
+                }">
+                <span
+                  style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 9px; line-height: 13.5px; letter-spacing: 0px; text-transform: uppercase;"
+                  [ngStyle]="{
+                    'color': member.taskStatus === 'DONE'        ? '#22C55E' :
+                            member.taskStatus === 'IN_PROGRESS' ? '#DC2626'  :
+                            member.taskStatus === 'TODO'        ? '#EAB308'  : '#525252'
+                  }">
+                  {{ member.taskStatusLabel || member.taskStatus || 'NO TASK' }}
+                </span>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
-
-      <!-- Last task description -->
-      <p style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 12px; line-height: 19.5px; letter-spacing: 0px; color: #D4D4D4; margin: 0;">
-        {{ member.lastTask || 'No active tasks' }}
-      </p>
-
-      <!-- Bottom row: active time + status badge -->
-      <div class="flex items-center justify-between">
-        <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 400; font-size: 9px; line-height: 13.5px; letter-spacing: 0px; color: #525252; text-transform: uppercase;">
-          ACTIVE {{ member.elapsed }} AGO
-        </span>
-        <div
-          style="border-radius: 9999px; padding: 2px 8px; display: inline-flex; align-items: center;"
-          [ngStyle]="{
-            'background': member.taskStatus === 'DONE'        ? '#22C55E1A' :
-                          member.taskStatus === 'IN_PROGRESS' ? '#DC26261A' :
-                          member.taskStatus === 'TODO'        ? '#EAB3081A' : '#FFFFFF0D'
-          }">
-          <span
-            style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 9px; line-height: 13.5px; letter-spacing: 0px; text-transform: uppercase;"
-            [ngStyle]="{
-              'color': member.taskStatus === 'DONE'        ? '#22C55E' :
-                       member.taskStatus === 'IN_PROGRESS' ? '#DC2626'  :
-                       member.taskStatus === 'TODO'        ? '#EAB308'  : '#525252'
-            }">
-            {{ member.taskStatusLabel || member.taskStatus || 'NO TASK' }}
-          </span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
     </div>
 
     <!-- RIGHT COLUMN -->
@@ -526,11 +524,13 @@
       </div> -->
       <!-- Time Tracker Glass Card -->
       <div class="relative overflow-hidden flex flex-col"
-        style="background: #17171799; border-radius: 32px; padding: 24px; border: 1px solid #FFFFFF0D; backdrop-filter: blur(16px); box-sizing: border-box; width: 100%;">
+        [style.background]="lunchBreakOver ? '#DC26261A' : (isLunchBreak ? '#F59E0B1A' : '#17171799')"
+        style="border-radius: 32px; padding: 24px; border: 1px solid #FFFFFF0D; backdrop-filter: blur(16px); box-sizing: border-box; width: 100%; transition: all 0.5s ease;">
 
         <!-- Decorative glow -->
         <div class="absolute"
-          style="width: 128px; height: 128px; border-radius: 9999px; background: #DC26261A; backdrop-filter: blur(60px); top: -32px; right: -32px; pointer-events: none;">
+          [style.background]="lunchBreakOver ? '#DC26264D' : (isLunchBreak ? '#F59E0B33' : '#DC26261A')"
+          style="width: 128px; height: 128px; border-radius: 9999px; backdrop-filter: blur(60px); top: -32px; right: -32px; pointer-events: none; transition: all 0.5s ease;">
         </div>
 
         <!-- Content -->
@@ -538,12 +538,14 @@
 
           <!-- Label -->
           <span
-            style="font-family: 'Space Grotesk', sans-serif; font-weight: 400; font-size: 10px; line-height: 15px; color: #737373; text-transform: uppercase; letter-spacing: 1px;">
-            Current Session Tracking
+            [style.color]="lunchBreakOver ? '#EF4444' : (isLunchBreak ? '#F59E0B' : '#737373')"
+            style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 10px; line-height: 15px; text-transform: uppercase; letter-spacing: 1.5px; transition: color 0.5s ease;">
+            {{ lunchBreakOver ? 'Break Time Exceeded' : (isLunchBreak ? 'Lunch Break Mode' : 'Current Session Tracking') }}
           </span>
 
           <!-- Timer value -->
           <span
+            [class.animate-pulse]="lunchBreakOver"
             style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 36px; line-height: 40px; letter-spacing: -1.8px; color: #FFFFFF;">
             {{ timerValue }}
           </span>
@@ -551,34 +553,45 @@
           <!-- Buttons -->
           <div class="flex items-center" style="gap: 12px; padding-top: 8px;">
 
-            <!-- Pause / secondary action -->
+            <!-- Secondary action (Coffee/Pause) -->
             <button
+              *ngIf="!lunchBreakOver"
               (click)="timerRunning ? startLunchBreak() : toggleTimer()"
               class="flex items-center justify-center flex-shrink-0"
-              style="width: 38px; height: 38px; border-radius: 48px; background: #FFFFFF1A; border: none; cursor: pointer; transition: background 0.2s;"
+              style="width: 42px; height: 42px; border-radius: 48px; background: #FFFFFF1A; border: none; cursor: pointer; transition: all 0.2s;"
               onmouseover="this.style.background='#FFFFFF2A'"
               onmouseout="this.style.background='#FFFFFF1A'">
-              <!-- Pause icon -->
-              <svg *ngIf="timerRunning" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              
+              <!-- Coffee Icon (during lunch) -->
+              <svg *ngIf="isLunchBreak" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                <line x1="6" y1="1" x2="6" y2="4"></line>
+                <line x1="10" y1="1" x2="10" y2="4"></line>
+                <line x1="14" y1="1" x2="14" y2="4"></line>
+              </svg>
+
+              <!-- Pause icon (working) -->
+              <svg *ngIf="timerRunning && !isLunchBreak" width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <rect x="2" y="1" width="4" height="12" rx="1" fill="#FFFFFF"/>
                 <rect x="8" y="1" width="4" height="12" rx="1" fill="#FFFFFF"/>
               </svg>
-              <!-- Play icon -->
-              <svg *ngIf="!timerRunning" width="14" height="14" viewBox="0 0 14 14" fill="none">
+
+              <!-- Play icon (stopped) -->
+              <svg *ngIf="!timerRunning && !isLunchBreak" width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M3 1.5L12 7L3 12.5V1.5Z" fill="#FFFFFF"/>
               </svg>
             </button>
 
-            <!-- Stop / main CTA -->
+            <!-- Stop / Main CTA -->
             <button
               (click)="toggleTimer()"
-              class="flex items-center justify-center"
-              style="flex: 1; height: 48px; border-radius: 48px; background: linear-gradient(108.7deg, #FD0000 0%, #FF3B3B 100%); border: none; cursor: pointer; transition: opacity 0.2s;"
-              onmouseover="this.style.opacity='0.9'"
-              onmouseout="this.style.opacity='1'">
+              class="flex items-center justify-center group"
+              [style.background]="lunchBreakOver ? '#EF4444' : (isLunchBreak ? '#F59E0B' : 'linear-gradient(108.7deg, #FD0000 0%, #FF3B3B 100%)')"
+              style="flex: 1; height: 48px; border-radius: 48px; border: none; cursor: pointer; transition: all 0.3s ease;">
               <span
-                style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 12px; line-height: 16px; color: #FFFFFF; text-align: center;">
-                {{ timerRunning ? 'Stop Timer' : 'Resume Session' }}
+                style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; color: #FFFFFF; text-align: center; letter-spacing: 0.5px;">
+                {{ lunchBreakOver ? 'I AM BACK - RESUME' : (isLunchBreak ? 'End Break Now' : (timerRunning ? 'Stop Timer' : 'Resume Session')) }}
               </span>
             </button>
 

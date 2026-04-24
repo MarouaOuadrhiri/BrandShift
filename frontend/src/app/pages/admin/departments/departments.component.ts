@@ -24,6 +24,10 @@ export class DepartmentsComponent implements OnInit {
   depImage = '';          // base64 string sent to backend
   depImagePreview = '';   // data URL shown in preview
   editDepId: string | null = null;
+  
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 6;
 
   isModalOpen = false;
   showHistoryModal = false;
@@ -161,5 +165,41 @@ export class DepartmentsComponent implements OnInit {
   closeHistory() {
     this.showHistoryModal = false;
     this.selectedHistory = null;
+  }
+
+  // Pagination Methods
+  get paginatedDepartments() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.departments.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages() {
+    return Math.ceil(this.departments.length / this.itemsPerPage);
+  }
+
+  get pagesArray() {
+    const total = this.totalPages;
+    const limit = Math.min(total, 5);
+    const pages = [];
+    for (let i = 1; i <= limit; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  setPage(page: number) {
+    this.currentPage = page;
   }
 }

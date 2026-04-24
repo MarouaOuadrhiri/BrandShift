@@ -34,35 +34,30 @@
       <!-- Header Section -->
       <div class="flex justify-between items-start mb-6">
         <div class="flex flex-col">
-          <span class="card-label-top !text-red-500 !font-black !tracking-[0.2em] uppercase opacity-80 mb-2">Project Completion</span>
+          <span class="card-label-top !text-red-500 !font-black !tracking-[0.2em] uppercase opacity-80 mb-2">Project
+            Completion</span>
           <h2 class="card-title-main !text-4xl tracking-tight leading-none">Global Completion Rates</h2>
         </div>
         <div class="text-right">
           <div class="text-5xl font-black tracking-tighter text-white mb-1">{{ stats.avgCompletionRate }}%</div>
           <div class="flex items-center justify-end gap-1.5">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-green-400">
-              <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+              class="text-green-400">
+              <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
-            <span class="text-green-400 text-xs font-bold tracking-tight">+{{ stats.avgCompletionChange }} vs prev</span>
+            <span class="text-green-400 text-xs font-bold tracking-tight">+{{ stats.avgCompletionChange }} vs
+              prev</span>
           </div>
         </div>
       </div>
 
       <!-- Apex Chart Integration -->
       <div class="flex-1 relative mt-4">
-        <apx-chart
-          *ngIf="chartOptions"
-          [series]="chartOptions.series!"
-          [chart]="chartOptions.chart!"
-          [xaxis]="chartOptions.xaxis!"
-          [yaxis]="chartOptions.yaxis!"
-          [stroke]="chartOptions.stroke!"
-          [tooltip]="chartOptions.tooltip!"
-          [dataLabels]="chartOptions.dataLabels!"
-          [fill]="chartOptions.fill!"
-          [grid]="chartOptions.grid!"
-          [colors]="chartOptions.colors!"
-        ></apx-chart>
+        <apx-chart *ngIf="chartOptions" [series]="chartOptions.series!" [chart]="chartOptions.chart!"
+          [xaxis]="chartOptions.xaxis!" [yaxis]="chartOptions.yaxis!" [stroke]="chartOptions.stroke!"
+          [tooltip]="chartOptions.tooltip!" [dataLabels]="chartOptions.dataLabels!" [fill]="chartOptions.fill!"
+          [grid]="chartOptions.grid!" [colors]="chartOptions.colors!"></apx-chart>
       </div>
     </div>
 
@@ -143,28 +138,28 @@
           <!-- text-[17px] font-bold text-white group-hover:text-white transition-colors truncate tracking-tight -->
           <div class="flex-1 min-w-0">
             <h4 class="title-project">{{ project.title }}</h4>
-            <span class="text-[11px] text-white/30 font-semibold block mt-1 tracking-wide">{{ i === 0 ? '3 days to
+            <span class="project-rest-time">{{ i === 0 ? '3 days to
               launch' : (i === 1 ? 'Reviewing assets' : 'Migration in progress') }}</span>
           </div>
 
           <!-- Status Label -->
-          <div class="text-[10px] font-black tracking-widest text-right leading-none w-20 shrink-0 italic"
+          <div class="project-status"
             [style.color]="project.type === 'DONE' ? '#10B981' : (project.type === 'IN_PROGRESS' ? '#3B82F6' : '#F59E0B')">
             {{ project.status }}
           </div>
         </div>
       </div>
 
-      <button class="btn-outline-pill">
+      <a routerLink="/admin/projects" class="btn-outline-pill">
         VIEW ALL PROJECTS
-      </button>
+      </a>
     </div>
 
     <!-- Activity Distribution (Heatmap) -->
     <div class="col-span-8 dashboard-card">
       <div class="flex justify-between items-start mb-8">
         <div>
-          <span class="card-label-top !text-[#737373] !mb-2 uppercase tracking-[0.2em] font-black opacity-60">Activity
+          <span class="card-label-top">Activity
             Distribution</span>
           <h2 class="card-title-main !text-3xl tracking-tight">Peak Performance Hours</h2>
         </div>
@@ -215,10 +210,11 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Peak Activity -->
           <div class="legend-dot-wrap group">
-            <div class="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] shadow-[0_0_10px_rgba(255,59,59,0.3)] cursor-default"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-[#ff3b3b] shadow-[0_0_10px_rgba(255,59,59,0.3)] cursor-default">
+            </div>
             <div class="legend-tooltip w-max">
               <div class="chart-tooltip-container !p-3">
                 <div class="flex items-center gap-3">
@@ -272,97 +268,218 @@
     </div>
 
     <div class="flex-1">
-      <span class="card-label-top mb-4">Internal Spotlight</span>
-      <h2 class="text-6xl font-bold mb-8 tracking-tighter text-white">{{ topPerformer.first_name }} {{
+      <span class="card-label-top">Internal Spotlight</span>
+      <h2 class="name">{{ topPerformer.first_name }} {{
         topPerformer.last_name }}</h2>
-
-      <p class="text-xl text-white/50 mb-10 max-w-2xl leading-relaxed">
+      <p class="description-card">
         Maintaining a <span class="text-white font-bold">{{ topPerformer.performance }} engineering rate</span> this
         quarter. Supporting structural architecture and accelerating internal operations.
       </p>
 
-      <div class="flex gap-16 border-t border-white/5 pt-10">
+      <div class="flex gap-16 pt-10">
         <div>
-          <h3 class="text-4xl font-bold text-white mb-2">{{ topPerformer.tasksClosed }}</h3>
-          <div class="text-[10px] text-white/30 font-bold uppercase tracking-widest">Tasks Closed</div>
+          <h3 class="number">{{ topPerformer.tasksClosed }}</h3>
+          <div class="description-card-title">Tasks Closed</div>
         </div>
         <div>
-          <h3 class="text-4xl font-bold text-white mb-2">{{ topPerformer.avgResponse }}</h3>
-          <div class="text-[10px] text-white/30 font-bold uppercase tracking-widest">Avg Response</div>
+          <h3 class="number">{{ topPerformer.avgResponse }}</h3>
+          <div class="description-card-title">Avg Response</div>
         </div>
         <div>
-          <h3 class="text-4xl font-bold text-white mb-2">{{ topPerformer.projectsLed }}</h3>
-          <div class="text-[10px] text-white/30 font-bold uppercase tracking-widest">Projects Led</div>
+          <h3 class="number">{{ topPerformer.projectsLed }}</h3>
+          <div class="description-card-title">Projects Led</div>
         </div>
       </div>
     </div>
 
     <div class="shrink-0">
       <button class="btn-profile" (click)="toggleProfileModal()">
-        VIEW PROFILE
-        <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+        <span>View Profile</span>
+        <svg class="icon-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
     </div>
   </div>
 </div>
 
-<!-- Profile Details Modal -->
+<!-- Profile Details Modal: Dashboard Redesign -->
 <div class="modal-overlay" *ngIf="showProfileModal" (click)="toggleProfileModal()">
   <div class="modal-card" (click)="$event.stopPropagation()">
-    <button class="modal-close" (click)="toggleProfileModal()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2.5" stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-    </button>
-
-    <div class="modal-header">
-      <div class="profile-image-large overflow-hidden">
-        <img *ngIf="topPerformer.photoPath; else modalInitialsTemplate" [src]="topPerformer.photoPath"
-          class="w-full h-full object-cover">
-        <ng-template #modalInitialsTemplate>
-          <div class="text-7xl font-bold text-white/5 uppercase tracking-tighter">
-            {{ getTopPerformerInitials() }}
+    <!-- Premium Header -->
+    <div class="modal-header-premium">
+      <div class="flex items-center gap-6">
+        <div class="profile-avatar-premium">
+          <img *ngIf="topPerformer.photoPath" [src]="topPerformer.photoPath" class="w-full h-full object-cover">
+          <span *ngIf="!topPerformer.photoPath">{{ getTopPerformerInitials() }}</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-white tracking-tighter">{{ topPerformer.name }}</h2>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="w-2 h-2 rounded-full bg-red-500 pulse-red-small"></span>
+            <span class="text-[10px] font-black uppercase tracking-widest text-white/40">{{ topPerformer.performance }}
+              Performance</span>
           </div>
-        </ng-template>
-      </div>
-      <div class="text-center mt-8">
-        <span class="card-label-top !text-red-500 mb-2">Team Member Spotlight</span>
-        <h2 class="text-5xl font-bold text-white tracking-tighter leading-none">{{ topPerformer.first_name }} {{
-          topPerformer.last_name }}</h2>
-        <div
-          class="performance-badge mt-6 inline-flex items-center gap-2 px-6 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-red-500">
-          <span class="w-1.5 h-1.5 rounded-full bg-red-500 pulse-red"></span>
-          {{ topPerformer.performance }}
         </div>
       </div>
+      <button class="modal-close" (click)="toggleProfileModal()">
+        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+        </svg>
+      </button>
     </div>
 
-    <div class="modal-content mt-12">
-      <div class="grid grid-cols-3 gap-6">
-        <div class="stat-box-large">
-          <span class="stat-large-value">{{ topPerformer.tasksClosed }}</span>
-          <span class="stat-large-label">Tasks Finished</span>
-        </div>
-        <div class="stat-box-large">
-          <span class="stat-large-value">{{ topPerformer.avgResponse }}</span>
-          <span class="stat-large-label">Response Time</span>
-        </div>
-        <div class="stat-box-large">
-          <span class="stat-large-value">{{ topPerformer.projectsLed }}</span>
-          <span class="stat-large-label">Projects Led</span>
-        </div>
-      </div>
+    <div class="modal-body-dashboard">
+      <!-- Left Sidebar: Professional Summary -->
+      <aside class="dashboard-sidebar custom-scrollbar">
+        <div class="space-y-8">
+          <div>
+            <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-4">Professional Intelligence
+            </h4>
+            <p class="text-white/60 text-base leading-relaxed">
+              Currently maintaining a peak performance baseline while accelerating cross-departmental operations and
+              structural integrity.
+            </p>
+          </div>
 
-      <div class="modal-bio mt-12 pt-10 border-t border-white/5">
-        <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-6">Professional Intelligence</h4>
-        <p class="text-white/40 text-xl leading-relaxed font-medium">
-          A relentless driver of architectural excellence within BrandShift. Currently maintaining a peak performance
-          baseline while accelerating cross-departmental operations and structural integrity.
-        </p>
-      </div>
+          <div class="stat-grid-mini">
+            <div class="stat-item-mini">
+              <span class="val">{{ topPerformer.tasksClosed }}</span>
+              <span class="lbl">Tasks</span>
+            </div>
+            <div class="stat-item-mini">
+              <span class="val">{{ topPerformer.projectsLed }}</span>
+              <span class="lbl">Led</span>
+            </div>
+          </div>
+
+          <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+            <h5 class="text-[9px] font-black uppercase tracking-widest text-white/20 mb-3">System Efficiency</h5>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white/40">Benchmark</span>
+              <span class="text-xs font-black text-red-500">{{ topPerformer.avgResponse }}</span>
+            </div>
+            <div class="w-full h-1 bg-white/5 rounded-full mt-3 overflow-hidden">
+              <div class="h-full bg-red-500 w-[85%]"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right Main Content: Activity & Data -->
+      <main class="dashboard-content custom-scrollbar">
+        <!-- Navigation Tabs -->
+        <div class="tab-nav">
+          <div class="tab-btn" [class.active]="activeProfileTab === 'OVERVIEW'" (click)="activeProfileTab = 'OVERVIEW'">
+            Overview</div>
+          <div class="tab-btn" [class.active]="activeProfileTab === 'PROJECTS'" (click)="activeProfileTab = 'PROJECTS'">
+            Projects</div>
+          <div class="tab-btn" [class.active]="activeProfileTab === 'ATTENDANCE'"
+            (click)="activeProfileTab = 'ATTENDANCE'">Attendance</div>
+        </div>
+
+        <!-- Tab Content: OVERVIEW -->
+        <div *ngIf="activeProfileTab === 'OVERVIEW'" class="space-y-8 animate-in">
+          <div class="grid grid-cols-1 gap-6">
+            <div class="info-card">
+              <div class="flex items-center gap-3 mb-6">
+                <span class="w-1 h-4 bg-red-500 rounded-full"></span>
+                <h4 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em]">Operational Pulse</h4>
+              </div>
+              <div class="flex items-center justify-between p-4 bg-white/[0.01] border border-white/5 rounded-2xl">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-white font-bold text-sm">System Reliability</p>
+                    <p class="text-[9px] text-white/30 uppercase tracking-widest mt-0.5">Verified Archive Status</p>
+                  </div>
+                </div>
+                <span class="text-xs font-black text-white italic">Stable</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+              <div class="info-card">
+                <span class="text-[10px] font-black text-white/20 uppercase tracking-widest block mb-1">Focus
+                  Mode</span>
+                <span class="text-2xl font-black text-white italic">High Intensity</span>
+              </div>
+              <div class="info-card">
+                <span class="text-[10px] font-black text-white/20 uppercase tracking-widest block mb-1">Weekly
+                  Goal</span>
+                <span class="text-2xl font-black text-white italic">92% Reach</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: PROJECTS -->
+        <div *ngIf="activeProfileTab === 'PROJECTS'" class="space-y-4 animate-in">
+          <div *ngIf="selectedEmployeeHistory?.projects?.length > 0; else noProjects" class="grid grid-cols-1 gap-3">
+            <div *ngFor="let p of selectedEmployeeHistory.projects"
+              class="p-5 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center justify-between hover:bg-white/[0.05] transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-red-500">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h5 class="text-white font-bold italic">{{p.name}}</h5>
+                  <p class="text-[9px] text-white/20 uppercase tracking-widest mt-0.5">Project Lead</p>
+                </div>
+              </div>
+              <span
+                class="text-[10px] text-white/20 font-mono bg-white/5 px-3 py-1 rounded-full">#{{p.id?.slice(-4)}}</span>
+            </div>
+          </div>
+          <ng-template #noProjects>
+            <div class="py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+              <p class="text-white/20 text-sm font-medium uppercase tracking-widest">No active projects found</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Tab Content: ATTENDANCE -->
+        <div *ngIf="activeProfileTab === 'ATTENDANCE'" class="space-y-4 animate-in">
+          <div *ngIf="selectedEmployeeHistory?.attendance?.length > 0; else noAttendance" class="space-y-3">
+            <div *ngFor="let log of selectedEmployeeHistory.attendance"
+              class="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 text-white/20">
+                  <svg class="w-5 h-5" [class.animate-pulse]="log.status === 'ACTIVE'" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2.5"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h5 class="text-white font-bold italic">{{ log.start_time | date:'mediumDate' }}</h5>
+                  <p class="text-[9px] text-white/30 uppercase tracking-widest mt-0.5">Punch: {{ log.start_time |
+                    date:'shortTime' }}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-black text-white italic">{{ log.status === 'ACTIVE' ? 'Ongoing' : log.duration }}
+                </p>
+                <p class="text-[8px] text-red-500 font-black uppercase tracking-widest" *ngIf="log.status === 'ACTIVE'">
+                  Live Now</p>
+              </div>
+            </div>
+          </div>
+          <ng-template #noAttendance>
+            <div class="py-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+              <p class="text-white/20 text-sm font-medium uppercase tracking-widest">No attendance records found</p>
+            </div>
+          </ng-template>
+        </div>
+      </main>
     </div>
   </div>
 </div>
