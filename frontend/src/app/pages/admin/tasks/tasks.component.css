@@ -532,12 +532,17 @@ text-transform: uppercase;
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: #00000066;
+  /* background: #00000066; */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 1.5rem;
+  backdrop-filter: blur(8px);
+/*   
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  animation: backdropFade 0.4s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
 .modal-content.glass {
@@ -575,15 +580,9 @@ text-transform: uppercase;
 /* Modal Panel Refinements */
 .modal-panel {
   background: #0A0A0A;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.modal-panel.glass {
-  /* background: rgba(10, 10, 10, 0.8); */
-  /* box-shadow: 0px 25px 50px -12px #00000040; */
-  background: #FFFFFF0D;
-  border: 1px solid #FFFFFF1A;
-  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6);
+  animation: panelSlide 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .title-popup {

@@ -5,18 +5,23 @@
 }
 
 .modal-overlay {
-  /* background: rgba(0, 0, 0, 0.4); */
-  backdrop-filter: blur(24px);
+  backdrop-filter: blur(8px);
+  /* background: rgba(0, 0, 0, 0.85); */
+  /* backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  animation: backdropFade 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: backdropFade 0.4s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
 .modal-panel {
   font-family: 'Inter', sans-serif;
-  background: #0A0A0A;
+  /* background: #0A0A0A; */
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6);
+  /* box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6); */
   animation: panelSlide 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+  background: #000000B8;
+box-shadow: 0px 25px 50px -12px #00000040;
+
 }
 
 @keyframes backdropFade {
@@ -56,16 +61,54 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
-input, select, textarea {
+.input, select, textarea, input[type="datetime-local"], input[type="text"] {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 14px 20px;
-  color: #FFFFFF;
+  max-width: 366px;
+  height: 44px;
+  background: #1C1B1C;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 0 16px;
+  color: #fff;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  transition: all 0.2s ease;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Hide default browser icons for date/time */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+textarea {
+  height: auto;
+  padding: 16px;
+  max-width: 100%;
+}
+
+.input:focus, select:focus, textarea:focus, input:focus {
+  outline: none;
+  background: #252425;
+  border-color: rgba(229, 57, 53, 0.3);
+  box-shadow: 0 0 20px rgba(229, 57, 53, 0.1);
+}
+
+.input:focus, select:focus, textarea:focus {
+  outline: none;
+  background: #252425;
+  border-color: rgba(229, 57, 53, 0.3);
+  box-shadow: 0 0 20px rgba(229, 57, 53, 0.1);
 }
 
 input::placeholder, textarea::placeholder {

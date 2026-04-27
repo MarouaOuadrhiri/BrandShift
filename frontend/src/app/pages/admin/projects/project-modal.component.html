@@ -14,7 +14,7 @@
     </button>
 
     <!-- Header -->
-    <div class="px-10 pt-12 pb-8 shrink-0 relative z-10">
+    <div class="px-10 pb-4 pt-12 mb-8 shrink-0 relative z-10 border-b border-white/5">
       <h2 class="title-popup uppercase">
         {{ isReadOnly ? projectName : (isEditingMode ? 'UPDATE PROJECT' : 'Create New Project') }}
       </h2>
@@ -32,12 +32,12 @@
           <div class="flex flex-col gap-3">
             <label class="label">Project Name</label>
             <input type="text" [(ngModel)]="projectName" name="projectName" required [disabled]="isReadOnly"
-              placeholder="e.g. Kinetic Brand Redesign" />
+              placeholder="e.g. Kinetic Brand Redesign" class="input"/>
           </div>
           <div class="flex flex-col gap-3">
             <label class="label">Client Name</label>
             <input type="text" [(ngModel)]="projectClient" name="projectClient" [disabled]="isReadOnly"
-              placeholder="e.g. Prestige Global" />
+              placeholder="e.g. Prestige Global" class="input"/>
           </div>
         </div>
 
@@ -72,14 +72,8 @@
         <!-- Row 4: Assign Team Members -->
         <div class="flex flex-col gap-4 p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 relative">
            <div class="flex items-center justify-between">
-              <div class="flex flex-col gap-1">
-                <label class="label">Assign Team Members</label>
-                <span class="text-[9px] font-medium text-white/20 uppercase tracking-widest">{{ projectEmployeeIds.length }} MEMBERS ASSIGNED</span>
-              </div>
               
-              <div class="flex items-center gap-6">
-                 <!-- Avatar Stack -->
-                 <div class="avatar-stack flex items-center">
+              <div class="avatar-stack flex items-center">
                    <div *ngFor="let e of getSelectedEmployees().slice(0, 4)" class="avatar-item w-10 h-10 rounded-full border-2 border-[#0A0A0A] -ml-3 first:ml-0 overflow-hidden bg-[#1A1A1A]">
                      <img *ngIf="e.profile_photo || e.photo" [src]="e.profile_photo || e.photo" class="w-full h-full object-cover" />
                      <div *ngIf="!(e.profile_photo || e.photo)" class="w-full h-full flex items-center justify-center text-[10px] font-black text-white/40">
@@ -93,6 +87,12 @@
                      <svg class="w-4 h-4 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                    </div>
                  </div>
+              <div class="flex items-center gap-6">
+                 <!-- Avatar Stack -->
+                 <div class="flex flex-col gap-1">
+                <label class="label">Assign Team Members</label>
+                <span class="text-[9px] font-medium text-white/20 uppercase tracking-widest">{{ projectEmployeeIds.length }} MEMBERS ASSIGNED</span>
+              </div>
 
                  <button type="button" (click)="!isReadOnly && showEmployeeDropdown = !showEmployeeDropdown" 
                    class="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 border border-white/10 text-[10px] font-black tracking-widest hover:bg-[#E53935] hover:border-[#E53935] transition-all text-white group">
@@ -168,15 +168,21 @@
           <div class="flex flex-col gap-3">
             <label class="label">Start Date</label>
             <div class="relative">
-              <input type="datetime-local" [(ngModel)]="projectStartDate" name="projectStartDate" [disabled]="isReadOnly" class="pl-12" />
-              <svg class="w-5 h-5 text-white/10 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              <svg class="w-4 h-4 text-white/20 absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <input type="datetime-local" [(ngModel)]="projectStartDate" name="projectStartDate" [disabled]="isReadOnly" 
+                     placeholder="DD/MM/YYYY" class="input pl-14" />
             </div>
           </div>
           <div class="flex flex-col gap-3">
             <label class="label">End Date</label>
             <div class="relative">
-              <input type="datetime-local" [(ngModel)]="projectDeadline" name="projectDeadline" required [disabled]="isReadOnly" class="pl-12" />
-              <svg class="w-5 h-5 text-white/10 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              <svg class="w-4 h-4 text-white/20 absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <input type="datetime-local" [(ngModel)]="projectDeadline" name="projectDeadline" required [disabled]="isReadOnly" 
+                     placeholder="DD/MM/YYYY" class="input pl-14" />
             </div>
           </div>
         </div>
@@ -186,13 +192,15 @@
           <div class="flex flex-col gap-3">
             <label class="label">Budget (DHS)</label>
             <div class="relative">
-              <input type="text" [(ngModel)]="projectBudget" name="projectBudget" [disabled]="isReadOnly" placeholder="e.g. 50,000" class="pl-14" />
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/20">MAD</span>
+              <input type="text" [(ngModel)]="projectBudget" name="projectBudget" [disabled]="isReadOnly" 
+                     placeholder="40.000" class="input pr-14" />
+              <span class="absolute right-6 top-1/2 -translate-y-1/2 text-[11px] font-bold text-white/20 pointer-events-none">DHs</span>
             </div>
           </div>
           <div class="flex flex-col gap-3">
-            <label class="label">Estimated Duration</label>
-            <input type="text" [(ngModel)]="projectDuration" name="projectDuration" [disabled]="isReadOnly" placeholder="e.g. 3 Months" />
+            <label class="label">Estimated Duration</label>''
+            <input type="text" [(ngModel)]="projectDuration" name="projectDuration" [disabled]="isReadOnly" 
+                   placeholder="e.g. 30 Days" class="input" />
           </div>
         </div>
 
@@ -216,12 +224,12 @@
                <div class="flex flex-col gap-2">
                  <label class="text-[9px] font-black text-white/20 tracking-widest">TASK TITLE</label>
                  <input type="text" [(ngModel)]="t.title" [name]="'task_title_'+i" [disabled]="isReadOnly"
-                   placeholder="e.g. Wireframe Design" class="bg-transparent border-white/5 p-0 text-sm focus:ring-0" />
+                   placeholder="e.g. Wireframe Design" class="bg-transparent text-white border-none p-0 text-sm focus:ring-0 w-full" />
                </div>
                <div class="flex flex-col gap-2">
                  <label class="text-[9px] font-black text-white/20 tracking-widest">NOTES / INSTRUCTIONS</label>
                  <input type="text" [(ngModel)]="t.note" [name]="'task_note_'+i" [disabled]="isReadOnly"
-                   placeholder="Add specific details..." class="bg-transparent border-white/5 p-0 text-sm focus:ring-0" />
+                   placeholder="Add specific details..." class="bg-transparent text-white border-none p-0 text-sm focus:ring-0 w-full" />
                </div>
                <div class="flex items-end">
                  <button type="button" (click)="removeProjectTask(i)" *ngIf="!isReadOnly"

@@ -4,6 +4,8 @@ import { forkJoin } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { NgApexchartsModule, ChartComponent } from 'ng-apexcharts';
 import { ApiService } from '../../../core/api.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 import {
   ApexAxisChartSeries,
@@ -74,6 +76,17 @@ export class AnalyticsComponent implements OnInit {
 
   showProfileModal = false;
   activeProfileTab: 'OVERVIEW' | 'PROJECTS' | 'ATTENDANCE' = 'OVERVIEW';
+
+  // Range and Export State
+  isRangeDropdownOpen = false;
+  selectedRange = 'LAST 30 DAYS';
+  dateRanges = [
+    'TODAY',
+    'LAST 7 DAYS',
+    'LAST 30 DAYS',
+    'LAST 90 DAYS',
+    'YEAR TO DATE'
+  ];
 
   constructor(private api: ApiService) {
     this.chartOptions = {
@@ -427,5 +440,120 @@ The previous points are calculated as offsets (e.g., rate - 20, rate - 15) to si
     } else {
       this.selectedEmployeeHistory = null;
     }
+  }
+
+  toggleRangeDropdown() {
+    this.isRangeDropdownOpen = !this.isRangeDropdownOpen;
+  }
+
+  selectRange(range: string) {
+    this.selectedRange = range;
+    this.isRangeDropdownOpen = false;
+    // Simulate data refresh for visual feedback
+    this.loadData();
+  }
+
+  exportReport() {
+    console.log('Exporting PDF Analytics Report for BrandShift...');
+    const doc = new jsPDF();
+    
+    // Header Style - Official Icon & Brand
+    const img = new Image();
+    img.src = 'icon.png'; // Use brand icon instead of full logo
+    
+    // Add Brand Logo (using addImage)
+    try {
+      doc.addImage(img, 'PNG', 15, 12, 15, 15);
+    } catch (e) {
+      // Fallback if image load fails
+      doc.setFillColor(239, 68, 68);
+      doc.rect(15, 15, 12, 12, 'F');
+    }
+    
+    doc.setFontSize(22);
+    doc.setTextColor(20, 20, 20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BRANDSHIFT', 35, 25);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
+    doc.text('PERFORMANCE INTELLIGENCE ENGINE', 35, 30);
+
+    // Title Section
+    doc.setDrawColor(239, 68, 68);
+    doc.setLineWidth(0.5);
+    doc.line(15, 40, 195, 40);
+
+    doc.setFontSize(18);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Performance Analytics Report', 15, 55);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Report Scope: ${this.selectedRange}`, 15, 62);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 68);
+    
+    // Primary Metric: Global Completion Rate
+    doc.setFillColor(248, 248, 248);
+    doc.rect(15, 75, 180, 45, 'F');
+    
+    doc.setFontSize(14);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Global Completion Rate', 25, 90);
+    
+    doc.setFontSize(38);
+    doc.setTextColor(239, 68, 68);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${this.stats.avgCompletionRate}%`, 25, 110);
+    
+    // Status Indicator
+    doc.setFontSize(10);
+    doc.setTextColor(16, 185, 129); // Success Green
+    doc.text(`Growth: +${this.stats.avgCompletionChange} vs Previous Period`, 100, 110);
+    
+    // Detailed Statistics Table
+    const tableData = [
+      ['Workforce Capacity', `${this.stats.totalEmployees} Active Employees`],
+      ['Task Distribution', `${this.stats.activeTasks} Pending / ${this.stats.completedTasks} Resolved`],
+      ['Team Efficiency', `${this.stats.avgCompletionRate}% Average`],
+      ['Top Performer', this.topPerformer.name],
+      ['MVP Impact Rate', this.topPerformer.performance]
+    ];
+    
+    autoTable(doc, {
+      startY: 135,
+      head: [['Analytical Parameter', 'Quantified Value']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { 
+        fillColor: [20, 20, 20], 
+        textColor: [255, 255, 255],
+        fontStyle: 'bold'
+      },
+      styles: {
+        font: 'helvetica',
+        fontSize: 10,
+        cellPadding: 6
+      },
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
+      }
+    });
+    
+    // Footer
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Page ${i} of ${pageCount}`, 195, 285, { align: 'right' });
+      doc.text('CONFIDENTIAL: BRANDSHIFT INTERNAL OPERATIONS DATA', 15, 285);
+    }
+    
+    const fileName = `BrandShift_Report_${this.selectedRange.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
   }
 }

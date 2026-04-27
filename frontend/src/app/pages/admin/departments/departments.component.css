@@ -85,11 +85,15 @@
 }
 
 .glass {
-  background: rgba(25, 25, 25, 0.6);
+  /* background: rgba(25, 25, 25, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); */
+   background: #0A0A0A;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6);
+  animation: panelSlide 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .dep-card {
@@ -362,7 +366,6 @@
   font-weight: 700;
   font-style: Bold;
   font-size: 18px;
-  /* leading-trim: NONE; */
   line-height: 28px;
   letter-spacing: 0px;
   vertical-align: middle;
@@ -375,7 +378,6 @@
   font-weight: 500;
   font-style: Medium;
   font-size: 10px;
-  /* leading-trim: NONE; */
   line-height: 15px;
   letter-spacing: 1px;
   text-align: center;
@@ -399,7 +401,6 @@
 .dep-table thead {
   width: 1132px;
   height: 45px;
-  /* angle: 0 deg; */
   opacity: 1;
   background: #FFFFFF05;
 }
@@ -498,25 +499,21 @@
 }
 
 .table-badge[data-status="OPTIMAL"] {
- border: 1px solid #10B98133;
-  background: #10B9811A;
+background: #10B9811A;
   color: #10B981;
 }
 
 .table-badge[data-status="STABLE"] {
-  border: 1px solid #3B82F633;
-  border: 1px solid #3B82F633;
-  background: #3B82F6;
+background: #3B82F61A;
+color: #3B82F6;
 }
 
 .table-badge[data-status="AT CAPACITY"] {
- border: 1px solid #EAB30833;
-  background: #EAB3081A;
-  background: #EAB308;
+background: #EAB3081A;
+color: #EAB308;
 }
 
 .table-badge[data-status="CRITICAL"] {
-  border: 1px solid #EF444433;
   background: #EF44441A;
   color: #EF4444;
 }

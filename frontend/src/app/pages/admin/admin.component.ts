@@ -40,7 +40,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object,
     private cdr: ChangeDetectorRef,
     private zone: NgZone
-  ) {}
+  ) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -48,7 +48,7 @@ export class AdminComponent implements OnInit, OnDestroy {
         next: (r: any) => {
           this.zone.run(() => { this.user = r; this.cdr.markForCheck(); });
         },
-        error: () => {}
+        error: () => { }
       });
       this.loadMeetings(true); // initial load — mark all existing as "seen"
     }, 0);
@@ -103,7 +103,7 @@ export class AdminComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         });
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
