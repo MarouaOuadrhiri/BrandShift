@@ -9,27 +9,20 @@
     <!-- Sidebar Navigation -->
     <aside class="hidden lg:block ml-12">
       <nav class="sticky top-4 space-y-1">
-        <button (click)="scrollToSection('profile')" 
-          [class.active-nav]="activeTab === 'profile'"
-          class="nav-item">
+        <button (click)="scrollToSection('profile')" [class.active-nav]="activeTab === 'profile'" class="nav-item">
           <span class="nav-indicator"></span>
           Profile
         </button>
-        <button (click)="scrollToSection('workspace')" 
-          [class.active-nav]="activeTab === 'workspace'"
-          class="nav-item">
+        <!-- <button (click)="scrollToSection('workspace')" [class.active-nav]="activeTab === 'workspace'" class="nav-item">
           <span class="nav-indicator"></span>
           Workspace
-        </button>
-        <button (click)="scrollToSection('notifications')" 
-          [class.active-nav]="activeTab === 'notifications'"
+        </button> -->
+        <button (click)="scrollToSection('notifications')" [class.active-nav]="activeTab === 'notifications'"
           class="nav-item">
           <span class="nav-indicator"></span>
           Notifications
         </button>
-        <button (click)="scrollToSection('security')" 
-          [class.active-nav]="activeTab === 'security'"
-          class="nav-item">
+        <button (click)="scrollToSection('security')" [class.active-nav]="activeTab === 'security'" class="nav-item">
           <span class="nav-indicator"></span>
           Security
         </button>
@@ -38,7 +31,7 @@
 
     <!-- Main Content Area -->
     <div class="space-y-12 pb-24 max-w-4xl">
-      
+
       <!-- Personal Identity Section -->
       <section id="profile" class="settings-card scroll-mt-8">
         <div class="flex items-center justify-between mb-8">
@@ -69,58 +62,61 @@
       </section>
 
       <!-- Workspace Configuration Section -->
-      <section id="workspace" class="space-y-6 scroll-mt-8">
+      <!-- <section id="workspace" class="space-y-6 scroll-mt-8">
         <h2 class="title">Workspace Configuration</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> -->
           <!-- Atmospheric Mode -->
-          <div class="settings-card-mini">
+          <!-- <div class="settings-card-mini">
             <div class="flex items-start justify-between">
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg  flex items-center justify-center">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.4625 0.00833333 9.6875 0.025C9.9125 0.0416667 10.1333 0.0666667 10.35 0.1C9.66667 0.583333 9.12083 1.2125 8.7125 1.9875C8.30417 2.7625 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69583 16.025 9.2875C16.7917 8.87917 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.0875 17.975 8.3125C17.9917 8.5375 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.5958 12.95 14.7875C14.1167 13.9792 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.70417 11.1792 8.2625 9.7375C6.82083 8.29583 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.02083 3.88333 3.2125 5.05C2.40417 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z" fill="#FFB4A8"/>
+                      <path
+                        d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.4625 0.00833333 9.6875 0.025C9.9125 0.0416667 10.1333 0.0666667 10.35 0.1C9.66667 0.583333 9.12083 1.2125 8.7125 1.9875C8.30417 2.7625 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69583 16.025 9.2875C16.7917 8.87917 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.0875 17.975 8.3125C17.9917 8.5375 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.5958 12.95 14.7875C14.1167 13.9792 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.70417 11.1792 8.2625 9.7375C6.82083 8.29583 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.02083 3.88333 3.2125 5.05C2.40417 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z"
+                        fill="#FFB4A8" />
                     </svg>
                   </div>
-                  <!-- <h3 class="title-2">Atmospheric Mode</h3> -->
                 </div>
                 <h3 class="title-2">Atmospheric Mode</h3>
                 <p class="desc">Lock the interface to high-contrast obsidian themes.</p>
               </div>
               <label class="switch">
-                <input type="checkbox" [(ngModel)]="atmosphericMode">
+                <input type="checkbox" [(ngModel)]="atmosphericMode" (change)="savePreferences()">
                 <span class="slider"></span>
               </label>
             </div>
-          </div>
+          </div> -->
           <!-- Performance Render -->
-          <div class="settings-card-mini">
+          <!-- <div class="settings-card-mini">
             <div class="flex items-start justify-between">
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg flex items-center justify-center">
                     <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8.45 11.5C8.85 11.9 9.36667 12.0958 10 12.0875C10.6333 12.0792 11.1 11.85 11.4 11.4L17 3L8.6 8.6C8.15 8.9 7.9125 9.35833 7.8875 9.975C7.8625 10.5917 8.05 11.1 8.45 11.5ZM10 0C10.9833 0 11.9292 0.1375 12.8375 0.4125C13.7458 0.6875 14.6 1.1 15.4 1.65L13.5 2.85C12.95 2.56667 12.3792 2.35417 11.7875 2.2125C11.1958 2.07083 10.6 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.7 2.09583 11.3917 2.2875 12.075C2.47917 12.7583 2.75 13.4 3.1 14H16.9C17.2833 13.3667 17.5625 12.7083 17.7375 12.025C17.9125 11.3417 18 10.6333 18 9.9C18 9.3 17.9292 8.71667 17.7875 8.15C17.6458 7.58333 17.4333 7.03333 17.15 6.5L18.35 4.6C18.85 5.38333 19.2458 6.21667 19.5375 7.1C19.8292 7.98333 19.9833 8.9 20 9.85C20.0167 10.8 19.9083 11.7083 19.675 12.575C19.4417 13.4417 19.1 14.2667 18.65 15.05C18.4667 15.35 18.2167 15.5833 17.9 15.75C17.5833 15.9167 17.25 16 16.9 16H3.1C2.75 16 2.41667 15.9167 2.1 15.75C1.78333 15.5833 1.53333 15.35 1.35 15.05C0.916667 14.3 0.583333 13.5042 0.35 12.6625C0.116667 11.8208 0 10.9333 0 10C0 8.61667 0.2625 7.32083 0.7875 6.1125C1.3125 4.90417 2.02917 3.84583 2.9375 2.9375C3.84583 2.02917 4.90833 1.3125 6.125 0.7875C7.34167 0.2625 8.63333 0 10 0Z" fill="#FFB4A8"/>
+                      <path
+                        d="M8.45 11.5C8.85 11.9 9.36667 12.0958 10 12.0875C10.6333 12.0792 11.1 11.85 11.4 11.4L17 3L8.6 8.6C8.15 8.9 7.9125 9.35833 7.8875 9.975C7.8625 10.5917 8.05 11.1 8.45 11.5ZM10 0C10.9833 0 11.9292 0.1375 12.8375 0.4125C13.7458 0.6875 14.6 1.1 15.4 1.65L13.5 2.85C12.95 2.56667 12.3792 2.35417 11.7875 2.2125C11.1958 2.07083 10.6 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.7 2.09583 11.3917 2.2875 12.075C2.47917 12.7583 2.75 13.4 3.1 14H16.9C17.2833 13.3667 17.5625 12.7083 17.7375 12.025C17.9125 11.3417 18 10.6333 18 9.9C18 9.3 17.9292 8.71667 17.7875 8.15C17.6458 7.58333 17.4333 7.03333 17.15 6.5L18.35 4.6C18.85 5.38333 19.2458 6.21667 19.5375 7.1C19.8292 7.98333 19.9833 8.9 20 9.85C20.0167 10.8 19.9083 11.7083 19.675 12.575C19.4417 13.4417 19.1 14.2667 18.65 15.05C18.4667 15.35 18.2167 15.5833 17.9 15.75C17.5833 15.9167 17.25 16 16.9 16H3.1C2.75 16 2.41667 15.9167 2.1 15.75C1.78333 15.5833 1.53333 15.35 1.35 15.05C0.916667 14.3 0.583333 13.5042 0.35 12.6625C0.116667 11.8208 0 10.9333 0 10C0 8.61667 0.2625 7.32083 0.7875 6.1125C1.3125 4.90417 2.02917 3.84583 2.9375 2.9375C3.84583 2.02917 4.90833 1.3125 6.125 0.7875C7.34167 0.2625 8.63333 0 10 0Z"
+                        fill="#FFB4A8" />
                     </svg>
                   </div>
-                  
+
                 </div>
                 <h3 class="title-2">Performance Render</h3>
                 <p class="desc">Reduce blur and translucency for low-power devices.</p>
               </div>
               <label class="switch">
-                <input type="checkbox" [(ngModel)]="performanceRender">
+                <input type="checkbox" [(ngModel)]="performanceRender" (change)="savePreferences()">
                 <span class="slider"></span>
               </label>
             </div>
-          </div>
-        </div>
-      </section>
+          </div> -->
+        <!-- </div>
+      </section> -->
 
       <!-- System Communications Section -->
       <section id="notifications" class="settings-card scroll-mt-8">
         <h2 class="title mb-8">System Communications</h2>
-        
+
         <div class="space-y-8">
           <div class="flex items-center justify-between">
             <div class="space-y-1">
@@ -128,7 +124,7 @@
               <p class="description">Alert me when a critical path project hits 80% completion.</p>
             </div>
             <label class="switch">
-              <input type="checkbox" [(ngModel)]="projectMilestones">
+              <input type="checkbox" [(ngModel)]="projectMilestones" (change)="savePreferences()">
               <span class="slider"></span>
             </label>
           </div>
@@ -139,7 +135,7 @@
               <p class="description">Instant notification when a colleague tags you in a task.</p>
             </div>
             <label class="switch">
-              <input type="checkbox" [(ngModel)]="mentionAlerts">
+              <input type="checkbox" [(ngModel)]="mentionAlerts" (change)="savePreferences()">
               <span class="slider"></span>
             </label>
           </div>
@@ -150,10 +146,35 @@
               <p class="description">Morning digest of team performance and overdue tasks.</p>
             </div>
             <label class="switch">
-              <input type="checkbox" [(ngModel)]="dailyVelocityReport">
+              <input type="checkbox" [(ngModel)]="dailyVelocityReport" (change)="savePreferences()">
               <span class="slider"></span>
             </label>
           </div>
+        </div>
+
+        <!-- --- SYSTEM VALIDATION SUITE --- -->
+        <div class="mt-12 pt-8 border-t border-white/5">
+          <div class="flex items-center gap-2 mb-6">
+            <span class="w-1 h-3 bg-red-500 rounded-full"></span>
+            <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Communication Validation Suite
+            </h4>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button *ngIf="projectMilestones" (click)="testMilestoneLogic()" class="btn-validation">Test Milestone
+              Logic</button>
+            <button *ngIf="mentionAlerts" (click)="simulateMention()" class="btn-validation">Simulate Mention</button>
+            <button *ngIf="dailyVelocityReport" (click)="generateVelocityReport()" class="btn-validation">Run Velocity
+              Digest</button>
+          </div>
+
+          <!-- Empty State for Validation -->
+          <div *ngIf="!projectMilestones && !mentionAlerts && !dailyVelocityReport"
+            class="p-8 text-center bg-white/[0.01] border border-dashed border-white/5 rounded-2xl">
+            <p class="text-[10px] uppercase tracking-widest text-white/20">Enable communication toggles above to run
+              system validations</p>
+          </div>
+
         </div>
       </section>
 
@@ -162,35 +183,77 @@
         <h2 class="title mb-8">Security & Access</h2>
 
         <div class="space-y-8">
-          <div class="flex items-center justify-between">
+          <!-- <div class="flex items-center justify-between">
             <div class="flex items-center gap-5">
               <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[#FE0707]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                  </path>
+                </svg>
               </div>
               <div class="space-y-1">
                 <h3 class="title-3">Two-Factor Authentication</h3>
                 <p class="description">Active: Linked to •••• •••• 92</p>
               </div>
             </div>
-            <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Rotate Keys</button>
-          </div>
+            <button
+              class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Rotate
+              Keys</button>
+          </div> -->
 
           <div class="flex items-center justify-between border-t border-white/5 pt-8">
             <div class="flex items-center gap-5">
               <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[#FE0707]">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                  </path>
+                </svg>
               </div>
               <div class="space-y-1">
                 <h3 class="title-3">Active Sessions</h3>
-                <p class="description">3 devices currently authorized</p>
+                <p class="description">{{ activeSessions.length }} device{{ activeSessions.length > 1 ? 's' : '' }} currently authorized</p>
               </div>
             </div>
-            <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Manage</button>
+            <button (click)="showSessionsList = !showSessionsList"
+              class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">
+              {{ showSessionsList ? 'Hide' : 'Manage' }}
+            </button>
+          </div>
+
+          <!-- Sessions List -->
+          <div *ngIf="showSessionsList" class="mt-6 space-y-4 animate-fade-up">
+            <div *ngFor="let session of activeSessions" 
+                 class="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400">
+                  <svg *ngIf="session.device_info.includes('Mobi')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  <svg *ngIf="!session.device_info.includes('Mobi')" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <p class="text-sm font-bold text-white">{{ session.device_info }}</p>
+                    <span *ngIf="session.is_current" class="text-[10px] px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 font-black uppercase tracking-widest">Current</span>
+                  </div>
+                  <p class="text-xs text-gray-500">{{ session.ip_address }} • Connected on {{ session.created_at | date:'mediumDate' }}</p>
+                </div>
+              </div>
+              <button *ngIf="!session.is_current" (click)="disconnectSession(session.id)"
+                      class="px-4 py-2 rounded-xl bg-red-500/10 text-red-500 text-xs font-bold hover:bg-red-500 hover:text-white transition-all">
+                Disconnect
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="mt-16 pt-10 border-t border-white/5">
+        <div class="mt-16 pt-10 border-t border-white/5 flex gap-4">
           <button class="btn-danger">Delete Workspace Data</button>
+          <button class="btn-primary px-8" (click)="openPasswordModal()">Update Password</button>
         </div>
       </section>
     </div>
@@ -198,12 +261,15 @@
 </div>
 
 <!-- Password Verification Modal -->
-<div class="modal-overlay" *ngIf="isVerificationModalOpen" (click)="isVerificationModalOpen = false" style="z-index: 2000;">
-  <div class="modal-content glass password-modal" (click)="$event.stopPropagation()" style="max-width: 420px; background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 2rem; padding: 2.5rem;">
+<div class="modal-overlay" *ngIf="isVerificationModalOpen" (click)="isVerificationModalOpen = false"
+  style="z-index: 2000;">
+  <div class="modal-content glass password-modal" (click)="$event.stopPropagation()"
+    style="max-width: 420px; background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 2rem; padding: 2.5rem;">
     <div class="text-center mb-8">
       <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
         <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
       </div>
       <h2 class="text-2xl font-bold text-white mb-2">Security Verification</h2>
@@ -213,19 +279,117 @@
     <div class="space-y-4">
       <div class="space-y-2">
         <label class="input-label">CURRENT PASSWORD</label>
-        <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••" 
-               class="settings-input" (keyup.enter)="confirmProfileUpdate()">
+        <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••" class="settings-input"
+          (keyup.enter)="confirmProfileUpdate()">
         <p *ngIf="errorMsg" class="text-red-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{errorMsg}}</p>
-        <p *ngIf="successMsg" class="text-green-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{successMsg}}</p>
+        <p *ngIf="successMsg" class="text-green-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{successMsg}}
+        </p>
       </div>
     </div>
 
     <div class="flex gap-4 mt-10">
-      <button (click)="isVerificationModalOpen = false" class="flex-1 px-6 py-3 rounded-full border border-white/5 text-gray-400 font-bold text-xs hover:bg-white/5 transition-all">
+      <button (click)="isVerificationModalOpen = false"
+        class="flex-1 px-6 py-3 rounded-full border border-white/5 text-gray-400 font-bold text-xs hover:bg-white/5 transition-all">
         CANCEL
       </button>
       <button (click)="confirmProfileUpdate()" [disabled]="isSubmitting" class="flex-1 btn-primary py-3">
         {{ isSubmitting ? 'VERIFYING...' : 'CONFIRM' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- --- SIMULATION RESULTS MODAL --- -->
+<div class="modal-overlay" *ngIf="isResultsModalOpen" (click)="isResultsModalOpen = false" style="z-index: 3000;">
+  <div class="modal-content glass password-modal animate-in zoom-in-95" (click)="$event.stopPropagation()"
+    style="max-width: 550px; background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 2.5rem; padding: 3rem; position: relative;">
+
+    <!-- Close Button -->
+    <button (click)="isResultsModalOpen = false"
+      class="absolute top-8 right-8 text-white/20 hover:text-white transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="text-center mb-10">
+      <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">{{ modalTitle }}</h2>
+      <p class="text-gray-400 text-sm">Real-time system validation based on current database state.</p>
+    </div>
+
+    <!-- Simulation Feed Inside Modal -->
+    <div class="space-y-4 max-h-[350px] overflow-y-auto custom-scrollbar pr-2">
+      <div *ngFor="let n of activeNotifications"
+        class="p-5 bg-white/[0.02] border border-white/5 rounded-2xl flex items-start gap-5 animate-in slide-in-from-bottom-2"
+        [ngClass]="{
+             'border-green-500/20': n.type === 'success',
+             'border-blue-500/20': n.type === 'info',
+             'border-red-500/20': n.type === 'warn'
+           }">
+        <div class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" [ngClass]="{
+               'bg-green-500': n.type === 'success',
+               'bg-blue-500': n.type === 'info',
+               'bg-red-500': n.type === 'warn'
+             }"></div>
+        <p class="text-sm font-medium text-white/80 leading-relaxed tracking-tight">{{ n.message }}</p>
+      </div>
+    </div>
+
+    <div class="mt-10">
+      <button (click)="isResultsModalOpen = false" class="w-full btn-primary py-4">
+        DISMISS ANALYSIS
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- --- PASSWORD UPDATE MODAL --- -->
+<div class="modal-overlay" *ngIf="isPasswordModalOpen" (click)="isPasswordModalOpen = false" style="z-index: 4000;">
+  <div class="modal-content glass password-modal animate-in zoom-in-95" (click)="$event.stopPropagation()"
+    style="max-width: 450px; background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 2.5rem; padding: 3rem;">
+
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Update Password</h2>
+      <p class="text-gray-400 text-sm">Protect your account with a strong, unique password.</p>
+    </div>
+
+    <div class="space-y-5">
+      <div class="space-y-2">
+        <label class="input-label">CURRENT PASSWORD</label>
+        <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••" class="settings-input">
+      </div>
+
+      <div class="space-y-2">
+        <label class="input-label">NEW PASSWORD</label>
+        <input type="password" [(ngModel)]="newPassword" placeholder="••••••••" class="settings-input">
+      </div>
+
+      <div class="space-y-2">
+        <label class="input-label">CONFIRM NEW PASSWORD</label>
+        <input type="password" [(ngModel)]="confirmNewPassword" placeholder="••••••••" class="settings-input">
+        <p *ngIf="errorMsg" class="text-red-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{errorMsg}}</p>
+      </div>
+    </div>
+
+    <div class="flex gap-4 mt-10">
+      <button (click)="isPasswordModalOpen = false"
+        class="flex-1 px-6 py-4 rounded-full border border-white/5 text-gray-400 font-bold text-xs hover:bg-white/5 transition-all">
+        CANCEL
+      </button>
+      <button (click)="confirmPasswordUpdate()" [disabled]="isSubmitting" class="flex-1 btn-primary py-4">
+        {{ isSubmitting ? 'UPDATING...' : 'SAVE CHANGES' }}
       </button>
     </div>
   </div>

@@ -103,6 +103,7 @@ class ListMeetingsView(APIView):
                         'departments': [{'id': str(d.id), 'name': d.name} for d in (m.departments or [])],
                         'employees': [{'id': str(e.id), 'name': f"{e.first_name} {e.last_name}"} for e in (m.employees or [])],
                         'created_by': created_by_name,
+                        'status': getattr(m, 'status', 'TODO'),
                     })
                 except Exception:
                     continue  # Skip malformed records
@@ -110,3 +111,22 @@ class ListMeetingsView(APIView):
             return Response(result)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class UpdateMeetingStatusView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        try:
+            meeting = Meeting.objects.get(id=ObjectId(pk))
+            status_val = request.data.get('status')
+            if status_val not in ['TODO', 'DONE']:
+                return Response({'error': 'Invalid status. Use TODO or DONE.'}, status=400)
+            
+            meeting.status = status_val
+            meeting.save()
+            return Response({'message': 'Status updated.', 'status': meeting.status})
+        except (InvalidId, Meeting.DoesNotExist):
+            return Response({'error': 'Meeting not found.'}, status=404)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)

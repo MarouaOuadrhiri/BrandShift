@@ -12,6 +12,7 @@ export class ApiService {
   // Profile — any authenticated user
   getMe(): Observable<any> { return this.http.get(`${this.baseUrl}/users/me/`); }
   updateMe(data: any): Observable<any> { return this.http.patch(`${this.baseUrl}/users/me/`, data); }
+  updatePreferences(data: any): Observable<any> { return this.http.patch(`${this.baseUrl}/users/me/preferences/`, data); }
 
   // Employee management (admin)
   getEmployees(): Observable<any> { return this.http.get(`${this.baseUrl}/users/employees/`); }
@@ -58,5 +59,10 @@ export class ApiService {
   // Meetings
   getMeetings(): Observable<any> { return this.http.get(`${this.baseUrl}/meetings/`); }
   createMeeting(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/meetings/create/`, data); }
+  updateMeetingStatus(id: string, status: string): Observable<any> { return this.http.patch(`${this.baseUrl}/meetings/${id}/status/`, { status }); }
+  // Sessions
+  getSessions(): Observable<any> { return this.http.get(`${this.baseUrl}/users/me/sessions/`); }
+  revokeSession(sessionId: string): Observable<any> { return this.http.post(`${this.baseUrl}/users/me/sessions/revoke/`, { session_id: sessionId }); }
+
   verifyPassword(password: string): Observable<any> { return this.http.post(`${this.baseUrl}/users/verify-password/`, { password }); }
 }

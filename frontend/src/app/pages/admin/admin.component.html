@@ -2,7 +2,7 @@
   <!-- Sidebar -->
   <aside
     [class]="showSidebar ? 'flex absolute md:relative w-64 h-full z-50 admin-sidebar' : 'flex absolute md:relative h-full z-50 admin-sidebar collapsed'"
-    class="flex-col  shadow-2xl shrink-0 transition-all duration-500">
+    class="flex-col shadow-2xl shrink-0">
 
     <!-- Logo / compact header -->
     <div *ngIf="showSidebar" class="px-8 py-8  flex flex-col items-center">
@@ -161,7 +161,7 @@
               <path
                 d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
-            <span class="notif-dot"></span>
+            <span *ngIf="newMeetingCount > 0 || systemNotifications.length > 0" class="notif-dot"></span>
           </button>
 
           <!-- Username + email -->
@@ -221,19 +221,50 @@
           </svg>
         </button>
       </div>
-      <div class="overflow-y-auto max-h-[340px] p-4 space-y-3">
-        <div *ngIf="upcomingMeetings.length === 0" class="text-sm text-white/40">
-          Aucune nouvelle réunion pour le moment.
-        </div>
-        <div *ngFor="let m of upcomingMeetings" class="rounded-3xl border border-white/10 bg-white/5 p-4">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="font-black text-white truncate">{{m.title}}</p>
-              <p class="text-[11px] text-white/40 mt-1">{{ getMeetingTimeLabel(m.date_time) }}</p>
+      <div class="overflow-y-auto max-h-[340px] p-4 space-y-4">
+
+        <!-- Meetings Section -->
+        <div class="space-y-3">
+          <p class="text-[10px] font-black uppercase tracking-widest text-white/20 px-2 mb-2">Réunions</p>
+          <div *ngIf="upcomingMeetings.length === 0" class="text-[11px] text-white/30 px-2">
+            Aucune réunion prévue.
+          </div>
+          <div *ngFor="let m of upcomingMeetings" class="rounded-3xl border border-white/10 bg-white/5 p-4 group relative">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="font-black text-white truncate text-xs">{{m.title}}</p>
+                <p class="text-[10px] text-white/40 mt-1">{{ getMeetingTimeLabel(m.date_time) }}</p>
+              </div>
+              <button (click)="$event.stopPropagation(); toggleMeetingStatus(m)" 
+                      class="shrink-0 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center text-white/20 hover:bg-green-500/20 hover:text-green-500 transition-all opacity-0 group-hover:opacity-100"
+                      title="Mark as Done">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </button>
             </div>
           </div>
-          <p *ngIf="m.description" class="text-[11px] text-white/50 mt-2 line-clamp-2">{{m.description}}</p>
         </div>
+
+        <div class="border-t border-white/5 pt-4 space-y-3">
+          <p class="text-[10px] font-black uppercase tracking-widest text-white/20 px-2 mb-2">Alertes Système</p>
+          <div *ngIf="systemNotifications.length === 0" class="text-[11px] text-white/30 px-2">
+            Aucune alerte système.
+          </div>
+          <div *ngFor="let n of systemNotifications" class="rounded-3xl border border-white/5 bg-white/[0.02] p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-1.5 h-1.5 rounded-full shrink-0" [ngClass]="{
+                     'bg-green-500': n.type === 'success',
+                     'bg-blue-500': n.type === 'info',
+                     'bg-red-500': n.type === 'warn'
+                   }"></div>
+              <span class="text-[9px] font-black uppercase tracking-widest text-white/30">{{ n.feature || 'Système'
+                }}</span>
+            </div>
+            <p class="text-[11px] font-bold text-white/70 leading-tight">{{n.message}}</p>
+          </div>
+        </div>
+
       </div>
     </div>
 

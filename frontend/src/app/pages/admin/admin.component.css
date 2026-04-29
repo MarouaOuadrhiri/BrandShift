@@ -2,7 +2,7 @@
 
 
 .animate-fade-up {
-  animation: fadeUp 0.4s ease-out forwards;
+  animation: fadeUp 300ms ease-in forwards;
 }
 
 @keyframes fadeUp {
@@ -20,6 +20,7 @@
 .admin-sidebar {
   background: rgba(23, 23, 23, 0.5);
   backdrop-filter: blur(24px);
+  transition: all 300ms ease-in;
 }
 
 .admin-sidebar.collapsed {
@@ -88,7 +89,7 @@
   vertical-align: middle;
   text-transform: uppercase;
   overflow: hidden;
-  transition: background 300ms ease-in, color 300ms ease-in, width 300ms ease-in, padding 300ms ease-in, font-weight 300ms ease;
+  transition: background 300ms ease-in, color 300ms ease-in, width 300ms ease-in, padding 300ms ease-in, font-weight 300ms ease-in;
 }
 
 .nav-link.collapsed {
@@ -349,7 +350,7 @@
   gap: 4px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  animation: dropdownIn 0.2s ease-out;
+  animation: dropdownIn 300ms ease-in;
 }
 
 @keyframes dropdownIn {

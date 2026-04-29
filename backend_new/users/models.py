@@ -1,8 +1,9 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 # users/models.py
-from mongoengine import Document, StringField, EmailField, ReferenceField, DateTimeField
+from mongoengine import Document, StringField, EmailField, ReferenceField, DateTimeField, DictField, BooleanField
 from departments.models import Department
 
 class User(Document):
@@ -14,6 +15,7 @@ class User(Document):
     department = ReferenceField(Department, null=True)
     profile_photo = StringField()
     bio = StringField()
+    preferences = DictField()
     
     meta = {
         'strict': False,
@@ -23,6 +25,20 @@ class User(Document):
     @property
     def is_authenticated(self):
         return True
+
+class UserSession(Document):
+    user = ReferenceField(User, required=True)
+    token = StringField(required=True)
+    device_info = StringField()
+    ip_address = StringField()
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    last_active = DateTimeField(default=datetime.datetime.utcnow)
+    is_active = BooleanField(default=True)
+
+    meta = {
+        'collection': 'user_sessions',
+        'indexes': ['token', 'user']
+    }
 
 class AttendanceRecord(Document):
     user = ReferenceField(User, required=True)

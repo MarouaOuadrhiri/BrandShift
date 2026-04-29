@@ -11,5 +11,6 @@ class Meeting(Document):
     employees = ListField(ReferenceField(User))
     created_by = ReferenceField(User, required=True)
     created_at = DateTimeField(default=datetime.datetime.utcnow)
+    status = StringField(choices=('TODO', 'DONE'), default='TODO')
 
     meta = {'collection': 'meetings'}

@@ -15,5 +15,8 @@ urlpatterns = [
     path('attendance/current/', views.get_current_attendance, name='get_current_attendance'),
     path('activity-heatmap/', views.activity_heatmap, name='activity_heatmap'),
     path('my-team/', views.my_team, name='my_team'),
+    path('me/preferences/', views.update_preferences, name='update_preferences'),
+    path('me/sessions/', views.get_user_sessions, name='get_user_sessions'),
+    path('me/sessions/revoke/', views.revoke_session, name='revoke_session'),
     path('verify-password/', views.verify_password, name='verify_password'),
 ]

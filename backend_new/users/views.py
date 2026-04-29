@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .authentication import JWTAuthentication
-from .models import User, AttendanceRecord
+from .models import User, AttendanceRecord, UserSession
 from django.contrib.auth.hashers import make_password, check_password
 import jwt
 import datetime
@@ -61,7 +61,8 @@ def serialize_user(u, include_department=True):
         'bio': getattr(u, 'bio', ''),
         'is_online': is_online,
         'current_session_start': current_session_start,
-        'total_work_today': format_seconds(total_seconds_today)
+        'total_work_today': format_seconds(total_seconds_today),
+        'preferences': getattr(u, 'preferences', {})
     }
     
     last_task = None
@@ -162,11 +163,21 @@ def login(request):
         set__end_time=datetime.datetime.utcnow(),
         set__status='COMPLETED'
     )
-    # Create new active session
+    # Create new active session (Work/Pointage)
     AttendanceRecord(
         user=user,
         start_time=datetime.datetime.utcnow(),
         status='ACTIVE'
+    ).save()
+
+    # Track Device Session
+    user_agent = request.headers.get('User-Agent', 'Unknown Device')
+    ip = request.META.get('REMOTE_ADDR')
+    UserSession(
+        user=user,
+        token=token,
+        device_info=user_agent,
+        ip_address=ip
     ).save()
 
     return Response({
@@ -227,12 +238,28 @@ def me_view(request):
         if 'bio' in data:
             user.bio = data.get('bio', '')
 
+        if 'preferences' in data:
+            user.preferences = data.get('preferences', {})
+
         try:
             user.save()
         except NotUniqueError:
             return Response({'error': 'Email address already exists.'}, status=400)
 
         return Response({'message': 'Profile updated successfully.', 'user': serialize_user(user)})
+
+@api_view(['PATCH'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def update_preferences(request):
+    """Specific endpoint for minor UI preferences that don't require password challenge."""
+    user = request.user
+    data = request.data
+    if 'preferences' in data:
+        user.preferences = data.get('preferences', {})
+        user.save()
+        return Response({'message': 'Preferences saved.', 'preferences': user.preferences})
+    return Response({'error': 'No preferences provided.'}, status=400)
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -601,3 +628,31 @@ def verify_password(request):
         return Response({'success': True})
     else:
         return Response({'success': False, 'error': 'Incorrect password'}, status=401)
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_sessions(request):
+    sessions = UserSession.objects(user=request.user, is_active=True).order_by('-created_at')
+    return Response([{
+        'id': str(s.id),
+        'device_info': s.device_info,
+        'ip_address': s.ip_address,
+        'created_at': s.created_at.isoformat() + 'Z',
+        'is_current': s.token == request.auth
+    } for s in sessions])
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def revoke_session(request):
+    session_id = request.data.get('session_id')
+    if not session_id:
+        return Response({'error': 'session_id is required'}, status=400)
+    
+    try:
+        session = UserSession.objects.get(id=session_id, user=request.user)
+        session.is_active = False
+        session.save()
+        return Response({'message': 'Session revoked successfully'})
+    except DoesNotExist:
+        return Response({'error': 'Session not found'}, status=404)

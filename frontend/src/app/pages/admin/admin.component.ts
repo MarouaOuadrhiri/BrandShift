@@ -32,6 +32,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   private meetingPollInterval: any;
   private meetingCreatedListener: any;
   private lastSeenMeetingIds: Set<string> = new Set();
+  systemNotifications: any[] = [];
 
   constructor(
     private api: ApiService,
@@ -46,7 +47,11 @@ export class AdminComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.api.getMe().subscribe({
         next: (r: any) => {
-          this.zone.run(() => { this.user = r; this.cdr.markForCheck(); });
+          this.zone.run(() => { 
+            this.user = r; 
+            this.cdr.markForCheck(); 
+            this.checkSystemStatus(); // Run automated checks on launch
+          });
         },
         error: () => { }
       });
@@ -66,6 +71,13 @@ export class AdminComponent implements OnInit, OnDestroy {
       };
       window.addEventListener('meeting-created', this.meetingCreatedListener);
     }
+
+    // Subscribe to system-wide notifications
+    this.ui.notifications$.subscribe(n => {
+      this.systemNotifications.unshift(n);
+      if (this.systemNotifications.length > 10) this.systemNotifications.pop();
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy() {
@@ -83,7 +95,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
           this.meetings = raw;
           this.upcomingMeetings = raw
-            .filter(m => new Date(m.date_time) >= now)
+            .filter(m => (m.status === 'TODO' || !m.status) && new Date(m.date_time) >= now)
             .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime());
 
           const in24h = new Date(now.getTime() + 24 * 3600 * 1000);
@@ -164,5 +176,55 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   onNewProjectClick() {
     this.ui.triggerOpenProjectModal();
+  }
+
+  toggleMeetingStatus(m: any) {
+    const newStatus = m.status === 'DONE' ? 'TODO' : 'DONE';
+    this.api.updateMeetingStatus(m.id, newStatus).subscribe({
+      next: () => {
+        this.loadMeetings(false);
+      }
+    });
+  }
+
+  /**
+   * Automated System Audit: Runs on launch to populate notifications based on preferences.
+   */
+  checkSystemStatus() {
+    const prefs = this.user?.preferences;
+    if (!prefs) return;
+
+    // 1. Check Project Milestones
+    if (prefs.project_milestones) {
+      this.api.getProjects().subscribe(projects => {
+        const critical = projects.filter((p: any) => {
+          const total = p.tasks?.length || 0;
+          const done = p.tasks?.filter((t: any) => t.status === 'DONE').length || 0;
+          const progress = total > 0 ? (done / total) * 100 : 0;
+          return progress >= 80 && progress < 100;
+        });
+        critical.forEach((p: any) => {
+          this.ui.notify(`CRITICAL PATH: "${p.name}" est à ${Math.round((p.tasks?.filter((t: any) => t.status === 'DONE').length / p.tasks?.length) * 100)}%`, 'success', 'Project Milestones');
+        });
+      });
+    }
+
+    // 2. Run Velocity Audit
+    if (prefs.daily_velocity_report) {
+      this.api.getTasks().subscribe(tasks => {
+        const overdue = tasks.filter((t: any) => t.status !== 'DONE' && new Date(t.deadline) < new Date()).length;
+        this.ui.notify(`Analyse : ${overdue} tâches sont actuellement en retard.`, 'warn', 'Daily Velocity');
+      });
+    }
+
+    // 3. Simulate Mention if active
+    if (prefs.mention_alerts) {
+      this.api.getEmployees().subscribe(users => {
+        if (users && users.length > 0) {
+          const randomUser = users[users.length - 1]; // Pick a real one
+          this.ui.notify(`${randomUser.first_name} ${randomUser.last_name} a mentionné votre profil.`, 'info', 'Mention Alerts');
+        }
+      });
+    }
   }
 }

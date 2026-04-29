@@ -28,6 +28,21 @@ class JWTAuthentication(authentication.BaseAuthentication):
 
         try:
             user = User.objects.get(id=payload['user_id'])
+            # Verify session status
+            from .models import UserSession
+            session = UserSession.objects(user=user, token=token).first()
+            
+            if session:
+                if not session.is_active:
+                    raise exceptions.AuthenticationFailed('Session has been revoked')
+            else:
+                # If token is valid but no session record exists (old session), create one
+                UserSession(
+                    user=user,
+                    token=token,
+                    device_info=request.headers.get('User-Agent', 'Migrated Session'),
+                    ip_address=request.META.get('REMOTE_ADDR')
+                ).save()
         except DoesNotExist:
             raise exceptions.AuthenticationFailed('User not found')
 
