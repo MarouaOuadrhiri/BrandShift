@@ -50,6 +50,10 @@ export class TasksComponent implements OnInit {
   taskProgress = 0;
   assignedMembers: any[] = [];
   showEmployeeDropdown = false;
+  
+  isConfirmingPassword = false;
+  adminPassword = '';
+  confirmPasswordError = '';
 
   editTaskId: string | null = null;
 
@@ -262,7 +266,13 @@ export class TasksComponent implements OnInit {
 
   // Rest of the methods...
   openModal() { this.isModalOpen = true; }
-  closeModal() { this.isModalOpen = false; this.resetForm(); }
+  closeModal() { 
+    this.isModalOpen = false; 
+    this.resetForm(); 
+    this.isConfirmingPassword = false;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+  }
   resetForm() {
     this.taskTitle = ''; this.taskDesc = ''; this.taskEmployeeId = ''; this.taskEmployeeIds = []; this.taskProjectId = '';
     this.taskDepartmentId = ''; this.taskPriority = 'MEDIUM'; this.taskStatus = 'IN PROGRESS';
@@ -277,7 +287,38 @@ export class TasksComponent implements OnInit {
        return;
     }
     
+    this.isConfirmingPassword = true;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+    this.confirmCallback = () => this.executeCreateTask();
+  }
+
+  confirmCallback: (() => void) | null = null;
+
+  confirmAction() {
+    if (!this.adminPassword) {
+      this.confirmPasswordError = 'Password is required.';
+      return;
+    }
+
     this.isSubmitting = true;
+    this.api.verifyPassword(this.adminPassword).subscribe({
+      next: (res) => {
+        if (res.success) {
+          if (this.confirmCallback) this.confirmCallback();
+        } else {
+          this.confirmPasswordError = 'Incorrect password.';
+          this.isSubmitting = false;
+        }
+      },
+      error: (err) => {
+        this.confirmPasswordError = err.error?.error || 'Verification failed.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
+  executeCreateTask() {
     const taskData = {
       title: this.taskTitle, 
       description: this.taskDesc, 
@@ -290,17 +331,39 @@ export class TasksComponent implements OnInit {
       progress: this.taskProgress
     };
     this.api.createTask(taskData).subscribe({
-      next: () => { this.isSubmitting = false; this.closeModal(); this.loadData(); },
-      error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to create task.'; this.isSubmitting = false; }
+      next: () => { 
+        this.isSubmitting = false; 
+        this.closeModal(); 
+        this.loadData(); 
+      },
+      error: (err: any) => { 
+        this.errorMsg = err.error?.error || 'Failed to create task.'; 
+        this.isSubmitting = false; 
+        this.isConfirmingPassword = false;
+      }
     });
   }
 
   startEditTask(t: any) { this.editTaskId = t.id; t.editTitle = t.title; t.editDesc = t.description; t.editEmployeeId = t.employee_id; }
   saveEditTask(t: any) {
-    this.api.updateTask(t.id, { title: t.editTitle, description: t.editDesc, employee_id: t.editEmployeeId }).subscribe({
-      next: () => { this.editTaskId = null; this.loadData(); },
-      error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to update task.'; }
-    });
+    this.isConfirmingPassword = true;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+    this.confirmCallback = () => {
+      this.api.updateTask(t.id, { title: t.editTitle, description: t.editDesc, employee_id: t.editEmployeeId }).subscribe({
+        next: () => { 
+          this.isSubmitting = false;
+          this.editTaskId = null; 
+          this.isConfirmingPassword = false;
+          this.loadData(); 
+        },
+        error: (err: any) => { 
+          this.errorMsg = err.error?.error || 'Failed to update task.'; 
+          this.isSubmitting = false;
+          this.isConfirmingPassword = false;
+        }
+      });
+    };
   }
 
   getSelectedEmployee() {

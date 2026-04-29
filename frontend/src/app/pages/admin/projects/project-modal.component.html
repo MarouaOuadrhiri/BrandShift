@@ -198,7 +198,7 @@
             </div>
           </div>
           <div class="flex flex-col gap-3">
-            <label class="label">Estimated Duration</label>''
+            <label class="label">Estimated Duration</label>
             <input type="text" [(ngModel)]="projectDuration" name="projectDuration" [disabled]="isReadOnly" 
                    placeholder="e.g. 30 Days" class="input" />
           </div>
@@ -265,6 +265,41 @@
         {{ errorMsg }}
       </div>
     </div>
+  </div>
 
+  <!-- Password Confirmation Overlay (Nested Modal) -->
+  <div class="modal-overlay fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 backdrop-blur-md" 
+       *ngIf="isConfirmingPassword" (click)="isConfirmingPassword = false">
+    <div class="modal-panel w-full max-w-[400px] p-10 rounded-[32px] bg-[#0A0A0A] border border-white/10 shadow-2xl relative animate-in zoom-in duration-200" 
+         (click)="$event.stopPropagation()">
+      <div class="flex flex-col items-center text-center gap-6">
+        <div class="w-16 h-16 rounded-3xl bg-[#E53935]/10 border border-[#E53935]/20 flex items-center justify-center text-[#E53935]">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-white uppercase tracking-tight">Security Verification</h2>
+          <p class="text-[11px] text-white/30 font-medium leading-relaxed mt-2 uppercase tracking-widest">Administrator credentials required to authorize this request.</p>
+        </div>
+        
+        <div class="w-full space-y-4">
+          <div class="flex flex-col gap-2 text-left">
+            <label class="label text-[9px]">Admin Password</label>
+            <input type="password" [(ngModel)]="adminPassword" name="adminPassword" placeholder="••••••••" 
+                   (keyup.enter)="confirmAction()" autofocus
+                   class="input text-center tracking-[0.5em] text-lg font-bold py-5"/>
+            <p *ngIf="confirmPasswordError" class="text-[9px] font-black text-red-500 uppercase tracking-widest mt-1 animate-pulse">{{confirmPasswordError}}</p>
+          </div>
+          
+          <div class="flex flex-col gap-3 pt-4">
+            <button type="button" (click)="confirmAction()" [disabled]="isSubmitting" class="btn-primary w-full py-5 rounded-2xl">
+              {{ isSubmitting ? 'VERIFYING...' : 'AUTHORIZE ACTION' }}
+            </button>
+            <button type="button" (click)="isConfirmingPassword = false" class="text-[10px] font-black text-white/20 hover:text-white uppercase tracking-widest transition-all">CANCEL</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

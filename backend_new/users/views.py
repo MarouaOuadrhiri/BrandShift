@@ -579,3 +579,16 @@ def activity_heatmap(request):
         return 3
 
     return Response({'hourly': [to_level(c) for c in counts], 'raw': counts})
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def verify_password(request):
+    password = request.data.get('password')
+    if not password:
+        return Response({'error': 'Password is required'}, status=400)
+    
+    if check_password(password, request.user.password):
+        return Response({'success': True})
+    else:
+        return Response({'success': False, 'error': 'Incorrect password'}, status=401)

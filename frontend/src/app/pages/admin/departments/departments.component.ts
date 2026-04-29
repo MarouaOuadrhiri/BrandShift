@@ -36,6 +36,10 @@ export class DepartmentsComponent implements OnInit {
   totalWorkforce = 0;
   activeEntities = 0;
 
+  isConfirmingPassword = false;
+  adminPassword = '';
+  confirmPasswordError = '';
+
   defaultIcon = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>';
 
   constructor(private api: ApiService, private cdr: ChangeDetectorRef) {}
@@ -97,11 +101,42 @@ export class DepartmentsComponent implements OnInit {
     this.editDepId = null;
     this.depImage = '';
     this.depImagePreview = '';
+    this.isConfirmingPassword = false;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
   }
 
   submitDepartment() {
     if (!this.depName) { this.errorMsg = 'Department name is required.'; return; }
+    this.isConfirmingPassword = true;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+  }
+
+  confirmAction() {
+    if (!this.adminPassword) {
+      this.confirmPasswordError = 'Password is required.';
+      return;
+    }
+
     this.isSubmitting = true;
+    this.api.verifyPassword(this.adminPassword).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.executeSubmit();
+        } else {
+          this.confirmPasswordError = 'Incorrect password.';
+          this.isSubmitting = false;
+        }
+      },
+      error: (err) => {
+        this.confirmPasswordError = err.error?.error || 'Verification failed.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
+  executeSubmit() {
     const data = { 
       name: this.depName, 
       subtitle: this.depSubtitle,

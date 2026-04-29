@@ -39,6 +39,10 @@ export class EmployeesComponent implements OnInit {
   selectedAttendanceLogs: any[] = [];
   selectedEmpName = '';
 
+  isConfirmingPassword = false;
+  adminPassword = '';
+  confirmPasswordError = '';
+
   constructor(private api: ApiService) {}
 
   ngOnInit() {
@@ -64,7 +68,35 @@ export class EmployeesComponent implements OnInit {
     if (!this.empFirstName || !this.empLastName || !this.empEmail || !this.empPassword || !this.empDepartmentId) {
       this.errorMsg = 'Please fill all fields.'; return;
     }
+    this.isConfirmingPassword = true;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+  }
+
+  confirmAction() {
+    if (!this.adminPassword) {
+      this.confirmPasswordError = 'Password is required.';
+      return;
+    }
+
     this.isSubmitting = true;
+    this.api.verifyPassword(this.adminPassword).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.executeCreateEmployee();
+        } else {
+          this.confirmPasswordError = 'Incorrect password.';
+          this.isSubmitting = false;
+        }
+      },
+      error: (err) => {
+        this.confirmPasswordError = err.error?.error || 'Verification failed.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
+  executeCreateEmployee() {
     this.api.createEmployee({ 
       first_name: this.empFirstName,
       last_name: this.empLastName,
@@ -81,7 +113,11 @@ export class EmployeesComponent implements OnInit {
         this.closeModal();
         setTimeout(() => this.empSuccess = '', 3000);
       },
-      error: (err: any) => { this.errorMsg = err.error?.error || 'Failed to create employee.'; this.isSubmitting = false; }
+      error: (err: any) => { 
+        this.errorMsg = err.error?.error || 'Failed to create employee.'; 
+        this.isSubmitting = false; 
+        this.isConfirmingPassword = false;
+      }
     });
   }
 
@@ -155,6 +191,9 @@ export class EmployeesComponent implements OnInit {
   closeModal() {
     this.isModalOpen = false;
     this.errorMsg = '';
+    this.isConfirmingPassword = false;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
   }
 
   get filteredEmployees() {

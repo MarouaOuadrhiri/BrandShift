@@ -1,137 +1,192 @@
-<div class="animate-fade-up max-w-4xl mx-auto py-8 px-4">
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-3xl font-black text-white tracking-tight">Account Settings</h1>
-      <p class="text-sm text-white/40 mt-1">Manage your personal information and security</p>
-    </div>
-    <div class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-      <span class="text-[10px] font-bold text-white/60 uppercase tracking-widest tracking-widest">{{user?.role}} MODE</span>
-    </div>
+<div class="animate-fade-up">
+  <!-- Header -->
+  <div class="header-title mb-12 ml-12">
+    <h1 class="">Account Settings</h1>
+    <p class="">Manage your personal preferences and workspace configuration.</p>
   </div>
 
-  <div *ngIf="errorMsg" class="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl flex items-center justify-between text-sm animate-shake">
-    <div class="flex items-center gap-3">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      <span class="font-bold">{{errorMsg}}</span>
-    </div>
-    <button (click)="errorMsg=''" class="font-black hover:text-white transition-colors ml-4 uppercase text-[10px]">Dismiss</button>
-  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-12">
+    <!-- Sidebar Navigation -->
+    <aside class="hidden lg:block ml-12">
+      <nav class="sticky top-4 space-y-1">
+        <button (click)="scrollToSection('profile')" 
+          [class.active-nav]="activeTab === 'profile'"
+          class="nav-item">
+          <span class="nav-indicator"></span>
+          Profile
+        </button>
+        <button (click)="scrollToSection('workspace')" 
+          [class.active-nav]="activeTab === 'workspace'"
+          class="nav-item">
+          <span class="nav-indicator"></span>
+          Workspace
+        </button>
+        <button (click)="scrollToSection('notifications')" 
+          [class.active-nav]="activeTab === 'notifications'"
+          class="nav-item">
+          <span class="nav-indicator"></span>
+          Notifications
+        </button>
+        <button (click)="scrollToSection('security')" 
+          [class.active-nav]="activeTab === 'security'"
+          class="nav-item">
+          <span class="nav-indicator"></span>
+          Security
+        </button>
+      </nav>
+    </aside>
 
-  <div *ngIf="successMsg" class="mb-6 p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-2xl flex items-center justify-between text-sm animate-fade-in">
-    <div class="flex items-center gap-3">
-      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-      <span class="font-bold">{{successMsg}}</span>
-    </div>
-    <button (click)="successMsg=''" class="font-black hover:text-white transition-colors ml-4 uppercase text-[10px]">Dismiss</button>
-  </div>
+    <!-- Main Content Area -->
+    <div class="space-y-12 pb-24 max-w-4xl">
+      
+      <!-- Personal Identity Section -->
+      <section id="profile" class="settings-card scroll-mt-8">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="">Personal Identity</h2>
+          <span class="admin-badge">ADMIN INFO</span>
+        </div>
 
-  <div class="grid lg:grid-cols-3 gap-8">
-    <!-- Photo Section -->
-    <div class="lg:col-span-1">
-      <div class="bg-[#161616] border border-white/5 rounded-3xl p-8 flex flex-col items-center text-center sticky top-8 group">
-        <div class="relative mb-6">
-          <div class="w-32 h-32 rounded-[2rem] bg-gradient-to-br from-[#e53935] to-[#b71c1c] p-1.5 shadow-2xl shadow-red-900/20 group-hover:scale-105 transition-transform duration-500">
-            <div class="w-full h-full rounded-[1.7rem] bg-[#0d0d0d] overflow-hidden flex items-center justify-center relative">
-              <img *ngIf="profilePhoto" [src]="profilePhoto" class="w-full h-full object-cover">
-              <span *ngIf="!profilePhoto" class="text-4xl font-black text-white/50">{{(user?.first_name || 'U').charAt(0).toUpperCase()}}</span>
-              
-              <!-- Hover Overlay -->
-              <label class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
-                <svg class="w-8 h-8 text-white mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                <span class="text-[10px] font-bold text-white uppercase tracking-widest">Change Photo</span>
-                <input type="file" class="hidden" (change)="onFileSelected($event)" accept="image/*">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div class="space-y-2">
+            <label class="input-label">DISPLAY NAME</label>
+            <input type="text" [(ngModel)]="firstName" placeholder="L7aj L3ibat" class="settings-input">
+          </div>
+          <div class="space-y-2">
+            <label class="input-label">WORK EMAIL</label>
+            <input type="email" [(ngModel)]="email" placeholder="L3ibat@brandshift.ma" class="settings-input">
+          </div>
+        </div>
+
+        <div class="space-y-2 mb-10">
+          <label class="input-label">BIO / PROFESSIONAL SUMMARY</label>
+          <textarea rows="4" class="settings-input resize-none" 
+            placeholder="Lead Product Designer focused on high-performance operational systems and interfaces."></textarea>
+        </div>
+
+        <div class="flex justify-end">
+          <button (click)="updateProfile()" class="btn-primary">Update Profile</button>
+        </div>
+      </section>
+
+      <!-- Workspace Configuration Section -->
+      <section id="workspace" class="space-y-6 scroll-mt-8">
+        <h2 class="text-2xl font-bold mb-6">Workspace Configuration</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Atmospheric Mode -->
+          <div class="settings-card-mini">
+            <div class="flex items-start justify-between">
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                  </div>
+                  <h3 class="font-semibold text-lg">Atmospheric Mode</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">Lock the interface to high-contrast obsidian themes.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="atmosphericMode">
+                <span class="slider"></span>
               </label>
             </div>
           </div>
-          <button *ngIf="profilePhoto" (click)="profilePhoto=''" class="absolute -top-2 -right-2 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center border-4 border-[#161616] hover:bg-red-500 transition-all shadow-lg scale-0 group-hover:scale-100">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
+          <!-- Performance Render -->
+          <div class="settings-card-mini">
+            <div class="flex items-start justify-between">
+              <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  </div>
+                  <h3 class="font-semibold text-lg">Performance Render</h3>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">Reduce blur and translucency for low-power devices.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="performanceRender">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
-        
-        <h2 class="text-xl font-black text-white px-2">{{user?.first_name}} {{user?.last_name}}</h2>
-        <p class="text-xs text-white/30 mt-1 uppercase tracking-widest font-bold">{{user?.department_name || 'No Department'}}</p>
-        
-        <div class="w-full h-px bg-white/5 my-6"></div>
-        
-        <p class="text-[10px] text-white/20 italic leading-relaxed">
-          Upload a profile picture to personalize your workspace. (JPG or PNG, max 1MB)
-        </p>
-      </div>
-    </div>
+      </section>
 
-    <!-- Details Section -->
-    <div class="lg:col-span-2">
-      <div class="bg-[#161616] border border-white/5 rounded-3xl p-8 lg:p-10 shadow-xl">
-        <form (ngSubmit)="updateProfile()" class="space-y-8">
-          
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-widest px-1">First Name</label>
-              <div class="relative">
-                <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                <input type="text" [(ngModel)]="firstName" name="firstName" placeholder="First Name" required
-                  class="w-full bg-[#0d0d0d] border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:bg-[#0d0d0d] focus:outline-none transition-all text-sm font-semibold">
-              </div>
+      <!-- System Communications Section -->
+      <section id="notifications" class="settings-card scroll-mt-8">
+        <h2 class="text-2xl font-bold mb-8">System Communications</h2>
+        
+        <div class="space-y-8">
+          <div class="flex items-center justify-between">
+            <div class="space-y-1">
+              <h3 class="font-semibold text-lg">Project Milestones</h3>
+              <p class="text-sm text-gray-400">Alert me when a critical path project hits 80% completion.</p>
             </div>
-            <div class="space-y-2">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-widest px-1">Last Name</label>
-              <div class="relative">
-                <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                <input type="text" [(ngModel)]="lastName" name="lastName" placeholder="Last Name" required
-                  class="w-full bg-[#0d0d0d] border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:bg-[#0d0d0d] focus:outline-none transition-all text-sm font-semibold">
-              </div>
-            </div>
-          </div>
-            <div class="space-y-2">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-widest px-1">Email Address</label>
-              <div class="relative">
-                <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required
-                  class="w-full bg-[#0d0d0d] border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:bg-[#0d0d0d] focus:outline-none transition-all text-sm font-semibold">
-              </div>
-            </div>
-
-          <div class="space-y-2 pt-4">
-            <label class="text-[10px] font-black text-white/30 uppercase tracking-widest px-1">Update Password (optional)</label>
-            <div class="relative">
-              <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-              <input type="password" [(ngModel)]="password" name="password" placeholder="New Password (leave blank to keep current)"
-                class="w-full bg-[#0d0d0d] border border-white/5 rounded-2xl pl-12 pr-4 py-3.5 text-white placeholder-white/20 focus:border-[#e53935]/50 focus:bg-[#0d0d0d] focus:outline-none transition-all text-sm font-semibold">
-            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="projectMilestones">
+              <span class="slider"></span>
+            </label>
           </div>
 
-          <div class="w-full h-px bg-white/5"></div>
-
-          <div class="space-y-4 pt-4">
-            <div class="flex items-center gap-3 mb-2">
-              <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-              </div>
-              <h4 class="text-xs font-black text-white/70 uppercase tracking-widest">Verification Required</h4>
+          <div class="flex items-center justify-between border-t border-white/5 pt-8">
+            <div class="space-y-1">
+              <h3 class="font-semibold text-lg">Mention Alerts</h3>
+              <p class="text-sm text-gray-400">Instant notification when a colleague tags you in a task.</p>
             </div>
-            
-            <div class="space-y-2">
-              <label class="text-[10px] font-black text-white/30 uppercase tracking-widest px-1">Confirm Current Password</label>
-              <div class="relative">
-                <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-3.652A11.954 11.954 0 0110 3c3.517 0 6.799 1.009 9.571 2.753m-2.205 8.354c.185.501.33 1.013.434 1.538m-1.428-1.428A11.952 11.952 0 0112 15c-3.517 0-6.799-1.009-9.571-2.753m2.205-8.354C4.815 4.398 5.327 4.544 5.852 4.648m3.351 1.488A11.95 11.95 0 0112 5c.61 0 1.209.046 1.794.135m0 0a11.952 11.952 0 014.172 1.634"></path></svg>
-                <input type="password" [(ngModel)]="currentPassword" name="currentPassword" placeholder="Current Password" required
-                  class="w-full bg-[#000000] border-2 border-[#e53935]/20 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-white/20 focus:border-[#e53935] focus:outline-none transition-all text-sm font-bold">
-              </div>
-              <p class="text-[9px] text-white/20 px-2 italic">You must confirm your current password to save any profile changes.</p>
-            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="mentionAlerts">
+              <span class="slider"></span>
+            </label>
           </div>
 
-          <button type="submit" [disabled]="isSubmitting"
-            class="w-full bg-gradient-to-r from-[#e53935] to-[#b71c1c] hover:from-[#c62828] hover:to-[#911717] text-white font-black py-4 rounded-2xl transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-3 shadow-2xl shadow-red-900/40 group overflow-hidden relative">
-            <span class="relative z-10 flex items-center gap-2">
-              <svg *ngIf="!isSubmitting" class="w-4 h-4 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-              <div *ngIf="isSubmitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              {{isSubmitting ? 'SAVING CHANGES...' : 'SAVE SETTINGS'}}
-            </span>
-          </button>
-        </form>
-      </div>
+          <div class="flex items-center justify-between border-t border-white/5 pt-8">
+            <div class="space-y-1">
+              <h3 class="font-semibold text-lg">Daily Velocity Report</h3>
+              <p class="text-sm text-gray-400">Morning digest of team performance and overdue tasks.</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="dailyVelocityReport">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Security & Access Section -->
+      <section id="security" class="settings-card scroll-mt-8">
+        <h2 class="text-2xl font-bold mb-10">Security & Access</h2>
+
+        <div class="space-y-8">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[#FE0707]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </div>
+              <div class="space-y-1">
+                <h3 class="font-semibold text-lg">Two-Factor Authentication</h3>
+                <p class="text-sm text-gray-400">Active: Linked to •••• •••• 92</p>
+              </div>
+            </div>
+            <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Rotate Keys</button>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-white/5 pt-8">
+            <div class="flex items-center gap-5">
+              <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-[#FE0707]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              </div>
+              <div class="space-y-1">
+                <h3 class="font-semibold text-lg">Active Sessions</h3>
+                <p class="text-sm text-gray-400">3 devices currently authorized</p>
+              </div>
+            </div>
+            <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Manage</button>
+          </div>
+        </div>
+
+        <div class="mt-16 pt-10 border-t border-white/5">
+          <button class="btn-danger">Delete Workspace Data</button>
+        </div>
+      </section>
     </div>
   </div>
 </div>

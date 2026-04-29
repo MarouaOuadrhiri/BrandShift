@@ -24,7 +24,7 @@
 
   <!-- Cards Grid -->
   <div class="dep-grid" *ngIf="!selectedDep">
-    <div *ngFor="let d of paginatedDepartments" class="dep-card glass" (click)="viewDetail(d)">
+    <div *ngFor="let d of paginatedDepartments" class="dep-card glass-card" (click)="viewDetail(d)">
       <div class="card-top">
         <div class="icon-box">
           <!-- Show uploaded image if available, otherwise fall back to SVG icon -->
@@ -69,7 +69,7 @@
   </div>
 
   <!-- Summary Table -->
-  <div class="table-section glass mt-12" *ngIf="!selectedDep && departments.length > 0">
+  <div class="table-section glass-card mt-12" *ngIf="!selectedDep && departments.length > 0">
     <div class="table-header">
       <h3>Department Performance Summary</h3>
       <button class="generate-report">GENERATE REPORT</button>
@@ -221,6 +221,36 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Password Confirmation Modal -->
+<div class="modal-overlay" *ngIf="isConfirmingPassword" (click)="isConfirmingPassword = false" style="z-index: 1100;">
+  <div class="modal-content glass password-modal" (click)="$event.stopPropagation()" style="max-width: 400px;">
+    <div class="modal-header">
+      <div class="security-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="1.5">
+          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Security Verification</h2>
+      <p>Please enter your administrator password to authorize this action.</p>
+    </div>
+
+    <div class="form-group full mt-6">
+      <label>ADMIN PASSWORD</label>
+      <input type="password" [(ngModel)]="adminPassword" name="adminPassword" placeholder="••••••••" 
+             (keyup.enter)="confirmAction()" required autofocus
+             class="password-input">
+      <p *ngIf="confirmPasswordError" class="text-red-500 text-[10px] font-bold uppercase mt-2 tracking-wider animate-shake">{{confirmPasswordError}}</p>
+    </div>
+
+    <div class="modal-actions mt-8">
+      <button type="button" class="btn-cancel" (click)="isConfirmingPassword = false">CANCEL</button>
+      <button type="button" class="btn-create" [disabled]="isSubmitting" (click)="confirmAction()">
+        {{ isSubmitting ? 'VERIFYING...' : 'CONFIRM ACTION' }}
+      </button>
+    </div>
   </div>
 </div>
 

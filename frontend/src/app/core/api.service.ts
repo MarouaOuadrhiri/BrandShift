@@ -58,4 +58,5 @@ export class ApiService {
   // Meetings
   getMeetings(): Observable<any> { return this.http.get(`${this.baseUrl}/meetings/`); }
   createMeeting(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/meetings/create/`, data); }
+  verifyPassword(password: string): Observable<any> { return this.http.post(`${this.baseUrl}/users/verify-password/`, { password }); }
 }

@@ -85,15 +85,17 @@
 }
 
 .glass {
-  /* background: rgba(25, 25, 25, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); */
    background: #0A0A0A;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 32px 120px rgba(0, 0, 0, 0.6);
   animation: panelSlide 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.glass-card{
+   background: rgba(25, 25, 25, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .dep-card {
@@ -848,3 +850,47 @@ color: #EAB308;
   object-fit: contain;
   display: block;
 }
+
+/* Password Modal Specific Styles */
+.password-modal {
+  text-align: center;
+}
+
+.security-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(229, 57, 53, 0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  border: 1px solid rgba(229, 57, 53, 0.1);
+}
+
+.password-input {
+  text-align: center !important;
+  letter-spacing: 0.3em !important;
+  font-size: 1.2rem !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  margin-top: 10px !important;
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes panelSlide {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

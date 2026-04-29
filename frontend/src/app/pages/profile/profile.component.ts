@@ -22,6 +22,22 @@ export class ProfileComponent implements OnInit {
   isSubmitting = false;
   errorMsg = '';
   successMsg = '';
+  activeTab = 'profile';
+
+  scrollToSection(sectionId: string) {
+    this.activeTab = sectionId;
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Settings Toggles
+  atmosphericMode = true;
+  performanceRender = false;
+  projectMilestones = true;
+  mentionAlerts = true;
+  dailyVelocityReport = false;
 
   constructor(private api: ApiService) {}
 

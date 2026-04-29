@@ -454,106 +454,154 @@ The previous points are calculated as offsets (e.g., rate - 20, rate - 15) to si
   }
 
   exportReport() {
-    console.log('Exporting PDF Analytics Report for BrandShift...');
+    console.log('Exporting Premium PDF Analytics Report for BrandShift...');
     const doc = new jsPDF();
     
-    // Header Style - Official Icon & Brand
-    const img = new Image();
-    img.src = 'icon.png'; // Use brand icon instead of full logo
+    // 1. Background & Base Styling
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Add Brand Logo (using addImage)
+    // 2. Premium Header Block (Dark Theme)
+    doc.setFillColor(15, 15, 15); // Deep Charcoal
+    doc.rect(0, 0, pageWidth, 45, 'F');
+    
+    // Add Brand Icon & Name
+    const img = new Image();
+    img.src = 'icon.png';
     try {
-      doc.addImage(img, 'PNG', 15, 12, 15, 15);
+      doc.addImage(img, 'PNG', 15, 10, 15, 15);
     } catch (e) {
-      // Fallback if image load fails
       doc.setFillColor(239, 68, 68);
-      doc.rect(15, 15, 12, 12, 'F');
+      doc.circle(22.5, 17.5, 7.5, 'F');
     }
     
     doc.setFontSize(22);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BRANDSHIFT', 38, 22);
+    
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
+    doc.setFont('helvetica', 'normal');
+    doc.text('OPERATIONAL INTELLIGENCE DASHBOARD', 38, 28);
+    doc.text(`REPORTING PERIOD: ${this.selectedRange}`, pageWidth - 15, 28, { align: 'right' });
+
+    // 3. Document Title Section
+    doc.setFontSize(18);
     doc.setTextColor(20, 20, 20);
     doc.setFont('helvetica', 'bold');
-    doc.text('BRANDSHIFT', 35, 25);
+    doc.text('Performance Analytics Summary', 15, 60);
     
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.setFont('helvetica', 'normal');
-    doc.text('PERFORMANCE INTELLIGENCE ENGINE', 35, 30);
-
-    // Title Section
     doc.setDrawColor(239, 68, 68);
-    doc.setLineWidth(0.5);
-    doc.line(15, 40, 195, 40);
+    doc.setLineWidth(1);
+    doc.line(15, 65, 35, 65); // Short accent line
 
-    doc.setFontSize(18);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Performance Analytics Report', 15, 55);
+    // 4. Primary Data Card: Global Completion
+    doc.setFillColor(250, 250, 250);
+    doc.setDrawColor(235, 235, 235);
+    doc.roundedRect(15, 75, pageWidth - 30, 50, 4, 4, 'FD');
     
+    // Accent bar for the card
+    doc.setFillColor(239, 68, 68);
+    doc.rect(15, 75, 4, 50, 'F');
+
     doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(80, 80, 80);
-    doc.text(`Report Scope: ${this.selectedRange}`, 15, 62);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 68);
-    
-    // Primary Metric: Global Completion Rate
-    doc.setFillColor(248, 248, 248);
-    doc.rect(15, 75, 180, 45, 'F');
-    
-    doc.setFontSize(14);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Global Completion Rate', 25, 90);
-    
-    doc.setFontSize(38);
-    doc.setTextColor(239, 68, 68);
+    doc.setTextColor(120, 120, 120);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${this.stats.avgCompletionRate}%`, 25, 110);
+    doc.text('GLOBAL COMPLETION RATE', 28, 90);
     
-    // Status Indicator
+    doc.setFontSize(42);
+    doc.setTextColor(15, 15, 15);
+    doc.text(`${this.stats.avgCompletionRate}%`, 28, 112);
+    
     doc.setFontSize(10);
     doc.setTextColor(16, 185, 129); // Success Green
-    doc.text(`Growth: +${this.stats.avgCompletionChange} vs Previous Period`, 100, 110);
+    doc.text(`↑ +${this.stats.avgCompletionChange} Performance Growth`, 28, 120);
     
-    // Detailed Statistics Table
+    // Secondary Stats Row
+    const startY = 140;
+    const colWidth = (pageWidth - 30) / 3;
+    
+    const miniCards = [
+      { label: 'ACTIVE WORKFORCE', val: this.stats.totalEmployees.toString() },
+      { label: 'PENDING TASKS', val: this.stats.activeTasks.toString() },
+      { label: 'RESOLVED UNITS', val: this.stats.completedTasks.toString() }
+    ];
+
+    miniCards.forEach((card, i) => {
+      const x = 15 + (i * colWidth);
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.setFont('helvetica', 'bold');
+      doc.text(card.label, x, startY);
+      
+      doc.setFontSize(16);
+      doc.setTextColor(40, 40, 40);
+      doc.text(card.val, x, startY + 8);
+    });
+
+    // 5. Spotlight Section: Top Performer
+    doc.setFillColor(15, 15, 15);
+    doc.roundedRect(15, 165, pageWidth - 30, 35, 4, 4, 'F');
+    
+    doc.setFontSize(9);
+    doc.setTextColor(239, 68, 68);
+    doc.text('MVP INTERNAL SPOTLIGHT', 25, 178);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.text(this.topPerformer.name, 25, 188);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`EFFICIENCY: ${this.topPerformer.performance}`, pageWidth - 25, 188, { align: 'right' });
+
+    // 6. Detailed Analysis Table
     const tableData = [
-      ['Workforce Capacity', `${this.stats.totalEmployees} Active Employees`],
-      ['Task Distribution', `${this.stats.activeTasks} Pending / ${this.stats.completedTasks} Resolved`],
-      ['Team Efficiency', `${this.stats.avgCompletionRate}% Average`],
-      ['Top Performer', this.topPerformer.name],
-      ['MVP Impact Rate', this.topPerformer.performance]
+      ['Analytical Parameter', 'Quantified Value', 'Metric Impact'],
+      ['Workforce Capacity', this.stats.totalEmployees.toString(), 'Stable'],
+      ['Active Backlog', this.stats.activeTasks.toString(), 'Optimal'],
+      ['Resolved Operations', this.stats.completedTasks.toString(), 'High'],
+      ['System Velocity', `${this.stats.avgCompletionRate}%`, 'Target Met']
     ];
     
     autoTable(doc, {
-      startY: 135,
-      head: [['Analytical Parameter', 'Quantified Value']],
-      body: tableData,
-      theme: 'grid',
+      startY: 215,
+      head: [tableData[0]],
+      body: tableData.slice(1),
+      theme: 'plain',
       headStyles: { 
-        fillColor: [20, 20, 20], 
-        textColor: [255, 255, 255],
-        fontStyle: 'bold'
+        textColor: [15, 15, 15],
+        fontStyle: 'bold',
+        fontSize: 9,
+        cellPadding: { bottom: 4 }
       },
       styles: {
         font: 'helvetica',
-        fontSize: 10,
-        cellPadding: 6
+        fontSize: 9,
+        cellPadding: 5,
+        textColor: [80, 80, 80]
       },
-      alternateRowStyles: {
-        fillColor: [250, 250, 250]
+      columnStyles: {
+        1: { fontStyle: 'bold', textColor: [20, 20, 20] },
+        2: { textColor: [239, 68, 68], fontStyle: 'bold' }
       }
     });
     
-    // Footer
+    // 7. Premium Footer
     const pageCount = (doc as any).internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
-      doc.setFontSize(9);
-      doc.setTextColor(150, 150, 150);
-      doc.text(`Page ${i} of ${pageCount}`, 195, 285, { align: 'right' });
-      doc.text('CONFIDENTIAL: BRANDSHIFT INTERNAL OPERATIONS DATA', 15, 285);
+      doc.setDrawColor(240, 240, 240);
+      doc.line(15, pageHeight - 20, pageWidth - 15, pageHeight - 20);
+      
+      doc.setFontSize(8);
+      doc.setTextColor(180, 180, 180);
+      doc.text(`CONFIDENTIAL: BRANDSHIFT INTERNAL OPERATIONS`, 15, pageHeight - 12);
+      doc.text(`PAGE ${i} OF ${pageCount}`, pageWidth - 15, pageHeight - 12, { align: 'right' });
     }
     
-    const fileName = `BrandShift_Report_${this.selectedRange.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+    const fileName = `BrandShift_Intelligence_${this.selectedRange.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
     doc.save(fileName);
   }
 }

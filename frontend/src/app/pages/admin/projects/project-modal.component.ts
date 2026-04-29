@@ -41,6 +41,10 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
   departments: any[] = [];
   filteredEmployees: any[] = [];
   showEmployeeDropdown = false;
+  
+  isConfirmingPassword = false;
+  adminPassword = '';
+  confirmPasswordError = '';
 
   private modalSub: Subscription | null = null;
 
@@ -127,6 +131,9 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
   closeModal() {
     this.showProjectModal = false;
     this.resetForm();
+    this.isConfirmingPassword = false;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
   }
 
   resetForm() {
@@ -209,6 +216,35 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.isConfirmingPassword = true;
+    this.adminPassword = '';
+    this.confirmPasswordError = '';
+  }
+
+  confirmAction() {
+    if (!this.adminPassword) {
+      this.confirmPasswordError = 'Password is required.';
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.api.verifyPassword(this.adminPassword).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.executeSubmit();
+        } else {
+          this.confirmPasswordError = 'Incorrect password.';
+          this.isSubmitting = false;
+        }
+      },
+      error: (err) => {
+        this.confirmPasswordError = err.error?.error || 'Verification failed.';
+        this.isSubmitting = false;
+      }
+    });
+  }
+
+  executeSubmit() {
     const validTasks = this.projectTasks.filter(t => t.title && t.title.trim());
 
     let deadlineIso = '';
@@ -216,10 +252,10 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
       deadlineIso = new Date(this.projectDeadline).toISOString();
     } catch {
       this.errorMsg = 'Invalid date format.';
+      this.isSubmitting = false;
       return;
     }
 
-    this.isSubmitting = true;
     const payload = {
       name: this.projectName,
       client: this.projectClient,
@@ -249,6 +285,7 @@ export class ProjectModalComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         this.errorMsg = err.error?.error || 'Failed to save project.';
         this.isSubmitting = false;
+        this.isConfirmingPassword = false;
       }
     });
   }
