@@ -42,7 +42,7 @@
       <!-- Personal Identity Section -->
       <section id="profile" class="settings-card scroll-mt-8">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="">Personal Identity</h2>
+          <h2 class="title">Personal Identity</h2>
           <span class="admin-badge">ADMIN INFO</span>
         </div>
 
@@ -70,19 +70,22 @@
 
       <!-- Workspace Configuration Section -->
       <section id="workspace" class="space-y-6 scroll-mt-8">
-        <h2 class="text-2xl font-bold mb-6">Workspace Configuration</h2>
+        <h2 class="title">Workspace Configuration</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Atmospheric Mode -->
           <div class="settings-card-mini">
             <div class="flex items-start justify-between">
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                  <div class="w-8 h-8 rounded-lg  flex items-center justify-center">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9 18C6.5 18 4.375 17.125 2.625 15.375C0.875 13.625 0 11.5 0 9C0 6.5 0.875 4.375 2.625 2.625C4.375 0.875 6.5 0 9 0C9.23333 0 9.4625 0.00833333 9.6875 0.025C9.9125 0.0416667 10.1333 0.0666667 10.35 0.1C9.66667 0.583333 9.12083 1.2125 8.7125 1.9875C8.30417 2.7625 8.1 3.6 8.1 4.5C8.1 6 8.625 7.275 9.675 8.325C10.725 9.375 12 9.9 13.5 9.9C14.4167 9.9 15.2583 9.69583 16.025 9.2875C16.7917 8.87917 17.4167 8.33333 17.9 7.65C17.9333 7.86667 17.9583 8.0875 17.975 8.3125C17.9917 8.5375 18 8.76667 18 9C18 11.5 17.125 13.625 15.375 15.375C13.625 17.125 11.5 18 9 18ZM9 16C10.4667 16 11.7833 15.5958 12.95 14.7875C14.1167 13.9792 14.9667 12.925 15.5 11.625C15.1667 11.7083 14.8333 11.775 14.5 11.825C14.1667 11.875 13.8333 11.9 13.5 11.9C11.45 11.9 9.70417 11.1792 8.2625 9.7375C6.82083 8.29583 6.1 6.55 6.1 4.5C6.1 4.16667 6.125 3.83333 6.175 3.5C6.225 3.16667 6.29167 2.83333 6.375 2.5C5.075 3.03333 4.02083 3.88333 3.2125 5.05C2.40417 6.21667 2 7.53333 2 9C2 10.9333 2.68333 12.5833 4.05 13.95C5.41667 15.3167 7.06667 16 9 16Z" fill="#FFB4A8"/>
+                    </svg>
                   </div>
-                  <h3 class="font-semibold text-lg">Atmospheric Mode</h3>
+                  <!-- <h3 class="title-2">Atmospheric Mode</h3> -->
                 </div>
-                <p class="text-sm text-gray-400 leading-relaxed">Lock the interface to high-contrast obsidian themes.</p>
+                <h3 class="title-2">Atmospheric Mode</h3>
+                <p class="desc">Lock the interface to high-contrast obsidian themes.</p>
               </div>
               <label class="switch">
                 <input type="checkbox" [(ngModel)]="atmosphericMode">
@@ -95,12 +98,15 @@
             <div class="flex items-start justify-between">
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center">
+                    <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.45 11.5C8.85 11.9 9.36667 12.0958 10 12.0875C10.6333 12.0792 11.1 11.85 11.4 11.4L17 3L8.6 8.6C8.15 8.9 7.9125 9.35833 7.8875 9.975C7.8625 10.5917 8.05 11.1 8.45 11.5ZM10 0C10.9833 0 11.9292 0.1375 12.8375 0.4125C13.7458 0.6875 14.6 1.1 15.4 1.65L13.5 2.85C12.95 2.56667 12.3792 2.35417 11.7875 2.2125C11.1958 2.07083 10.6 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.7 2.09583 11.3917 2.2875 12.075C2.47917 12.7583 2.75 13.4 3.1 14H16.9C17.2833 13.3667 17.5625 12.7083 17.7375 12.025C17.9125 11.3417 18 10.6333 18 9.9C18 9.3 17.9292 8.71667 17.7875 8.15C17.6458 7.58333 17.4333 7.03333 17.15 6.5L18.35 4.6C18.85 5.38333 19.2458 6.21667 19.5375 7.1C19.8292 7.98333 19.9833 8.9 20 9.85C20.0167 10.8 19.9083 11.7083 19.675 12.575C19.4417 13.4417 19.1 14.2667 18.65 15.05C18.4667 15.35 18.2167 15.5833 17.9 15.75C17.5833 15.9167 17.25 16 16.9 16H3.1C2.75 16 2.41667 15.9167 2.1 15.75C1.78333 15.5833 1.53333 15.35 1.35 15.05C0.916667 14.3 0.583333 13.5042 0.35 12.6625C0.116667 11.8208 0 10.9333 0 10C0 8.61667 0.2625 7.32083 0.7875 6.1125C1.3125 4.90417 2.02917 3.84583 2.9375 2.9375C3.84583 2.02917 4.90833 1.3125 6.125 0.7875C7.34167 0.2625 8.63333 0 10 0Z" fill="#FFB4A8"/>
+                    </svg>
                   </div>
-                  <h3 class="font-semibold text-lg">Performance Render</h3>
+                  
                 </div>
-                <p class="text-sm text-gray-400 leading-relaxed">Reduce blur and translucency for low-power devices.</p>
+                <h3 class="title-2">Performance Render</h3>
+                <p class="desc">Reduce blur and translucency for low-power devices.</p>
               </div>
               <label class="switch">
                 <input type="checkbox" [(ngModel)]="performanceRender">
@@ -113,13 +119,13 @@
 
       <!-- System Communications Section -->
       <section id="notifications" class="settings-card scroll-mt-8">
-        <h2 class="text-2xl font-bold mb-8">System Communications</h2>
+        <h2 class="title mb-8">System Communications</h2>
         
         <div class="space-y-8">
           <div class="flex items-center justify-between">
             <div class="space-y-1">
-              <h3 class="font-semibold text-lg">Project Milestones</h3>
-              <p class="text-sm text-gray-400">Alert me when a critical path project hits 80% completion.</p>
+              <h3 class="title-3">Project Milestones</h3>
+              <p class="description">Alert me when a critical path project hits 80% completion.</p>
             </div>
             <label class="switch">
               <input type="checkbox" [(ngModel)]="projectMilestones">
@@ -129,8 +135,8 @@
 
           <div class="flex items-center justify-between border-t border-white/5 pt-8">
             <div class="space-y-1">
-              <h3 class="font-semibold text-lg">Mention Alerts</h3>
-              <p class="text-sm text-gray-400">Instant notification when a colleague tags you in a task.</p>
+              <h3 class="title-3">Mention Alerts</h3>
+              <p class="description">Instant notification when a colleague tags you in a task.</p>
             </div>
             <label class="switch">
               <input type="checkbox" [(ngModel)]="mentionAlerts">
@@ -140,8 +146,8 @@
 
           <div class="flex items-center justify-between border-t border-white/5 pt-8">
             <div class="space-y-1">
-              <h3 class="font-semibold text-lg">Daily Velocity Report</h3>
-              <p class="text-sm text-gray-400">Morning digest of team performance and overdue tasks.</p>
+              <h3 class="title-3">Daily Velocity Report</h3>
+              <p class="description">Morning digest of team performance and overdue tasks.</p>
             </div>
             <label class="switch">
               <input type="checkbox" [(ngModel)]="dailyVelocityReport">
@@ -153,7 +159,7 @@
 
       <!-- Security & Access Section -->
       <section id="security" class="settings-card scroll-mt-8">
-        <h2 class="text-2xl font-bold mb-10">Security & Access</h2>
+        <h2 class="title mb-8">Security & Access</h2>
 
         <div class="space-y-8">
           <div class="flex items-center justify-between">
@@ -162,8 +168,8 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
               </div>
               <div class="space-y-1">
-                <h3 class="font-semibold text-lg">Two-Factor Authentication</h3>
-                <p class="text-sm text-gray-400">Active: Linked to •••• •••• 92</p>
+                <h3 class="title-3">Two-Factor Authentication</h3>
+                <p class="description">Active: Linked to •••• •••• 92</p>
               </div>
             </div>
             <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Rotate Keys</button>
@@ -175,8 +181,8 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
               </div>
               <div class="space-y-1">
-                <h3 class="font-semibold text-lg">Active Sessions</h3>
-                <p class="text-sm text-gray-400">3 devices currently authorized</p>
+                <h3 class="title-3">Active Sessions</h3>
+                <p class="description">3 devices currently authorized</p>
               </div>
             </div>
             <button class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white transition-colors">Manage</button>
