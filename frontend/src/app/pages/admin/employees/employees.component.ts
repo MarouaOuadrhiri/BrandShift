@@ -29,6 +29,7 @@ export class EmployeesComponent implements OnInit {
   empDepartmentId = '';
   empSuccess = '';
   empPhoto = '';
+  empBio = '';
 
   isModalOpen = false;
   showHistoryModal = false;
@@ -103,11 +104,12 @@ export class EmployeesComponent implements OnInit {
       email: this.empEmail, 
       password: this.empPassword, 
       department_id: this.empDepartmentId,
-      profile_photo: this.empPhoto
+      profile_photo: this.empPhoto,
+      bio: this.empBio
     }).subscribe({
       next: (res: any) => { 
         this.empSuccess = res.id; 
-        this.empFirstName = ''; this.empLastName = ''; this.empEmail = ''; this.empPassword = ''; this.empDepartmentId = ''; this.empPhoto = '';
+        this.empFirstName = ''; this.empLastName = ''; this.empEmail = ''; this.empPassword = ''; this.empDepartmentId = ''; this.empPhoto = ''; this.empBio = '';
         this.isSubmitting = false; 
         this.loadData(); 
         this.closeModal();

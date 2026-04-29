@@ -49,17 +49,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div class="space-y-2">
             <label class="input-label">DISPLAY NAME</label>
-            <input type="text" [(ngModel)]="firstName" placeholder="L7aj L3ibat" class="settings-input">
+            <input type="text" [(ngModel)]="firstName" placeholder="first name" class="settings-input">
           </div>
           <div class="space-y-2">
             <label class="input-label">WORK EMAIL</label>
-            <input type="email" [(ngModel)]="email" placeholder="L3ibat@brandshift.ma" class="settings-input">
+            <input type="email" [(ngModel)]="email" placeholder="email" class="settings-input">
           </div>
         </div>
 
         <div class="space-y-2 mb-10">
           <label class="input-label">BIO / PROFESSIONAL SUMMARY</label>
-          <textarea rows="4" class="settings-input resize-none" 
+          <textarea rows="4" class="settings-input resize-none" [(ngModel)]="bio" name="bio"
             placeholder="Lead Product Designer focused on high-performance operational systems and interfaces."></textarea>
         </div>
 
@@ -193,6 +193,40 @@
           <button class="btn-danger">Delete Workspace Data</button>
         </div>
       </section>
+    </div>
+  </div>
+</div>
+
+<!-- Password Verification Modal -->
+<div class="modal-overlay" *ngIf="isVerificationModalOpen" (click)="isVerificationModalOpen = false" style="z-index: 2000;">
+  <div class="modal-content glass password-modal" (click)="$event.stopPropagation()" style="max-width: 420px; background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 2rem; padding: 2.5rem;">
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Security Verification</h2>
+      <p class="text-gray-400 text-sm">Please confirm your current password to save these profile changes.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <label class="input-label">CURRENT PASSWORD</label>
+        <input type="password" [(ngModel)]="currentPassword" placeholder="••••••••" 
+               class="settings-input" (keyup.enter)="confirmProfileUpdate()">
+        <p *ngIf="errorMsg" class="text-red-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{errorMsg}}</p>
+        <p *ngIf="successMsg" class="text-green-500 text-[10px] font-bold uppercase mt-2 tracking-wider">{{successMsg}}</p>
+      </div>
+    </div>
+
+    <div class="flex gap-4 mt-10">
+      <button (click)="isVerificationModalOpen = false" class="flex-1 px-6 py-3 rounded-full border border-white/5 text-gray-400 font-bold text-xs hover:bg-white/5 transition-all">
+        CANCEL
+      </button>
+      <button (click)="confirmProfileUpdate()" [disabled]="isSubmitting" class="flex-1 btn-primary py-3">
+        {{ isSubmitting ? 'VERIFYING...' : 'CONFIRM' }}
+      </button>
     </div>
   </div>
 </div>

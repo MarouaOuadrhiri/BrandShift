@@ -200,6 +200,13 @@
         </div>
       </div>
 
+      <div class="form-row">
+        <div class="form-group full">
+          <label>BIO / PROFESSIONAL SUMMARY</label>
+          <textarea [(ngModel)]="empBio" name="empBio" rows="3" placeholder="Describe the employee's role or background..." class="w-full bg-[#121212] border border-white/10 rounded-xl p-4 text-white text-sm focus:border-red-500 transition-all outline-none resize-none"></textarea>
+        </div>
+      </div>
+
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="closeModal()">CANCEL</button>
         <button type="submit" class="btn-create" [disabled]="isSubmitting">
@@ -273,7 +280,7 @@
             <div>
               <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-4">Professional Intelligence</h4>
               <p class="text-white/60 text-base leading-relaxed">
-                Currently integrated within departmental workflows to maintain high-level operational integrity and team synergy.
+                {{ selectedHistory?.user?.bio || 'Currently integrated within departmental workflows to maintain high-level operational integrity and team synergy.' }}
               </p>
             </div>
 

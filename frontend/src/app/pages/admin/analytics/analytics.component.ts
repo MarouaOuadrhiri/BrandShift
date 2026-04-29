@@ -71,7 +71,8 @@ export class AnalyticsComponent implements OnInit {
     tasksClosed: 0,
     avgResponse: '--',
     projectsLed: 0,
-    photoPath: ''
+    photoPath: '',
+    bio: ''
   };
 
   showProfileModal = false;
@@ -412,7 +413,8 @@ The previous points are calculated as offsets (e.g., rate - 20, rate - 15) to si
         tasksClosed: displayTasks,
         avgResponse: tasksFinished > 10 ? '1.8h' : '3.8h', // Use realistic response times
         projectsLed: displayProjects,
-        photoPath: topUser.profile_image || topUser.profile_photo || ''
+        photoPath: topUser.profile_image || topUser.profile_photo || '',
+        bio: topUser.bio || ''
       };
     }
   }

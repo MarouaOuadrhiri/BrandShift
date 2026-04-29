@@ -58,6 +58,7 @@ def serialize_user(u, include_department=True):
         'last_name': getattr(u, 'last_name', ''),
         'role': u.role,
         'profile_photo': getattr(u, 'profile_photo', ''),
+        'bio': getattr(u, 'bio', ''),
         'is_online': is_online,
         'current_session_start': current_session_start,
         'total_work_today': format_seconds(total_seconds_today)
@@ -122,7 +123,8 @@ def register(request):
             password=make_password(password),
             first_name=first_name,
             last_name=last_name,
-            profile_photo=data.get('profile_photo', '')
+            profile_photo=data.get('profile_photo', ''),
+            bio=data.get('bio', '')
         )
         user.save()
         return Response({'message': 'User registered successfully', 'user': serialize_user(user)}, status=201)
@@ -221,6 +223,9 @@ def me_view(request):
 
         if 'profile_photo' in data:
             user.profile_photo = data.get('profile_photo', '')
+
+        if 'bio' in data:
+            user.bio = data.get('bio', '')
 
         try:
             user.save()
@@ -328,7 +333,8 @@ def employee_list_create(request):
                 last_name=last_name,
                 role='EMPLOYEE',
                 department=dep,
-                profile_photo=data.get('profile_photo', '')
+                profile_photo=data.get('profile_photo', ''),
+                bio=data.get('bio', '')
             )
             user.save()
             return Response({'message': 'Employee created successfully', 'user': serialize_user(user)}, status=201)
@@ -389,6 +395,9 @@ def employee_detail(request, pk):
 
         if 'profile_photo' in data:
             employee.profile_photo = data.get('profile_photo', '')
+
+        if 'bio' in data:
+            employee.bio = data.get('bio', '')
 
         # Only admin can change department
         if new_department_id and request.user.role == 'ADMIN':

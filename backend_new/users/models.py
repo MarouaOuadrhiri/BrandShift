@@ -13,6 +13,7 @@ class User(Document):
     role = StringField(choices=('ADMIN', 'EMPLOYEE'), default='EMPLOYEE')
     department = ReferenceField(Department, null=True)
     profile_photo = StringField()
+    bio = StringField()
     
     meta = {
         'strict': False,

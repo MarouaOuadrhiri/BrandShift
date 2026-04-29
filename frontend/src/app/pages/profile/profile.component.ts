@@ -18,6 +18,8 @@ export class ProfileComponent implements OnInit {
   password = '';
   currentPassword = '';
   profilePhoto = '';
+  bio = '';
+  isVerificationModalOpen = false;
   
   isSubmitting = false;
   errorMsg = '';
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
         this.lastName = u.last_name || '';
         this.email = u.email;
         this.profilePhoto = u.profile_photo || '';
+        this.bio = u.bio || '';
       },
       error: () => {
         this.errorMsg = 'Failed to load profile data.';
@@ -76,8 +79,14 @@ export class ProfileComponent implements OnInit {
   }
 
   updateProfile() {
+    this.isVerificationModalOpen = true;
+    this.currentPassword = '';
+    this.errorMsg = '';
+  }
+
+  confirmProfileUpdate() {
     if (!this.currentPassword) {
-      this.errorMsg = 'Current password is required to save changes.';
+      this.errorMsg = 'Current password is required.';
       return;
     }
 
@@ -90,7 +99,8 @@ export class ProfileComponent implements OnInit {
       first_name: this.firstName,
       last_name: this.lastName,
       email: this.email,
-      profile_photo: this.profilePhoto
+      profile_photo: this.profilePhoto,
+      bio: this.bio
     };
 
     if (this.password) {
@@ -104,8 +114,8 @@ export class ProfileComponent implements OnInit {
         this.password = '';
         this.currentPassword = '';
         this.isSubmitting = false;
-        // Optionally refresh page or notify parent layouts
-        window.location.reload(); // Simple way to refresh layouts with new photo
+        this.isVerificationModalOpen = false;
+        setTimeout(() => window.location.reload(), 1500);
       },
       error: (err) => {
         this.errorMsg = err.error?.error || 'Failed to update profile.';

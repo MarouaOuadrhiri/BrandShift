@@ -290,8 +290,7 @@
       <h2 class="name">{{ topPerformer.first_name }} {{
         topPerformer.last_name }}</h2>
       <p class="description-card">
-        Maintaining a <span class="text-white font-bold">{{ topPerformer.performance }} engineering rate</span> this
-        quarter. Supporting structural architecture and accelerating internal operations.
+        {{ topPerformer.bio || 'Maintaining a high-level operational integrity and team synergy through structural architecture and accelerating internal operations.' }}
       </p>
 
       <div class="flex gap-16 pt-10">
@@ -355,8 +354,7 @@
             <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-4">Professional Intelligence
             </h4>
             <p class="text-white/60 text-base leading-relaxed">
-              Currently maintaining a peak performance baseline while accelerating cross-departmental operations and
-              structural integrity.
+              {{ topPerformer.bio || 'Currently maintaining a peak performance baseline while accelerating cross-departmental operations and structural integrity.' }}
             </p>
           </div>
 
