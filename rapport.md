@@ -1,49 +1,59 @@
-# Rapport des Fonctionnalités Employé - BrandShift
+# Employee Features Report - BrandShift
 
-Ce document présente une vue d'ensemble exhaustive de toutes les fonctionnalités disponibles pour les employés dans le projet **BrandShift**, ainsi que les outils d'administration associés à la gestion du personnel.
-
----
-
-## 1. Espace de Travail Personnel (Dashboard)
-Le tableau de bord est le centre nucléique de l'employé, offrant une vue en temps réel sur ses activités.
-
-- **Suivi du Temps (Attendance) :**
-    - Chronomètre en direct affichant le temps écoulé depuis le début de la session.
-    - Pointage automatique (Check-in) lors de la connexion.
-    - Pointage de fin (Check-out) automatique lors de la déconnexion.
-- **Vue d'ensemble des Projets :**
-    - Liste des projets assignés avec barres de progression individuelles.
-    - Calcul du progrès global sur l'ensemble des tâches.
-- **Gestion des Tâches Individuelles (To-Do List) :**
-    - Création de tâches "Standalone" (personnelles).
-    - Transformation de notes de projets en tâches individuelles.
-    - Mise à jour du statut des tâches (À faire, En cours, Revue, Terminé).
-- **Réunions (Meetings) :**
-    - Liste des réunions à venir triées par date.
-    - Système d'alertes visuelles (Toasts) pour les réunions imminentes (dans les 24h).
-    - Panneau latéral dédié aux notifications de réunions.
+This document provides a comprehensive overview of all the features available to employees in the **BrandShift** platform, including recent updates to the premium user interface and productivity tools.
 
 ---
 
-## 2. Gestion des Projets et Tâches
-L'employé peut gérer l'avancement des travaux qui lui sont confiés.
+## 1. Premium Dashboard & Workspace
+The newly redesigned dashboard serves as the central hub for employees, featuring a high-fidelity, modern interface matching the administrative portal.
 
-- **Consultation des Projets :** Accès à la liste détaillée des projets dont il fait partie.
-- **Cycle de Vie des Tâches :** Possibilité de modifier le statut des tâches assignées au sein d'un projet pour refléter l'avancement réel.
+- **Real-Time Productivity Stats:** 
+    - Quick insights into Total Tasks, Tasks Completed Today, Active Projects, and a Productivity Score.
+    - Performance snapshot displaying average response times, weekly completion rates, and current workload.
+- **Kanban Task Board:**
+    - Interactive "My Tasks Board" with a horizontal scroll layout featuring categorized columns: To Do, In Progress, and Review.
+    - Tasks display priority badges (High/Medium/Low), progress bars, and assigned project contexts.
+- **Schedule & Focus Management:**
+    - **Today Schedule:** A chronological list of upcoming meetings with time, platform, and duration details.
+    - **Focus Session Timer:** A live, prominent timer tracking active attendance (automatically started on login), with a quick action to end the session or take a break.
+    - **Priority Tasks:** A quick-glance list of the most critical assignments.
 
 ---
 
-## 3. Équipe et Collaboration
-- **Annuaire de l'Équipe :** Visualisation des membres de l'équipe appartenant au même département.
-- **Identité Visuelle :** Affichage des noms, rôles, bios et photos de profil des collègues.
+## 2. Project & Task Management
+Employees have granular control over their assigned workload.
+
+- **My Projects Integration:** 
+    - Detailed table view of assigned projects showing visual progress bars, team leads, and upcoming deadlines.
+- **Calendar Module:**
+    - Dedicated calendar view to track daily and monthly task deadlines visually.
+    - Clicking on specific dates opens a contextual side panel with detailed task information due on that specific day.
+- **Task Lifecycle:**
+    - Employees can seamlessly update task statuses, progressing them toward completion.
 
 ---
 
-## 4. Profil et Paramètres Personnalisés
-Chaque employé dispose d'un espace pour gérer son identité et son expérience utilisateur.
+## 3. Communication & Team Collaboration
+- **Messages Module:**
+    - Internal team communication system featuring a searchable contact list of team members.
+    - Chat interface for direct communication, allowing employees to quickly resolve blockers and discuss project details.
+- **Meeting Notifications:**
+    - Persistent toast notifications and visual alerts for imminent and newly scheduled meetings.
 
-- **Informations Personnelles :** Mise à jour du nom, prénom, email, photo de profil et biographie.
-- **Sécurité :** Modification du mot de passe avec vérification du mot de passe actuel.
 ---
 
-*Note : Ce rapport est basé sur l'état actuel de l'implémentation dans le code source de BrandShift.*
+## 4. Personalization & Settings
+Employees can tailor their workspace to their personal preferences.
+
+- **Profile Management:**
+    - Update personal information, biography, and profile pictures.
+- **Advanced Settings:**
+    - **Notifications:** Toggle project milestones, mention alerts, and daily velocity emails.
+    - **Appearance:** Toggle Compact View and layout preferences.
+    - **Privacy:** Manage profile visibility to non-team members and data usage for system analytics.
+- **Secure Authentication:**
+    - Password management and automated session termination (attendance check-out) upon logout.
+
+---
+
+*Note: This report reflects the current state of the employee portal implementation within the BrandShift source code.*

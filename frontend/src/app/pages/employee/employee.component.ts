@@ -11,7 +11,8 @@ import { ApiService } from '../../core/api.service';
   styleUrls: ['./employee.component.css']
 })
 export class EmployeeComponent implements OnInit {
-  showSidebar = false;
+  showSidebar = true;
+  showUserDropdown = false;
   user: any = null;
 
   constructor(
@@ -21,6 +22,14 @@ export class EmployeeComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private zone: NgZone
   ) {}
+
+  toggleSidebar() {
+    this.showSidebar = !this.showSidebar;
+  }
+
+  toggleUserDropdown() {
+    this.showUserDropdown = !this.showUserDropdown;
+  }
 
   openMeetingNotifications() {
     if (typeof window === 'undefined') return;

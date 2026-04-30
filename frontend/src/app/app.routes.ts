@@ -29,6 +29,9 @@ export const routes: Routes = [
       { path: 'projects', loadComponent: () => import('./pages/employee/projects/projects.component').then(c => c.ProjectsComponent) },
       { path: 'tasks', loadComponent: () => import('./pages/employee/tasks/tasks.component').then(c => c.TasksComponent) },
       { path: 'team', loadComponent: () => import('./pages/employee/team/team.component').then(c => c.TeamComponent) },
+      { path: 'calendar', loadComponent: () => import('./pages/employee/calendar/calendar.component').then(c => c.CalendarComponent) },
+      { path: 'messages', loadComponent: () => import('./pages/employee/messages/messages.component').then(c => c.MessagesComponent) },
+      { path: 'settings', loadComponent: () => import('./pages/employee/settings/settings.component').then(c => c.SettingsComponent) },
       { path: 'profile', loadComponent: () => import('./pages/profile/profile.component').then(c => c.ProfileComponent) }
     ]
   }

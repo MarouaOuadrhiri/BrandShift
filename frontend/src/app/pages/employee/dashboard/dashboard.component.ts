@@ -3,17 +3,22 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../../core/api.service';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-employee-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, DragDropModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   projects: any[] = [];
   standaloneTasks: any[] = [];
+  todoTasks: any[] = [];
+  inProgressTasks: any[] = [];
+  reviewTasks: any[] = [];
+  doneTasks: any[] = [];
   meetings: any[] = [];
   upcomingMeetings: any[] = [];
   newMeetingCount = 0;
@@ -132,12 +137,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadData(isRefresh = false) {
     this.api.getMyProjects().subscribe({
-      next: (r: any) => this.runInZone(() => { this.projects = r || []; this.cdr.detectChanges(); }),
+      next: (r: any) => this.runInZone(() => { this.projects = r || []; this.updateTaskLists(); this.cdr.detectChanges(); }),
       error: () => { if (!isRefresh) this.errorMsg = 'Failed to load project data.'; }
     });
 
     this.api.getTasks().subscribe({
-      next: (r: any) => this.runInZone(() => { this.standaloneTasks = r || []; this.cdr.detectChanges(); }),
+      next: (r: any) => this.runInZone(() => { this.standaloneTasks = r || []; this.updateTaskLists(); this.cdr.detectChanges(); }),
       error: () => { if (!isRefresh) this.errorMsg = 'Failed to load tasks.'; }
     });
 
@@ -338,30 +343,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getTotalActiveTasks(): number {
-    let count = 0;
-    this.projects.forEach(p => {
-      if (p.tasks) count += p.tasks.filter((t: any) => t.status !== 'DONE').length;
-    });
-    count += this.standaloneTasks.filter((t: any) => t.status !== 'DONE').length;
-    return count;
+    return this.getAllTasks().filter(t => t.status !== 'DONE').length;
   }
 
   getOverallProgress(): number {
-    let total = 0;
-    let done = 0;
-
-    this.projects.forEach(p => {
-      if (p.tasks) {
-        total += p.tasks.length;
-        done += p.tasks.filter((t: any) => t.status === 'DONE').length;
-      }
-    });
-
-    total += this.standaloneTasks.length;
-    done += this.standaloneTasks.filter((t: any) => t.status === 'DONE').length;
-
-    if (total === 0) return 0;
-    return Math.round((done / total) * 100);
+    const all = this.getAllTasks();
+    if (all.length === 0) return 0;
+    const done = all.filter(t => t.status === 'DONE').length;
+    return Math.round((done / all.length) * 100);
   }
 
   getProjectProgress(p: any): number {
@@ -390,4 +379,88 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  getTotalTasks(): number {
+    return this.getAllTasks().length;
+  }
+
+  getCompletedTasks(): number {
+    return this.getAllTasks().filter(t => t.status === 'DONE').length;
+  }
+
+  getProductivityScore(): number {
+    return this.getCompletedTasks() * 4; // Arbitrary calculation for UI
+  }
+
+  getAllTasks(): any[] {
+    // this.standaloneTasks contains tasks specifically assigned to the employee
+    return this.standaloneTasks.map(t => {
+      let projectName = t.project_name || 'BrandShift';
+      if (t.project_id) {
+        const p = this.projects.find(proj => proj.id === t.project_id);
+        if (p) {
+          projectName = p.name;
+        }
+      }
+      return { ...t, project_name: projectName };
+    });
+  }
+
+  getTasksByStatus(status: string): any[] {
+    if (status === 'TODO') {
+      return this.getAllTasks().filter(t => t.status === 'TODO' || t.status === 'BLOCKED');
+    }
+    return this.getAllTasks().filter(t => t.status === status);
+  }
+
+  updateTaskLists() {
+    const all = this.getAllTasks();
+    this.todoTasks = all.filter(t => t.status === 'TODO' || t.status === 'BLOCKED');
+    this.inProgressTasks = all.filter(t => t.status === 'IN_PROGRESS');
+    this.reviewTasks = all.filter(t => t.status === 'REVIEW');
+    this.doneTasks = all.filter(t => t.status === 'DONE');
+  }
+
+  drop(event: CdkDragDrop<any[]>, targetStatus: string) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      const task = event.previousContainer.data[event.previousIndex];
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      
+      this.updateStandaloneTaskStatus(task.id, targetStatus);
+    }
+  }
+
+  getPriorityTasks(): any[] {
+    return this.getAllTasks().filter(t => t.priority === 'high' || t.priority === 'medium' || !t.status || t.status !== 'DONE').sort((a, b) => {
+      const pA = a.priority === 'high' ? 3 : (a.priority === 'medium' ? 2 : 1);
+      const pB = b.priority === 'high' ? 3 : (b.priority === 'medium' ? 2 : 1);
+      return pB - pA;
+    });
+  }
+
+  getAvgResponseTime(): string {
+    return '3.2h'; // Static for UI mock
+  }
+
+  getCurrentLoad(): number {
+    return 68; // Static for UI mock
+  }
+
+  getProjectColor(name: string): string {
+    const colors = ['#e53935', '#1e88e5', '#43a047', '#fb8c00', '#8e24aa'];
+    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  }
+
+  getProjectInitials(name: string): string {
+    return name.substring(0, 2).toUpperCase();
+  }
 }
+

@@ -30,6 +30,7 @@ export class ApiService {
 
   // Tasks
   getTasks(): Observable<any> { return this.http.get(`${this.baseUrl}/tasks/`); }
+  getMyTasks(): Observable<any> { return this.http.get(`${this.baseUrl}/tasks/`); }
   createTask(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/tasks/`, data); }
   updateTask(id: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/tasks/${id}/`, data); }
   updateTaskStatus(id: string, status?: string, isArchived?: boolean): Observable<any> { 

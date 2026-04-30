@@ -1,0 +1,135 @@
+<div class="settings-container animate-fade-up">
+  <div class="settings-header">
+    <h1 class="settings-title">Settings</h1>
+    <p class="settings-subtitle">Manage your preferences</p>
+  </div>
+
+  <!-- Success toast -->
+  <div *ngIf="saved" class="save-toast">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    Settings saved successfully
+  </div>
+
+  <div class="settings-grid">
+    <!-- Notifications -->
+    <div class="settings-card">
+      <div class="card-header">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+        <h2 class="card-title">Notifications</h2>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Email Notifications</p>
+          <p class="setting-desc">Receive updates via email</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="emailNotifications" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Push Notifications</p>
+          <p class="setting-desc">Browser push notifications</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="pushNotifications" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Task Reminders</p>
+          <p class="setting-desc">Get reminded before deadlines</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="taskReminders" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Meeting Alerts</p>
+          <p class="setting-desc">Upcoming meeting notifications</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="meetingAlerts" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Project Updates</p>
+          <p class="setting-desc">Notifications for project changes</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="projectUpdates" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Appearance -->
+    <div class="settings-card">
+      <div class="card-header">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+        <h2 class="card-title">Appearance</h2>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Dark Mode</p>
+          <p class="setting-desc">Use dark theme (default)</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="darkMode" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Compact View</p>
+          <p class="setting-desc">Reduce spacing in lists</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="compactView" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Privacy -->
+    <div class="settings-card">
+      <div class="card-header">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        <h2 class="card-title">Privacy</h2>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Show Online Status</p>
+          <p class="setting-desc">Let others see when you're active</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="showOnlineStatus" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <p class="setting-name">Show Email Address</p>
+          <p class="setting-desc">Display email to team members</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="showEmail" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button (click)="saveSettings()" class="save-btn">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+      Save Changes
+    </button>
+  </div>
+</div>
