@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject, HostListener, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/api.service';
@@ -21,6 +21,7 @@ export class ProjectsComponent implements OnInit {
   activeFilter = 'ALL';
   selectedPriorityProjectId = '';
   openMenuId: string | null = null;
+  loading = false;
   private modalSub: Subscription | null = null;
 
   // Pagination
@@ -65,7 +66,9 @@ export class ProjectsComponent implements OnInit {
   constructor(
     private api: ApiService,
     private ui: UiService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
   ) { }
 
   ngOnInit() {
@@ -85,16 +88,45 @@ export class ProjectsComponent implements OnInit {
   }
 
   loadData() {
+    this.loading = true;
+    this.cdr.markForCheck();
+
     this.api.getProjects().subscribe({
       next: (r: any) => {
-        this.projects = (r || []).map((project: any) => ({
-          ...project,
-          isPriority: project.id === this.selectedPriorityProjectId || !!project.isPriority
-        }));
-      }, error: () => { }
+        this.zone.run(() => {
+          this.projects = (r || []).map((project: any) => ({
+            ...project,
+            isPriority: project.id === this.selectedPriorityProjectId || !!project.isPriority
+          }));
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
+      },
+      error: () => { 
+        this.zone.run(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
+      }
     });
-    this.api.getEmployees().subscribe({ next: (r: any) => { this.employees = r; }, error: () => { } });
-    this.api.getDepartments().subscribe({ next: (r: any) => { this.departments = r; }, error: () => { } });
+
+    this.api.getEmployees().subscribe({ 
+      next: (r: any) => { 
+        this.zone.run(() => {
+          this.employees = r; 
+          this.cdr.detectChanges();
+        });
+      } 
+    });
+
+    this.api.getDepartments().subscribe({ 
+      next: (r: any) => { 
+        this.zone.run(() => {
+          this.departments = r; 
+          this.cdr.detectChanges();
+        });
+      } 
+    });
   }
 
 

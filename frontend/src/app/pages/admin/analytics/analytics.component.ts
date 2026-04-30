@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, OnInit, inject, PLATFORM_ID, ViewChild, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -89,7 +89,11 @@ export class AnalyticsComponent implements OnInit {
     'YEAR TO DATE'
   ];
 
-  constructor(private api: ApiService) {
+  constructor(
+    private api: ApiService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {
     this.chartOptions = {
       series: [
         {
@@ -200,23 +204,21 @@ export class AnalyticsComponent implements OnInit {
       tooltip: {
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const val = series[seriesIndex][dataPointIndex];
-          const name = this.topPerformer?.name && this.topPerformer.name !== '---'
-            ? this.topPerformer.name
-            : 'System Analyst';
-          const initials = this.getTopPerformerInitials();
-          const photo = this.topPerformer?.photoPath;
-
+          const weekLabel = w.globals.categoryLabels[dataPointIndex] || `WK ${dataPointIndex + 1}`;
+          
           return `
             <div class="apex-custom-tooltip-wrapper">
-              <div class="tooltip-avatar-circle">
-                ${photo ? `<img src="${photo}" class="w-full h-full object-cover rounded-full">` : `<span>${initials}</span>`}
+              <div class="tooltip-avatar-circle !bg-red-500/10 !border-red-500/20">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD0000" stroke-width="2.5">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
               </div>
               <div class="tooltip-info-content">
                 <div class="tooltip-info-top">
-                  <span class="tooltip-info-name">${name}</span>
-                  <span class="tooltip-info-time">3 days ago</span>
+                  <span class="tooltip-info-name">GLOBAL ANALYTICS</span>
+                  <span class="tooltip-info-time">${weekLabel}</span>
                 </div>
-                <div class="tooltip-info-msg">Performance benchmark reached ${val.toFixed(1)}% completion.</div>
+                <div class="tooltip-info-msg">Global Completion Rate reached <span class="text-[#FD0000] font-black">${val.toFixed(1)}%</span></div>
               </div>
             </div>
           `;
@@ -240,22 +242,26 @@ export class AnalyticsComponent implements OnInit {
       heatmap: this.api.getActivityHeatmap()
     }).subscribe({
       next: (res: any) => {
-        console.log('Analytics Data Loaded:', res);
-        this.employees = res.emps;
+        this.zone.run(() => {
+          console.log('Analytics Data Loaded:', res);
+          this.employees = res.emps;
 
-        // Aggregate tasks from standalone list AND projects
-        const standaloneTasks = res.tasks || [];
-        const projectTasks = (res.projs || []).flatMap((p: any) => (p.tasks || []).map((t: any) => ({ ...t, project_id: p.id })));
-        this.tasks = [...standaloneTasks, ...projectTasks];
+          // Aggregate tasks from standalone list AND projects
+          const standaloneTasks = res.tasks || [];
+          const projectTasks = (res.projs || []).flatMap((p: any) => (p.tasks || []).map((t: any) => ({ ...t, project_id: p.id })));
+          this.tasks = [...standaloneTasks, ...projectTasks];
 
-        this.projects = res.projs;
-        this.departments = res.depts;
+          this.projects = res.projs;
+          this.departments = res.depts;
 
-        this.calculateStats();
-        this.calculateTopPerformer();
-        this.calculatePulse();
-        this.calculateDepartmentStats();
-        this.loadHeatmap(res.heatmap);
+          this.calculateStats();
+          this.calculateTopPerformer();
+          this.calculatePulse();
+          this.calculateDepartmentStats();
+          this.loadHeatmap(res.heatmap);
+          
+          this.cdr.detectChanges();
+        });
       },
       error: (err: any) => console.error('Data Load Error:', err)
     });

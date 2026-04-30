@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/api.service';
@@ -65,7 +65,8 @@ export class TasksComponent implements OnInit {
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private zone: NgZone
   ) {}
 
   expandedStatusGroups = new Set<string>(['BLOCKED', 'IN PROGRESS', 'REVIEW', 'DONE']);
@@ -80,18 +81,19 @@ export class TasksComponent implements OnInit {
     
     this.api.getTasks().subscribe({ 
       next: (r: any) => { 
-        this.tasks = r.map((t: any) => ({
-          ...t,
-          status: this.mapStatus(t.status),
-          priority: t.priority || this.getRandomPriority(),
-          progress: t.progress || Math.floor(Math.random() * 100),
-          deadline: t.deadline || 'MAY 16',
-          // Use the first employee's name for compatibility in simple views
-          employee_name: t.employees && t.employees.length > 0 ? t.employees[0].name : 'Unassigned',
-          employee_photo: t.employees && t.employees.length > 0 ? t.employees[0].photo : ''
-        }));
-        this.groupTasks();
-        this.cdr.markForCheck();
+        this.zone.run(() => {
+          this.tasks = r.map((t: any) => ({
+            ...t,
+            status: this.mapStatus(t.status),
+            priority: t.priority || this.getRandomPriority(),
+            progress: t.progress || Math.floor(Math.random() * 100),
+            deadline: t.deadline || 'MAY 16',
+            employee_name: t.employees && t.employees.length > 0 ? t.employees[0].name : 'Unassigned',
+            employee_photo: t.employees && t.employees.length > 0 ? t.employees[0].photo : ''
+          }));
+          this.groupTasks();
+          this.cdr.detectChanges();
+        });
       }, 
       error: () => {} 
     });

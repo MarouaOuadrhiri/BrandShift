@@ -11,7 +11,77 @@ from mongoengine.queryset.visitor import Q
 import bson
 from datetime import datetime, timedelta
 
-def serialize_project(p):
+def serialize_project(p, user_map=None, dept_map=None):
+    def get_id_str(obj):
+        if obj is None: return None
+        if hasattr(obj, 'id'): return str(obj.id)
+        if isinstance(obj, bson.DBRef): return str(obj.id)
+        return str(obj)
+
+    # Resolve department name
+    department_name = None
+    if p.department:
+        dep_id = get_id_str(p.department)
+        if dept_map and dep_id in dept_map:
+            department_name = dept_map[dep_id].name
+        elif not isinstance(p.department, bson.DBRef) and hasattr(p.department, 'name'):
+            department_name = p.department.name
+        else:
+            dept = Department.objects.filter(id=dep_id).first()
+            department_name = dept.name if dept else None
+
+    # Resolve employees
+    serialized_employees = []
+    for e in p.employees:
+        e_id = get_id_str(e)
+        if user_map and e_id in user_map:
+            user_obj = user_map[e_id]
+            serialized_employees.append({
+                'id': e_id,
+                'name': f"{user_obj.first_name} {user_obj.last_name}",
+                'profile_photo': getattr(user_obj, 'profile_photo', '')
+            })
+        elif not isinstance(e, bson.DBRef) and hasattr(e, 'first_name'):
+            serialized_employees.append({
+                'id': e_id,
+                'name': f"{e.first_name} {e.last_name}",
+                'profile_photo': getattr(e, 'profile_photo', '')
+            })
+        else:
+            user_obj = User.objects.filter(id=e_id).first()
+            if user_obj:
+                serialized_employees.append({
+                    'id': e_id,
+                    'name': f"{user_obj.first_name} {user_obj.last_name}",
+                    'profile_photo': getattr(user_obj, 'profile_photo', '')
+                })
+
+    # Resolve tasks
+    serialized_tasks = []
+    for t in p.tasks:
+        completed_by_name = None
+        if t.completed_by:
+            cb_id = get_id_str(t.completed_by)
+            if user_map and cb_id in user_map:
+                user_obj = user_map[cb_id]
+                completed_by_name = f"{user_obj.first_name} {user_obj.last_name}"
+            elif not isinstance(t.completed_by, bson.DBRef) and hasattr(t.completed_by, 'first_name'):
+                completed_by_name = f"{t.completed_by.first_name} {t.completed_by.last_name}"
+            else:
+                user_obj = User.objects.filter(id=cb_id).first()
+                completed_by_name = f"{user_obj.first_name} {user_obj.last_name}" if user_obj else None
+
+        serialized_tasks.append({
+            'id': str(t.id),
+            'title': t.title,
+            'description': t.description,
+            'note': getattr(t, 'note', ''),
+            'status': t.status,
+            'deadline': t.deadline.isoformat() if getattr(t, 'deadline', None) else None,
+            'completed_by_name': completed_by_name,
+            'completed_at': t.completed_at.isoformat() if getattr(t, 'completed_at', None) else None,
+        })
+
     return {
         'id': str(p.id),
         'name': p.name,
@@ -21,35 +91,16 @@ def serialize_project(p):
         'status': getattr(p, 'status', 'Pending'),
         'priority': getattr(p, 'priority', 'MEDIUM'),
         'is_high_priority': getattr(p, 'is_high_priority', False),
+        'isPriority': getattr(p, 'is_high_priority', False),
         'budget': getattr(p, 'budget', ''),
         'duration': getattr(p, 'duration', ''),
         'tags': getattr(p, 'tags', []),
-        'department_id': str(p.department.id) if p.department else None,
-        'department_name': getattr(p.department, 'name', None) if p.department and not isinstance(p.department, bson.DBRef) else (Department.objects.filter(id=p.department.id).first().name if p.department and Department.objects.filter(id=p.department.id).first() else None),
-        'employees': [
-            {
-                'id': str(e.id), 
-                'name': f"{e.first_name} {e.last_name}" if not isinstance(e, bson.DBRef) else f"{User.objects.filter(id=e.id).first().first_name} {User.objects.filter(id=e.id).first().last_name}",
-                'profile_photo': getattr(e, 'profile_photo', '') if not isinstance(e, bson.DBRef) else getattr(User.objects.filter(id=e.id).first(), 'profile_photo', '')
-            } for e in p.employees
-        ],
+        'department_id': get_id_str(p.department),
+        'department_name': department_name,
+        'employees': serialized_employees,
         'start_date': p.start_date.isoformat() if p.start_date else None,
         'deadline': p.deadline.isoformat() if p.deadline else None,
-        'tasks': [
-            {
-                'id': str(t.id),
-                'title': t.title,
-                'description': t.description,
-                'note': getattr(t, 'note', ''),
-                'status': t.status,
-                'deadline': t.deadline.isoformat() if getattr(t, 'deadline', None) else None,
-                'completed_by_name': (
-                    f"{t.completed_by.first_name} {t.completed_by.last_name}" if not isinstance(t.completed_by, bson.DBRef) and hasattr(t.completed_by, 'first_name')
-                    else f"{User.objects.filter(id=t.completed_by.id).first().first_name} {User.objects.filter(id=t.completed_by.id).first().last_name}" if t.completed_by else None
-                ) if getattr(t, 'completed_by', None) else None,
-                'completed_at': t.completed_at.isoformat() if getattr(t, 'completed_at', None) else None,
-            } for t in p.tasks
-        ]
+        'tasks': serialized_tasks
     }
 
 @api_view(['GET', 'POST'])
@@ -58,14 +109,38 @@ def serialize_project(p):
 def project_list_create(request):
     if request.method == 'GET':
         if request.user.role == 'ADMIN':
-            projects = Project.objects.all()
+            projects = Project.objects.all().only(
+                'name', 'client', 'description', 'owner', 'status', 'priority', 
+                'is_high_priority', 'budget', 'duration', 'tags', 'employees', 
+                'department', 'start_date', 'deadline', 'tasks'
+            )
         else:
             user = request.user
             projects = Project.objects(
                 Q(employees=user) | 
                 (Q(employees__size=0) & Q(department=user.department))
             )
-        return Response([serialize_project(p) for p in projects])
+        
+        # Optimization: Bulk fetch users and departments
+        projects_list = list(projects)
+        user_ids = set()
+        dept_ids = set()
+        
+        def add_id(collection, obj):
+            if obj is None: return
+            if hasattr(obj, 'id'): collection.add(obj.id)
+            elif isinstance(obj, bson.DBRef): collection.add(obj.id)
+            else: collection.add(obj)
+
+        for p in projects_list:
+            add_id(dept_ids, p.department)
+            for e in p.employees: add_id(user_ids, e)
+            for t in p.tasks: add_id(user_ids, t.completed_by)
+        
+        user_map = {str(u.id): u for u in User.objects.filter(id__in=list(user_ids))}
+        dept_map = {str(d.id): d for d in Department.objects.filter(id__in=list(dept_ids))}
+
+        return Response([serialize_project(p, user_map, dept_map) for p in projects_list])
 
     if request.method == 'POST':
         if request.user.role != 'ADMIN':
@@ -258,7 +333,27 @@ def my_projects(request):
         Q(employees=user) | 
         (Q(employees__size=0) & Q(department=user.department))
     )
-    return Response([serialize_project(p) for p in projects])
+    
+    # Optimization: Bulk fetch users and departments
+    projects_list = list(projects)
+    user_ids = set()
+    dept_ids = set()
+    
+    def add_id(collection, obj):
+        if obj is None: return
+        if hasattr(obj, 'id'): collection.add(obj.id)
+        elif isinstance(obj, bson.DBRef): collection.add(obj.id)
+        else: collection.add(obj)
+
+    for p in projects_list:
+        add_id(dept_ids, p.department)
+        for e in p.employees: add_id(user_ids, e)
+        for t in p.tasks: add_id(user_ids, t.completed_by)
+    
+    user_map = {str(u.id): u for u in User.objects.filter(id__in=list(user_ids))}
+    dept_map = {str(d.id): d for d in Department.objects.filter(id__in=list(dept_ids))}
+
+    return Response([serialize_project(p, user_map, dept_map) for p in projects_list])
 
 @api_view(['PATCH'])
 @authentication_classes([JWTAuthentication])

@@ -17,17 +17,16 @@
               fill="#EF4444" />
           </svg>
           <span>{{ selectedRange }}</span>
-          <svg class="ml-1 transition-transform" [class.rotate-180]="isRangeDropdownOpen" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1L5 5L9 1" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg class="ml-1 transition-transform" [class.rotate-180]="isRangeDropdownOpen" width="10" height="6"
+            viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L5 5L9 1" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
 
         <!-- Dropdown Menu -->
         <div *ngIf="isRangeDropdownOpen" class="range-dropdown animate-in">
-          <div *ngFor="let range of dateRanges" 
-               (click)="selectRange(range)"
-               class="range-item"
-               [class.active]="selectedRange === range">
+          <div *ngFor="let range of dateRanges" (click)="selectRange(range)" class="range-item"
+            [class.active]="selectedRange === range">
             {{ range }}
           </div>
         </div>
@@ -290,7 +289,8 @@
       <h2 class="name">{{ topPerformer.first_name }} {{
         topPerformer.last_name }}</h2>
       <p class="description-card">
-        {{ topPerformer.bio || 'Maintaining a high-level operational integrity and team synergy through structural architecture and accelerating internal operations.' }}
+        {{ topPerformer.bio || 'Maintaining a high-level operational integrity and team synergy through structural
+        architecture and accelerating internal operations.' }}
       </p>
 
       <div class="flex gap-16 pt-10">
@@ -312,8 +312,10 @@
     <div class="shrink-0">
       <button class="btn-profile" (click)="toggleProfileModal()">
         <span>View Profile</span>
-        <svg class="icon-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg class="icon-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </button>
     </div>
@@ -354,7 +356,8 @@
             <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 mb-4">Professional Intelligence
             </h4>
             <p class="text-white/60 text-base leading-relaxed">
-              {{ topPerformer.bio || 'Currently maintaining a peak performance baseline while accelerating cross-departmental operations and structural integrity.' }}
+              {{ topPerformer.bio || 'Currently maintaining a peak performance baseline while accelerating
+              cross-departmental operations and structural integrity.' }}
             </p>
           </div>
 

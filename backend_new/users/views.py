@@ -656,3 +656,4 @@ def revoke_session(request):
         return Response({'message': 'Session revoked successfully'})
     except DoesNotExist:
         return Response({'error': 'Session not found'}, status=404)
+        return Response({'error': 'Session not found'}, status=404)

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/api.service';
@@ -44,7 +44,11 @@ export class EmployeesComponent implements OnInit {
   adminPassword = '';
   confirmPasswordError = '';
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -53,13 +57,19 @@ export class EmployeesComponent implements OnInit {
   loadData() {
     this.api.getEmployees().subscribe({ 
       next: (r: any) => { 
-        setTimeout(() => { this.employees = r; }, 0);
+        this.zone.run(() => {
+          this.employees = r; 
+          this.cdr.detectChanges();
+        });
       }, 
       error: () => {} 
     });
     this.api.getDepartments().subscribe({ 
       next: (r: any) => { 
-        setTimeout(() => { this.departments = r; }, 0);
+        this.zone.run(() => {
+          this.departments = r; 
+          this.cdr.detectChanges();
+        });
       }, 
       error: () => {} 
     });
