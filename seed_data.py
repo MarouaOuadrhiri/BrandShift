@@ -3,6 +3,7 @@ import os
 import django
 import datetime
 import random
+import bson
 
 # Add backend_new to path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'backend_new'))
