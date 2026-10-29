@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private baseUrl = 'http://192.168.4.246:8000/api';
+    private baseUrl = 'https://brandshift-c8840.containers.snapdeploy.app/api';
   constructor(private http: HttpClient) {}
 
   login(credentials: any): Observable<any> { return this.http.post(`${this.baseUrl}/users/login/`, credentials); }
