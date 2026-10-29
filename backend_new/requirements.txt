@@ -1,0 +1,12 @@
+setuptools
+django==3.2.7
+djangorestframework
+django-cors-headers
+mongoengine
+PyJWT
+gunicorn
+
+
+
+
+
