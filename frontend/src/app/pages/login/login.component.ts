@@ -12,8 +12,9 @@ import { ApiService } from '../../core/api.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  // Demo accounts — pre-filled so the app can be tested in one click
+  email = 'alice@brandshift.com';
+  password = 'password123';
   isLoading = false;
   errorMsg = '';
   viewMode: 'selection' | 'agent' | 'admin' = 'selection';
@@ -27,8 +28,13 @@ export class LoginComponent {
   setMode(mode: 'agent' | 'admin' | 'selection') {
     this.viewMode = mode;
     this.errorMsg = '';
-    this.email = '';
-    this.password = '';
+    if (mode === 'admin') {
+      this.email = 'admin@brandshift.com';
+      this.password = 'admin123';
+    } else if (mode === 'agent') {
+      this.email = 'alice@brandshift.com';
+      this.password = 'password123';
+    }
   }
 
   login() {
