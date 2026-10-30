@@ -8,14 +8,14 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/auth.interceptor';
-import { demoInterceptor } from './core/demo.interceptor';
+import { wakeRetryInterceptor } from './core/wake-retry.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes), 
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([demoInterceptor, authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([wakeRetryInterceptor, authInterceptor])),
     providePrimeNG({ 
       theme: {
         preset: Aura,
