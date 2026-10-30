@@ -1,6 +1,7 @@
 #!/bin/sh
 # Boot order: bundled MongoDB -> wait until it answers -> seed demo data ->
 # ensure the demo ADMIN account -> serve the API.
+# (Health probes are served by Django: /health and /api/health in mon_projet/urls.py.)
 /opt/mongo/bin/mongod --dbpath /data/db --bind_ip 127.0.0.1 --port 27017 --fork --logpath /tmp/mongod.log --wiredTigerCacheSizeGB 0.25 || { echo "MONGOD FAILED TO START"; tail -50 /tmp/mongod.log; }
 
 python - <<'PYEOF'
