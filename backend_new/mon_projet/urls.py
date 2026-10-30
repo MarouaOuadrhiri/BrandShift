@@ -1,8 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
 from projects import views as projects_views
 
+
+def health(request):
+    # Platform health probes (no DB access on purpose).
+    return JsonResponse({'status': 'ok'})
+
+
 urlpatterns = [
+    path('health', health),
+    path('api/health', health),
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/tasks/', projects_views.unified_task_list_create, name='unified_task_list_create'),
